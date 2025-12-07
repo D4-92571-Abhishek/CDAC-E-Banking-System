@@ -1,7 +1,6 @@
 import React from "react";
 import bankLogo from "../../images/bank-account.png";
 import { Link } from "react-router";
-import { ContactUs } from './ContactUs';
 
 export const Navbar = () => {
   return (
@@ -25,7 +24,7 @@ export const Navbar = () => {
               <Link to="/services" className="nav-link fs-3 fw-semibold">Services</Link>
             </div>
             <div>
-              <Link to="contact-us" className="nav-link fs-3 fw-semibold">Contact Us</Link>
+              <Link to="/contact-us" className="nav-link fs-3 fw-semibold">Contact Us</Link>
             </div>
           </div>
         </nav>

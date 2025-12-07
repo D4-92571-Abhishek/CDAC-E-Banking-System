@@ -1,6 +1,6 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HomePage } from "./Pages/Default Home Page/HomePage";
 import { DefaultHomePage } from "./Pages/Default Home Page/DefaultHomePage";
 import { About } from "./Pages/Default Home Page/About";
@@ -16,6 +16,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />}>
+          <Route index element={<Navigate to="home" replace />} />
             <Route path="home" element={<DefaultHomePage />} />
             <Route path="about" element={<About />} />
             <Route path="services" element={<Services />} />
