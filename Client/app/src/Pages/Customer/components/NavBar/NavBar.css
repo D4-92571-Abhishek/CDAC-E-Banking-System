@@ -1,0 +1,20 @@
+.btn3{
+
+  width: 35%;
+  margin-left: 55px;
+  margin-top: 350px;
+  
+}
+
+
+.nav-link {
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.nav-link.active {
+  background-color: #000;
+  color: #fff ;
+  font-weight: 600;
+}

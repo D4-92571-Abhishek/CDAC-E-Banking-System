@@ -1,0 +1,23 @@
+/* Smaller, modern input */
+.input-sm {
+  height: 36px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+/* Icon inside input */
+.icon-left {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: #6c757d;
+  pointer-events: none;
+}
+
+.form-select.input-sm {
+  height: 36px;  
+  font-size: 0.85rem;
+  padding-top: 6px;           
+}
