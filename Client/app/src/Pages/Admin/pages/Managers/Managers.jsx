@@ -26,23 +26,23 @@ const Managers = () => {
                                       <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <div className="modal-body">
-                                      <div class="mb-3">
-                                          <label for="exampleFormControlInput1" class="form-label">Full Name</label>
-                                          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter Full Name" />
+                                      <div className="mb-3">
+                                          <label for="exampleFormControlInput1" className="form-label">Full Name</label>
+                                          <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Enter Full Name" />
                                       </div>
-                                      <div class="mb-3">
-                                          <label for="exampleFormControlInput1" class="form-label">E-mail</label>
-                                          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" />
+                                      <div className="mb-3">
+                                          <label for="exampleFormControlInput1" className="form-label">E-mail</label>
+                                          <input type="email" className="form-control" id="exampleFormControlInput1" placeholder="name@example.com" />
                                       </div>
-                                      <div class="mb-3">
-                                          <label for="exampleFormControlInput1" class="form-label">Employee ID</label>
-                                          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter Employee ID" />
+                                      <div className="mb-3">
+                                          <label for="exampleFormControlInput1" className="form-label">Employee ID</label>
+                                          <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Enter Employee ID" />
                                       </div>
-                                      <div class="mb-3">
-                                          <label for="exampleFormControlInput1" class="form-label">Employee Phone Number</label>
-                                          <div class="input-group input-group-sm mb-3">
-                                              <span class="input-group-text" id="inputGroup-sizing-sm">+91-</span>
-                                              <input type="tel" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+                                      <div className="mb-3">
+                                          <label for="exampleFormControlInput1" className="form-label">Employee Phone Number</label>
+                                          <div className="input-group input-group-sm mb-3">
+                                              <span className="input-group-text" id="inputGroup-sizing-sm">+91-</span>
+                                              <input type="tel" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
                                           </div>
                                       </div>
                                       
