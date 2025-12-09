@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import lock from "../images/lock.png";
+
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);

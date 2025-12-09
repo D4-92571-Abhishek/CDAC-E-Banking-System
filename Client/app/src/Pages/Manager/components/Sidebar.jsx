@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../../../images/bank-account.png";
 
 export default function Sidebar() {
   return (
@@ -22,25 +22,25 @@ export default function Sidebar() {
         <ul className="navbar-nav flex-column w-100 mb-3">
 
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className="nav-link" to="">
               Create Account
             </Link>
           </li>
 
           <li className="nav-item">
-            <Link className="nav-link" to="/dashboard">
+            <Link className="nav-link" to="dashboard">
               Approve / Reject
             </Link>
           </li>
 
           <li className="nav-item">
-            <Link className="nav-link" to="/transactions">
+            <Link className="nav-link" to="transactions">
               Transactions
             </Link>
           </li>
 
           <li className="nav-item">
-            <Link className="nav-link" to="/users">
+            <Link className="nav-link" to="users">
               Manage Users
             </Link>
           </li>

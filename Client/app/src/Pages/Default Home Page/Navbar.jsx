@@ -1,11 +1,11 @@
 import React from "react";
 import bankLogo from "../../images/bank-account.png";
 import { Link } from "react-router";
-import { ContactUs } from './ContactUs';
+import "./home.css"
 
 export const Navbar = () => {
   return (
-    <div>
+    <div className="home-page">
       <div>
         <nav className="mt-3 d-flex p-3">
           <div className="ms-2" style={{ width: "14%", paddingLeft: "2rem" }}>
@@ -25,7 +25,7 @@ export const Navbar = () => {
               <Link to="/services" className="nav-link fs-3 fw-semibold">Services</Link>
             </div>
             <div>
-              <Link to="contact-us" className="nav-link fs-3 fw-semibold">Contact Us</Link>
+              <Link to="/contact-us" className="nav-link fs-3 fw-semibold">Contact Us</Link>
             </div>
           </div>
         </nav>

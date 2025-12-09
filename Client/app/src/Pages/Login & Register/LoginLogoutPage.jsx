@@ -8,6 +8,15 @@ const LoginLogoutPage = () => {
   const [show, setShow] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  useEffect(() => {
+      // Apply page-specific background
+      document.body.style.backgroundColor = "#e0e7ff";
+  
+      // Cleanup when leaving the page
+      return () => {
+        document.body.style.backgroundColor = "";
+      };
+    }, []);
 
   useEffect(() => {
     if (location.state?.from === "loginbtn") {
@@ -74,16 +83,16 @@ const LoginLogoutPage = () => {
         </p>
       </div>
 
-      <div className="bL">
+      <div className="" style={{backgroundColor:"#e0e7ff"}}>
         <footer className="text-center py-4">
           <div className="d-flex justify-content-center flex-wrap gap-3 mb-2">
-            <Link to="/" className="text-secondary text-decoration-none">
+            <Link to="/privacy" className="text-secondary text-decoration-none">
               Privacy Policy
             </Link>
-            <Link to="/" className="text-secondary text-decoration-none">
+            <Link to="/terms-and-services" className="text-secondary text-decoration-none">
               Terms of Service
             </Link>
-            <Link to="/" className="text-secondary text-decoration-none">
+            <Link to="/contact-us" className="text-secondary text-decoration-none">
               Contact Support
             </Link>
           </div>

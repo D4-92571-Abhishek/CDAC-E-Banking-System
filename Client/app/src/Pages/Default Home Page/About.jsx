@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export const About = () => {
+  useEffect(() => {
+      // Apply page-specific background
+      document.body.style.backgroundColor = "#e0e7ff";
+  
+      // Cleanup when leaving the page
+      return () => {
+        document.body.style.backgroundColor = "";
+      };
+    }, []);
   return (
     <div className="container mt-5">
       <h2>About</h2>

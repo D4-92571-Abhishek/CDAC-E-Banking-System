@@ -15,45 +15,45 @@ const Loans = () => {
               </div>
               <div className='row mt-4 px-3'>
                   <div className='col-3 mb-3'>
-                      <div class="card" style={{ "height": "180px" }}>
-                          <div class="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
-                              <h5 class="card-title fs-4">Total Loans</h5>
+                      <div className="card" style={{ "height": "180px" }}>
+                          <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
+                              <h5 className="card-title fs-4">Total Loans</h5>
                               <div>
-                                  <h3 class="card-text fs-3">12</h3>
-                                  <h6 class="card-subtitle text-body-secondary fs-6">Active Loan Accounts</h6>
+                                  <h3 className="card-text fs-3">12</h3>
+                                  <h6 className="card-subtitle text-body-secondary fs-6">Active Loan Accounts</h6>
                               </div>
                           </div>
                       </div>
                   </div>
                   <div className='col-3 mb-3'>
-                      <div class="card" style={{ "height": "180px" }}>
-                          <div class="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
-                              <h5 class="card-title fs-4">Outstanding Balance</h5>
+                      <div className="card" style={{ "height": "180px" }}>
+                          <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
+                              <h5 className="card-title fs-4">Outstanding Balance</h5>
                               <div>
-                                  <h3 class="card-text fs-4">3,12,456</h3>
-                                  <h6 class="card-subtitle text-body-secondary fs-6">Total Remaining Debt</h6>
+                                  <h3 className="card-text fs-4">3,12,456</h3>
+                                  <h6 className="card-subtitle text-body-secondary fs-6">Total Remaining Debt</h6>
                               </div>
                           </div>
                       </div>
                   </div>
                   <div className='col-3 mb-3'>
-                      <div class="card" style={{ "height": "180px" }}>
-                          <div class="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
-                              <h5 class="card-title fs-4">Overdue Loan Accounts</h5>
+                      <div className="card" style={{ "height": "180px" }}>
+                          <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
+                              <h5 className="card-title fs-4">Overdue Loan Accounts</h5>
                               <div>
-                                  <h3 class="card-text fs-3">3</h3>
-                                  <h6 class="card-subtitle text-body-secondary fs-6">Require Immediate Action</h6>
+                                  <h3 className="card-text fs-3">3</h3>
+                                  <h6 className="card-subtitle text-body-secondary fs-6">Require Immediate Action</h6>
                               </div>
                           </div>
                       </div>
                   </div>
                   <div className='col-3 mb-3'>
-                      <div class="card" style={{ "height": "180px" }}>
-                          <div class="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
-                              <h5 class="card-title fs-4">Average Interest Rate</h5>
+                      <div className="card" style={{ "height": "180px" }}>
+                          <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
+                              <h5 className="card-title fs-4">Average Interest Rate</h5>
                               <div>
-                                  <h3 class="card-text fs-3">6.6 %</h3>
-                                  <h6 class="card-subtitle text-body-secondary fs-6">Portfolio Average</h6>
+                                  <h3 className="card-text fs-3">6.6 %</h3>
+                                  <h6 className="card-subtitle text-body-secondary fs-6">Portfolio Average</h6>
                               </div>
                           </div>
                       </div>
@@ -65,9 +65,9 @@ const Loans = () => {
                       <p className='text-muted'>View and manage all customer loan accounts</p>
                   </div>
                   <div className='d-flex px-3 pt-3'>
-                      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                      <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
                       <span>
-                          <select class="form-select" aria-label="Default select example">
+                          <select className="form-select" aria-label="Default select example">
                               <option selected>All Status</option>
                               <option value="1">Current</option>
                               <option value="2">Overdue</option>
@@ -77,7 +77,7 @@ const Loans = () => {
                       </span>
                   </div>
                   <div className='px-3'>
-                      <table class="table table-hover border border-grey mt-3">
+                      <table className="table table-hover border border-grey mt-3">
                           <thead>
                               <tr>
                                   <th scope="col">Customer</th>

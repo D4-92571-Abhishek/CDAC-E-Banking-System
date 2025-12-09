@@ -1,5 +1,6 @@
-import Header from '../components/Header'
-import StatsCards from '../components/StatsCards'
+import Header from "../components/Header";
+import StatsCards from "../components/StatsCards";
+
 
 export default function ApproveReject() {
   return (
