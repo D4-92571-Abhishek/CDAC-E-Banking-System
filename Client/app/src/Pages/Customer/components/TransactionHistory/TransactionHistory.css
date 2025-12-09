@@ -1,0 +1,12 @@
+.card {
+  border-radius: 12px;
+}
+
+table td {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.btn-outline-secondary {
+  border-radius: 8px;
+}

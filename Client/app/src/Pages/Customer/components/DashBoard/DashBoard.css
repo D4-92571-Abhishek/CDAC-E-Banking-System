@@ -1,0 +1,20 @@
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+}
+
+.nav-link {
+  color: #555 !important;
+}
+
+.nav-link.active {
+  background: #f5f6f7 !important;
+  color: #000 !important;
+  border-radius: 8px;
+}
+
+.card {
+  border-radius: 16px !important;
+}
+
+

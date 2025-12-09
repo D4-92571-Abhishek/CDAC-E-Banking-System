@@ -1,0 +1,17 @@
+.card {
+  border-radius: 20px;
+}
+
+.btn-dark {
+  border-radius: 12px !important;
+}
+
+.btn-outline-secondary {
+  border-radius: 12px !important;
+}
+
+.form-control, .form-select {
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 0.9rem;
+}
