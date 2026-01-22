@@ -16,6 +16,13 @@ import Dashboard from './Pages/Admin/pages/Dashboard/Dashboard';
 import Customers from './Pages/Admin/pages/Customers/Customers';
 import Managers from './Pages/Admin/pages/Managers/Managers';
 import Loans from './Pages/Admin/pages/Loans/Loans';
+import DashboardUI from "./Pages/Customer/components/DashBoard/DashBoard";
+import TransactionHistory from './Pages/Customer/components/TransactionHistory/TransactionHistory';
+import ReceivePayment from './Pages/Customer/components/ReceivePayment/ReceivePayment';
+import CurrentLoansUI from './Pages/Customer/components/LoanHistory/LoanPage';
+import LoanApplicationUI from './Pages/Customer/components/ApplyForLoan/ApplyForLoan';
+import NavBar from './Pages/Customer/components/NavBar/NavBar';
+import FundTransferUI from './Pages/Customer/components/FundTransfer/FundTransfer';
 
 function App() {
   return (
@@ -34,10 +41,19 @@ function App() {
           </Route>
           <Route path='/admin' element={<AdminHome />}>
             <Route path='' element={<Dashboard />} />
-            
+
             <Route path='customers' element={<Customers />}></Route>
             <Route path='managers' element={<Managers />}></Route>
             <Route path='loans' element={<Loans />}></Route>
+          </Route>
+          <Route path="/customer" element={<NavBar />}>
+            <Route path="dashboard" element={<DashboardUI />} />
+            <Route path="transaction" element={<TransactionHistory />} />
+            <Route path="payment" element={<ReceivePayment />} />
+            <Route path="fund-transfer" element={<FundTransferUI />} />
+            <Route path="loan" element={<CurrentLoansUI />} />
+            <Route path="loandepartment" element={<LoanApplicationUI />} />
+
           </Route>
         </Routes>
       </BrowserRouter>

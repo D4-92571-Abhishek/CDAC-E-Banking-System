@@ -19,9 +19,7 @@ export default function DashboardUI() {
           </div>
 
           <div className="d-flex align-items-center gap-3">
-            <i className="bi bi-bell fs-5"></i>
             <div className="rounded-circle border p-2">
-              <i className="bi bi-person"></i>
             </div>
           </div>
         </div>
@@ -29,7 +27,7 @@ export default function DashboardUI() {
         <div className="d-flex justify-content-between align-items-center mt-4 mb-2">
           <h6 className="fw-semibold">Account Overview</h6>
           <button className="btn btn-outline-secondary btn-sm rounded-pill">
-            <i className="bi bi-eye-slash me-1"></i> Hide Balance
+           Hide Balance
           </button>
         </div>
 

@@ -23,23 +23,23 @@ export default function DashboardLayout() {
 
         <nav className="nav flex-column gap-2">
 
-          <NavLink to="/dashboard" className="nav-link px-3 py-2">
+          <NavLink to="dashboard" className="nav-link px-3 py-2">
             Dashboard
           </NavLink>
 
-          <NavLink to="/transaction" className="nav-link px-3 py-2">
+          <NavLink to="transaction" className="nav-link px-3 py-2">
             Transactions
           </NavLink>
 
-          <NavLink to="/fund-transfer" className="nav-link px-3 py-2">
+          <NavLink to="fund-transfer" className="nav-link px-3 py-2">
             Fund Transfer
           </NavLink>
 
-          <NavLink to="/payment" className="nav-link px-3 py-2">
+          <NavLink to="payment" className="nav-link px-3 py-2">
             Receive Payment
           </NavLink>
 
-          <NavLink to="/loan" className="nav-link px-3 py-2">
+          <NavLink to="loan" className="nav-link px-3 py-2">
             Loan Department
           </NavLink>
 
