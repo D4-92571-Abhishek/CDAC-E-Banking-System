@@ -3,11 +3,11 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HomePage } from "./Pages/Default Home Page/HomePage";
-import { DefaultHomePage } from "./Pages/Default Home Page/DefaultHomePage";
-import { About } from "./Pages/Default Home Page/About";
-import { Services } from "./Pages/Default Home Page/Services";
-import { ContactUs } from "./Pages/Default Home Page/ContactUs";
+import { HomePage } from "./Pages/Public/HomePage";
+import { Home } from "./Pages/Public/Home";
+import { About } from "./Pages/Public/About";
+import { Services } from "./Pages/Public/Services";
+import { ContactUs } from "./Pages/Public/ContactUs";
 import LoginLogoutPage from "./Pages/Login & Register/LoginLogoutPage";
 import Login from "./Pages/Login & Register/Login";
 import Register from "./Pages/Login & Register/Register";
@@ -16,8 +16,8 @@ import Dashboard from "./Pages/Admin/pages/Dashboard/Dashboard";
 import Customers from "./Pages/Admin/pages/Customers/Customers";
 import Managers from "./Pages/Admin/pages/Managers/Managers";
 import Loans from "./Pages/Admin/pages/Loans/Loans";
-import { PrivacyPolicy } from "./Pages/Default Home Page/PrivacyPolicy";
-import { TermsAndServices } from "./Pages/Default Home Page/TermsAndServices";
+import { PrivacyPolicy } from "./Pages/Public/PrivacyPolicy";
+import { TermsAndServices } from "./Pages/Public/TermsAndServices";
 import DashboardUI from "./Pages/Customer/components/DashBoard/DashBoard";
 import TransactionHistory from "./Pages/Customer/components/TransactionHistory/TransactionHistory";
 import ReceivePayment from "./Pages/Customer/components/ReceivePayment/ReceivePayment";
@@ -38,7 +38,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />}>
             <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<DefaultHomePage />} />
+            <Route path="home" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="services" element={<Services />} />
             <Route path="contact-us" element={<ContactUs />} />
