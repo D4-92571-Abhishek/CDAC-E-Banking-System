@@ -1,0 +1,139 @@
+/* Navbar Styling */
+.navbar-wrapper {
+  background: linear-gradient(135deg, #212529 0%, #495057 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: fit-content;
+}
+
+.navbar-logo img {
+  height: 50px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover img {
+  transform: scale(1.05);
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 2rem;
+  margin-left: auto;
+  align-items: center;
+}
+
+.nav-link {
+  color: white !important;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  position: relative;
+  transition: color 0.3s ease;
+  padding-bottom: 0.25rem;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  bottom: 0;
+  left: 0;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #f0f0f0;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: #f0f0f0;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Responsive Navbar */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .navbar-links {
+    gap: 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .logo-text {
+    font-size: 1.2rem;
+  }
+
+  .navbar-logo img {
+    height: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-container {
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+  }
+
+  .navbar-logo {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .navbar-links {
+    flex: 1;
+    min-width: 100%;
+    gap: 0.75rem;
+    order: 3;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+}

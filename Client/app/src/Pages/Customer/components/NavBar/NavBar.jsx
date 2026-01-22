@@ -23,7 +23,7 @@ export default function DashboardLayout() {
 
         <nav className="nav flex-column gap-2">
 
-          <NavLink to="dashboard" className="nav-link px-3 py-2">
+          <NavLink to="" className="nav-link px-3 py-2">
             Dashboard
           </NavLink>
 
@@ -43,7 +43,7 @@ export default function DashboardLayout() {
             Loan Department
           </NavLink>
 
-          <button className="btn3 btn-dark rounded-0" onClick={() => navigate("/")}>
+          <button className="btn btn-dark rounded-0 " style={{marginTop:"20rem"}} onClick={() => navigate("/")}>
             Logout
           </button>
         </nav>
