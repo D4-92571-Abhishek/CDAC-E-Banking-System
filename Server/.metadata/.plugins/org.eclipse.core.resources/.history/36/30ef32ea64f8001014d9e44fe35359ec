@@ -1,0 +1,5 @@
+package com.bankify.services;
+
+public class ManagerImpl {
+
+}
