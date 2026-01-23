@@ -16,13 +16,13 @@ export default function CreateAccount() {
         <h6>Personal Information</h6>
         <div className="row">
           <div className="col-md-4 mb-3">
-            <label>Full Name</label>
-            <input className="form-control" placeholder="Full Name" />
+            <label>First Name</label>
+            <input className="form-control"  />
           </div>
 
           <div className="col-md-4 mb-3">
-            <label>Father’s Name</label>
-            <input className="form-control" />
+            <label>Last Name</label>
+            <input className="form-control"  />
           </div>
 
           <div className="col-md-4 mb-3">
