@@ -37,6 +37,6 @@ public class Customer extends Base {
 	private boolean isLoanTaken;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id",nullable = false)
-	private User userId;
+	private User user;
 	
 }
