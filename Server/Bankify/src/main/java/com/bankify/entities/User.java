@@ -3,10 +3,12 @@ package com.bankify.entities;
 import java.time.LocalDate;
 
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,4 +41,8 @@ public class User extends Base {
 	@Enumerated(EnumType.STRING)
 	@Column(name="role",nullable = false)
 	private Role role;
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	 private Customer customer;
+	@OneToOne(mappedBy="user",cascade=CascadeType.ALL)
+	private Address address;
 }
