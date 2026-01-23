@@ -13,37 +13,43 @@ export default function CreateAccount() {
 
         <hr />
 
-        <h6>Personal Information</h6>
-        <div className="row">
-          <div className="col-md-4 mb-3">
-            <label>First Name</label>
-            <input className="form-control"  />
-          </div>
+       <h6>Personal Information</h6>
+<div className="row mb-3">
+  <div className="col-md-4 mb-3">
+    <label>First Name</label>
+    <input className="form-control" />
+  </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Last Name</label>
-            <input className="form-control"  />
-          </div>
+  <div className="col-md-4 mb-3">
+    <label>Last Name</label>
+    <input className="form-control" />
+  </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Date of Birth</label>
-            <input type="date" className="form-control" />
-          </div>
+  <div className="col-md-4 mb-3">
+    <label>Date of Birth</label>
+    <input type="date" className="form-control" />
+  </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Gender</label>
-            <select className="form-select">
-              <option>Select Gender</option>
-              <option>Male</option>
-              <option>Female</option>
-            </select>
-          </div>
+  {/* Gender, Mobile Number, Password in one line */}
+  <div className="col-md-4 mb-3">
+    <label>Gender</label>
+    <select className="form-select">
+      <option>Select Gender</option>
+      <option>Male</option>
+      <option>Female</option>
+    </select>
+  </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Mobile Number</label>
-            <input className="form-control" />
-          </div>
-        </div>
+  <div className="col-md-4 mb-3">
+    <label>Mobile Number</label>
+    <input type="text" className="form-control" />
+  </div>
+
+  <div className="col-md-4 mb-3">
+    <label>Password</label>
+    <input type="password" className="form-control" />
+  </div>
+</div>
 
         <h6>Contact & Identity</h6>
         <div className="row">

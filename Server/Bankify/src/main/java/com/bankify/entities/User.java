@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -38,11 +39,13 @@ public class User extends Base {
 	@Enumerated(EnumType.STRING)
 	@Column(name="status",nullable = false)
 	private Status status;
+	 @Column(nullable = false)
+	    private boolean customerVerified = false;
 	@Enumerated(EnumType.STRING)
 	@Column(name="role",nullable = false)
 	private Role role;
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
 	 private Customer customer;
-	@OneToOne(mappedBy="user",cascade=CascadeType.ALL)
-	private Address address;
+	
+	
 }
