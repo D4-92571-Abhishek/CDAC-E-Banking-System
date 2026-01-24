@@ -22,6 +22,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Optional<Transaction> findTopByCustomerOrderByTransactionTimeDesc(Customer customer);
 
 	Page<Transaction> findByCustomer(Customer c,Pageable page);
+	
     @Query("""
     		select coalesce(SUM(
     		

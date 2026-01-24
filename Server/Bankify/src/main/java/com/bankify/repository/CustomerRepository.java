@@ -15,10 +15,13 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	
 	Optional<Customer> findByAccountNo(String accountNo);
 	
-    Optional<Customer> findByUser(Long user);
     
     @Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
     long getAdminTotalCustomers();
+    
+    @Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
+    double getAdminTotalBankAssets();
 
+    
     
 }
