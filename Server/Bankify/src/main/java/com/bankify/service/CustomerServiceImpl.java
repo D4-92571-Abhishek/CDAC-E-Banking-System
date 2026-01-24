@@ -133,6 +133,25 @@ public class CustomerServiceImpl implements CustomerService {
 		transactionRepository.save(r);
 		return new GeneralResponseDTO("Success","Funds Transfer Successfully");
 	}
-	
+
+	@Override
+	public Page<Transaction> getTransactionHistoryDebited(Long userId) {
+		Pageable page = PageRequest.of(0, 10);
+		Customer cust = customerRepository.findByUser(userId).orElseThrow(()->new RuntimeException());
+		Page<Transaction> transactionList = transactionRepository.findByTransactionTypeAndCustomer(TransactionType.DEBITED, cust, page);
+		
+		if(transactionList.isEmpty())throw new RuntimeException("No Transactions");
+		 
+		return transactionList;
+	}
+	public Page<Transaction> getTransactionHistoryCredited(Long userId) {
+		Pageable page = PageRequest.of(0, 10);
+		Customer cust = customerRepository.findByUser(userId).orElseThrow(()->new RuntimeException());
+		Page<Transaction> transactionList = transactionRepository.findByTransactionTypeAndCustomer(TransactionType.CREDITED, cust, page);
+		
+		if(transactionList.isEmpty())throw new RuntimeException("No Transactions");
+		 
+		return transactionList;
+	}
 	
 }

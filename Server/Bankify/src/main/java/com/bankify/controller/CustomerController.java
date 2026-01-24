@@ -59,5 +59,16 @@ public class CustomerController {
 	public ResponseEntity<?> transferFunds(@PathVariable Long userId,@RequestBody CustomerFundTransferRequestDTO fundDetails){
 		return ResponseEntity.ok(customerService.transferFunds(userId, fundDetails));
 	}
+	
+	@GetMapping("/transaction-history-debited/{userId}")
+	public ResponseEntity<?> getTransferEntityDebited(@PathVariable Long userId){
+		return ResponseEntity.ok(customerService.getTransactionHistoryDebited(userId));
+	}
+	
+	@GetMapping("/transaction-history-credited/{userId}")
+	public ResponseEntity<?> getTransferEntityCredited(@PathVariable Long userId){
+		return ResponseEntity.ok(customerService.getTransactionHistoryCredited(userId));
+	}
+	
 
 }

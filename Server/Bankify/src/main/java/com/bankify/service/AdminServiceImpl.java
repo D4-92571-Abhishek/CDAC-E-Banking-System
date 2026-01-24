@@ -18,37 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 	
-	private final CustomerRepository customerRepository;
-	private final TransactionRepository transactionRepository;
-	private final UserRepository userRepository;
-	
-	AdminDashboardDTO getAdminDashboardDetails() {
-		
-		AdminDashboardDTO adminDashboardDTO=new AdminDashboardDTO();
-		
-		adminDashboardDTO.setTotalCustomers(customerRepository.getAdminTotalCustomers());
-		adminDashboardDTO.setTotalBankAssets(customerRepository.getAdminTotalBankAssets());
-		LocalDateTime start = LocalDate.now()
-                .withDayOfMonth(1)
-                .atStartOfDay();
-
-        LocalDateTime end = start.plusMonths(1);
-        double monthlyCashFlow=transactionRepository.getAdminDashboardMonthlyCashFlow(start,end);
-		adminDashboardDTO.setMonthlyCashFlow(monthlyCashFlow);
-		
-		adminDashboardDTO.setActiveBankManagers(userRepository.getAdminActiveManagers());
-		
-		
-		//loan api to be added
-		
-		String performance = monthlyCashFlow > 100000 ? "Good" : "Average";
-        
-		adminDashboardDTO.setPerformance(performance);
-        
-		return adminDashboardDTO;
-	
-	}
-	
 	
 	
 }
