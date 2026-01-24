@@ -41,8 +41,6 @@ public class User extends Base {
 	@Enumerated(EnumType.STRING)
 	@Column(name="role",nullable = false)
 	private Role role;
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-	 private Customer customer;
-	@OneToOne(mappedBy="user",cascade=CascadeType.ALL)
-	private Address address;
+	
+	
 }
