@@ -1,5 +1,7 @@
 package com.bankify.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,7 +19,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(exclude = {"userId"})
+@ToString(exclude = {"user"})
 
 
 // Entity Annotations
@@ -37,6 +39,12 @@ public class Customer extends Base {
 	private boolean isLoanTaken;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id",nullable = false)
+<<<<<<< HEAD
 	private User userId;
+=======
+	@JsonIgnore
+
+	private User user;
+>>>>>>> c7f6ce50909d3441b0461bc7fd07ee035f1649a9
 	
 }
