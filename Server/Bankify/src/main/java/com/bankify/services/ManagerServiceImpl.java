@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.ManagerCreateCustomerDTO;
+import com.bankify.dto.PendingCustomerResponse;
 import com.bankify.entities.Address;
 import com.bankify.entities.Customer;
 import com.bankify.entities.Role;
@@ -30,9 +31,26 @@ public class ManagerServiceImpl implements ManagerService {
     //Getting list of Inactive Customers
     
     @Override
-    public List<User> getPendingCustomers() {
-        return userRepository.findByRoleAndStatus(Role.ROLE_CUSTOMER, Status.DEACTIVATED);
+    public List<PendingCustomerResponse> getPendingCustomers() {
+
+        List<User> users =
+            userRepository.findByRoleAndStatus(Role.ROLE_CUSTOMER, Status.DEACTIVATED);
+
+        return users.stream().map(user -> {
+            PendingCustomerResponse dto = new PendingCustomerResponse();
+            dto.setId(user.getId());
+            dto.setName(user.getName());
+            dto.setEmail(user.getEmail());
+            dto.setContactNo(user.getContactNo());
+            dto.setCustomerVerified(user.isCustomerVerified());
+
+            Address address = addressRepository.findByUserId(user.getId()).orElse(null);
+            dto.setAddressVerified(address != null && address.isAddressVerified());
+
+            return dto;
+        }).toList();
     }
+
 
     //Approving Customer Details
 
@@ -84,8 +102,8 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public User createCustomerAsManager(ManagerCreateCustomerDTO dto) {
 
-        // 1️⃣ Create User
-        User user = new User();
+
+    	User user = new User();
         user.setName(dto.getFirstName() + " " + dto.getLastName());
         user.setEmail(dto.getEmail());
         user.setContactNo(dto.getContactNo());
@@ -96,7 +114,6 @@ public class ManagerServiceImpl implements ManagerService {
         user.setRole(Role.ROLE_CUSTOMER);
         user.setCustomerVerified(true); // no verification required
 
-        // 2️⃣ Create Customer
         Customer customer = new Customer();
         customer.setAadharNo(dto.getAadharNo());
         customer.setPanNo(dto.getPanNo());
@@ -106,7 +123,6 @@ public class ManagerServiceImpl implements ManagerService {
 
         user.setCustomer(customer); // optional, for in-memory navigation
 
-        // 3️⃣ Create Address (separate save)
         Address address = new Address();
         address.setCompleteAddress(dto.getCompleteAddress());
         address.setCity(dto.getCity());
@@ -115,7 +131,6 @@ public class ManagerServiceImpl implements ManagerService {
         address.setAddressVerified(true); // manager-added
         address.setUser(user); // owning side
 
-        // 4️⃣ Save everything
         userRepository.save(user);         // cascades Customer
         addressRepository.save(address);   // separate save for Address
 

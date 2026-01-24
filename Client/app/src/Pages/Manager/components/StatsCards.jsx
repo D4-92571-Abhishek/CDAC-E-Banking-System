@@ -1,19 +1,42 @@
+import { useEffect, useState } from "react";
+import { getDashboardStats } from "../../../services/dashboard";
+import { Services } from './../../Public/Services';
+
 export default function StatsCards() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    getDashboardStats().then((res) => setStats(res.data));
+  }, []);
+
+  if (!stats) return <p>Loading stats...</p>;
+
   return (
     <div className="row mb-4">
-      {[
-        { title: "Total Accounts", value: "8,547", change: "+12%" },
-        { title: "Daily Transactions", value: "6,439", change: "+8%" },
-        { title: "Total Revenue", value: "₹18.4Cr", change: "+5%" },
-      ].map((item, i) => (
-        <div className="col-md-4" key={i}>
-          <div className="card p-3">
-            <h6>{item.title}</h6>
-            <h4>{item.value}</h4>
-            <small className="text-success">{item.change} from last month</small>
-          </div>
+      <div className="col-md-4">
+        <div className="card p-3">
+          <h6>Total Accounts</h6>
+          <h4>{stats.totalAccounts}</h4>
+          <small className="text-success">Live data</small>
         </div>
-      ))}
+      </div>
+
+      <div className="col-md-4">
+        <div className="card p-3">
+          <h6>Daily Transactions</h6>
+          <h4>{stats.dailyTransactions}</h4>
+          <small className="text-success">Today</small>
+        </div>
+      </div>
+
+      <div className="col-md-4">
+        <div className="card p-3">
+          <h6>Total Revenue</h6>
+          <h4>₹{stats.totalRevenue}</h4>
+          <small className="text-success">Overall</small>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
+

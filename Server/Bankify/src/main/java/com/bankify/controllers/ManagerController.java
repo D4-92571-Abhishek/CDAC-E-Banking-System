@@ -3,6 +3,7 @@ package com.bankify.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,10 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bankify.dto.ManagerCreateCustomerDTO;
+import com.bankify.dto.PendingCustomerResponse;
 import com.bankify.entities.User;
 import com.bankify.services.ManagerService;
 
 import lombok.RequiredArgsConstructor;
+
+
+@CrossOrigin(origins = "http://localhost:5173")
 
 @RestController
 @RequestMapping("/api/manager")
@@ -25,7 +30,7 @@ public class ManagerController {
     private final ManagerService managerService;
 
     @GetMapping("/pending")
-    public List<User> getPendingCustomers() {
+    public List<PendingCustomerResponse> getPendingCustomers() {
         return managerService.getPendingCustomers();
     }
     
