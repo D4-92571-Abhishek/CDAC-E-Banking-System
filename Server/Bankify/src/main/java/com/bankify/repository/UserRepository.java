@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.bankify.entities.Role;
 import com.bankify.entities.Status;
@@ -18,5 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	    
 	    List<User> findByStatusAndRole(Status status, Role role);
 
+	    @Query("SELECT COUNT(u) FROM User u WHERE u.role='ROLE_MANAGER'")
+	    long getAdminActiveManagers();
 	
 }
