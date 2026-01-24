@@ -6,10 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Customer;
-import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.User;
 import com.bankify.repository.TransactionRepository;
@@ -21,23 +19,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TransactionsServiceImpl implements TransactionsService  {
 
-    private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
 
 
-    public List<CustomerListResponseDTO> getActiveCustomers() {
-
-        return userRepository
-                .findByStatusAndRole(Status.ACTIVE, Role.ROLE_CUSTOMER)
-                .stream()
-                .map(user -> new CustomerListResponseDTO(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getContactNo()
-                ))
-                .collect(Collectors.toList());
-    }
+   
     
     public List<TransactionResponseDTO> getTransactionsByUserId(Long userId) {
 

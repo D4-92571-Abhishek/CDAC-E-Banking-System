@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import com.bankify.dto.DashboardStatsDTO;
 import com.bankify.repository.DashboardRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DashboardServiceImpl implements DashboardService {
 
     private final DashboardRepository dashboardRepository;
