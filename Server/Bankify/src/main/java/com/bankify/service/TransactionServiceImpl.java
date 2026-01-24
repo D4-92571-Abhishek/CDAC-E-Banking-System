@@ -21,23 +21,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService  {
 
-    private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
 
 
-    public List<CustomerListResponseDTO> getActiveCustomers() {
-
-        return userRepository
-                .findByStatusAndRole(Status.ACTIVE, Role.ROLE_CUSTOMER)
-                .stream()
-                .map(user -> new CustomerListResponseDTO(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getContactNo()
-                ))
-                .collect(Collectors.toList());
-    }
+   
     
     public List<TransactionResponseDTO> getTransactionsByUserId(Long userId) {
 
