@@ -10,21 +10,17 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-<<<<<<< HEAD
 
 // lombok annotations
-@Getter
-@Setter
 
-=======
+
 import lombok.ToString;
->>>>>>> c7f6ce50909d3441b0461bc7fd07ee035f1649a9
 
 @Entity
 @Table(name = "addresses")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"user"})
 public class Address {
 
     @Id
@@ -45,11 +41,8 @@ public class Address {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-<<<<<<< HEAD
-    private User userId;
 
-=======
     private User user;
->>>>>>> c7f6ce50909d3441b0461bc7fd07ee035f1649a9
+
 }
 

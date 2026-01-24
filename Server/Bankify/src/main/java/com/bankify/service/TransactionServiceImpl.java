@@ -1,4 +1,4 @@
-package com.bankify.services;
+package com.bankify.service;
 
 
 import java.util.List;
@@ -41,26 +41,27 @@ public class TransactionServiceImpl implements TransactionService  {
     
     public List<TransactionResponseDTO> getTransactionsByUserId(Long userId) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-
-        if (user.getStatus() != Status.ACTIVE) {
-            throw new RuntimeException("Customer is not ACTIVE");
-        }
-
-        Customer customer = user.getCustomer();
-
-        return transactionRepository
-                .findByCustIdOrderByTransactionTimeDesc(customer)
-                .stream()
-                .map(tx -> new TransactionResponseDTO(
-                        tx.getId(),                      
-                        tx.getAmount(),
-                        tx.getTransactionType(),
-                        tx.getTransactionTime(),
-                        tx.getTransactionDescription()
-                ))
-                .collect(Collectors.toList());
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("Customer not found"));
+//
+//        if (user.getStatus() != Status.ACTIVE) {
+//            throw new RuntimeException("Customer is not ACTIVE");
+//        }
+//
+//        Customer customer = user.getCustomer();
+//
+//        return transactionRepository
+//                .findByCustIdOrderByTransactionTimeDesc(customer)
+//                .stream()
+//                .map(tx -> new TransactionResponseDTO(
+//                        tx.getId(),                      
+//                        tx.getAmount(),
+//                        tx.getTransactionType(),
+//                        tx.getTransactionTime(),
+//                        tx.getTransactionDescription()
+//                ))
+//                .collect(Collectors.toList());
+    	return null;
     }
 }
 

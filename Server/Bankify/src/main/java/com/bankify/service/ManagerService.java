@@ -1,4 +1,4 @@
-package com.bankify.services;
+package com.bankify.service;
 
 import java.util.List;
 

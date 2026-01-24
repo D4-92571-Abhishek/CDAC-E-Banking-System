@@ -1,4 +1,4 @@
-package com.bankify.controllers;
+package com.bankify.controller;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.CustomerSignupRequest;
 import com.bankify.dto.TransactionResponseDTO;
-import com.bankify.services.CustomerService;
-import com.bankify.services.TransactionServiceImpl;
+import com.bankify.service.CustomerService;
+import com.bankify.service.TransactionServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.bankify.services;
+package com.bankify.service;
 
 import com.bankify.dto.CustomerSignupRequest;
 

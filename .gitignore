@@ -88,3 +88,7 @@ Desktop.ini
 # Maven wrapper
 !.mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/
+
+/Server/.metadata
+
+

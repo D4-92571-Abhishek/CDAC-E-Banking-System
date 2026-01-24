@@ -1,4 +1,4 @@
-package com.bankify.services;
+package com.bankify.service;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void verifyAddress(Long userId) {
-        Address address = addressRepository.findByUserId(userId)
+        Address address = addressRepository.findByUser(userId)
                 .orElseThrow(() -> new RuntimeException("Address not found"));
         address.setAddressVerified(true);
     }
@@ -61,7 +61,7 @@ public class ManagerServiceImpl implements ManagerService {
         if (!user.isCustomerVerified())
             throw new RuntimeException("Customer not verified");
 
-        Address address = addressRepository.findByUserId(userId)
+        Address address = addressRepository.findByUser(userId)
                 .orElseThrow(() -> new RuntimeException("Address not verified"));
 
         if (!address.isAddressVerified())
@@ -86,7 +86,7 @@ public class ManagerServiceImpl implements ManagerService {
 
         // 1️⃣ Create User
         User user = new User();
-        user.setName(dto.getFirstName() + " " + dto.getLastName());
+        user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setContactNo(dto.getContactNo());
         user.setPassword(dto.getPassword()); 
@@ -104,7 +104,6 @@ public class ManagerServiceImpl implements ManagerService {
         customer.setLoanTaken(false);
         customer.setUser(user); // owning side of relationship
 
-        user.setCustomer(customer); // optional, for in-memory navigation
 
         // 3️⃣ Create Address (separate save)
         Address address = new Address();
