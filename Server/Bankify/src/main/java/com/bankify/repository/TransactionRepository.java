@@ -10,6 +10,7 @@ import com.bankify.entities.Transaction;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    List<Transaction> findByCustIdOrderByTransactionTimeDesc(Customer customer);
+    List<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer customer);
 }
+
 

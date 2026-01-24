@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 // lombok Annotations
 
@@ -23,6 +24,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"customer"})
 
 
 @Entity
@@ -45,6 +47,6 @@ public class Transaction extends Base {
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="customer_id",nullable = false)
-	private Customer custId;
+	private Customer customer;
 	
 }

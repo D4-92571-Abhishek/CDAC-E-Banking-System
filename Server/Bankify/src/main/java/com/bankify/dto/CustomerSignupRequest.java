@@ -8,12 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter @Setter
+@ToString
 public class CustomerSignupRequest {
 
-    private String firstName;
-    private String lastName;
+    private String name;
     @JsonProperty("dateOfBirth")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;

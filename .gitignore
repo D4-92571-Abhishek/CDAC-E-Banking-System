@@ -29,4 +29,66 @@ dist-ssr
 *.sln
 *.sw?
 .eslintcache
-.metadata/
+
+
+
+# Eclipse/STS specific files
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.sts4-cache/
+**/.sts4-cache/
+bin/
+tmp/
+wtpwebapps/ # Dynamic web projects often publish here
+
+# Build artifacts (Maven/Gradle)
+target/
+build/
+**/.gradle/
+.m2/repository/ # Only if you want to ignore local maven cache (generally not recommended to track)
+pom.xml.tag
+pom.xml.versions
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+# Exclude build output folders in sub-modules
+**/target/
+**/build/
+
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Log files
+*.log
+logs/
+temp/
+*.tmp
+
+# Environment and configuration files
+.env
+application.properties.placeholder
+application.yml.placeholder
+
+# System Files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/
+
+/Server/.metadata
+
+
