@@ -36,16 +36,22 @@ public class CustomersController {
     }
     
     @GetMapping("/transactions/{userId}")
-    public List<TransactionResponseDTO> getCustomerTransactions(
+    public ResponseEntity<List<TransactionResponseDTO>> getCustomerTransactions(
             @PathVariable Long userId) {
-        return transactionService.getTransactionsByUserId(userId);
-        
-        
+
+        List<TransactionResponseDTO> list =
+                transactionService.getTransactionsByUserId(userId);
+
+        return ResponseEntity.ok(list);
     }
-    
+
     @GetMapping("/active-customers")
-    public List<CustomerListResponseDTO> getActiveCustomers() {
-        return transactionService.getActiveCustomers();
+    public ResponseEntity<List<CustomerListResponseDTO>> getActiveCustomers() {
+
+        List<CustomerListResponseDTO> list =
+                transactionService.getActiveCustomers();
+
+        return ResponseEntity.ok(list);
     }
 
 }

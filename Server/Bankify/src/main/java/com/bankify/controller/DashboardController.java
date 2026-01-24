@@ -1,5 +1,6 @@
 package com.bankify.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,12 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/stats")
-    public DashboardStatsDTO getStats() {
-        return dashboardService.getDashboardStats();
+    public ResponseEntity<DashboardStatsDTO> getStats() {
+
+        DashboardStatsDTO stats = dashboardService.getDashboardStats();
+
+        return ResponseEntity.ok(stats);
     }
+
 }
 

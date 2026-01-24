@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 		User user = modelMapper.map(req, User.class);
 		user.setRole(Role.ROLE_CUSTOMER);
-		user.setStatus(Status.ACTIVE);
+		user.setStatus(Status.DEACTIVATED);
 		System.out.println(user);
 
 //        User user = new User();
