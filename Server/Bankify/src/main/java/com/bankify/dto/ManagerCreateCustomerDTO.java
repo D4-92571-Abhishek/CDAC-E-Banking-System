@@ -7,13 +7,14 @@ import com.bankify.entities.Gender;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class ManagerCreateCustomerDTO {
 
-    private String firstName;
-    private String lastName;
+    private String name;
     private String email;
     private String contactNo;
     private String password;

@@ -8,6 +8,6 @@ import com.bankify.entities.Customer;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    Optional<Customer> findByUser_Id(Long userId);
+    Optional<Customer> findByUser(Long user);
 
 }

@@ -8,8 +8,7 @@ import com.bankify.entities.Address;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
 	
-    Optional<Address> findByUserId(Long userId);
-    Optional<Address> findByUser_Id(Long userId);
+    Optional<Address> findByUser(Long user);
 
 }
 

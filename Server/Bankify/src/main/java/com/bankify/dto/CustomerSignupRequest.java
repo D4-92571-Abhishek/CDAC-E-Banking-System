@@ -6,12 +6,13 @@ import com.bankify.entities.Gender;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter @Setter
+@ToString
 public class CustomerSignupRequest {
 
-    private String firstName;
-    private String lastName;
+    private String name;
     private LocalDate dob;
     private String email;
     private String contactNo;
