@@ -16,9 +16,12 @@ public interface CustomerService {
 
 	CustomerDashboardResponseDTO getCustomerDetailsById(Long userId);
 
-	@Nullable
 	Page<Transaction> getCustomerTransactions(Long userId);
 
 	GeneralResponseDTO transferFunds(Long userId,CustomerFundTransferRequestDTO fundDetails);
+
+	Page<Transaction> getTransactionHistoryDebited(Long userId);
+
+	Page<Transaction> getTransactionHistoryCredited(Long userId);
 }
 
