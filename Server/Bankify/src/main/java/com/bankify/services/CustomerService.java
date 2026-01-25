@@ -1,5 +1,9 @@
 package com.bankify.services;
 
-public class CustomerService {
+import com.bankify.dto.CustomerSignupRequest;
 
+public interface CustomerService {
+    void signUp(CustomerSignupRequest request);
 }
+
+
