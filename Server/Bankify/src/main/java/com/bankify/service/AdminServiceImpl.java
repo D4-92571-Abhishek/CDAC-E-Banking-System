@@ -3,11 +3,19 @@ package com.bankify.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.AdminDashboardDTO;
 import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.LoanRepository;
+import com.bankify.repository.TransactionRepository;
+import com.bankify.repository.UserRepository;
+
+import com.bankify.dto.AdminDashboardDTO;
+import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
 
@@ -19,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 	
-	private final CustomerRepository customerRepository;
+	final CustomerRepository customerRepository;
 	private final TransactionRepository transactionRepository;
 	private final UserRepository userRepository;
 	private final LoanRepository loanRepository;
