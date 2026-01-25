@@ -2,13 +2,22 @@ package com.bankify.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.bankify.dto.AdminCreateManagerDTO;
+import com.bankify.dto.AdminCustomerInfoDTO;
+import com.bankify.dto.AdminCustomerListDTO;
 import com.bankify.dto.AdminDashboardDTO;
+import com.bankify.dto.AdminManagerListDTO;
+import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.entities.Role;
+import com.bankify.entities.Status;
+import com.bankify.entities.User;
 import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.LoanRepository;
 import com.bankify.repository.TransactionRepository;
@@ -31,7 +40,9 @@ public class AdminServiceImpl implements AdminService {
 	private final TransactionRepository transactionRepository;
 	private final UserRepository userRepository;
 	private final LoanRepository loanRepository;
+	private final ModelMapper modelMapper;
 	
+	@Override
 	public AdminDashboardDTO getAdminDashboardDetails() {
 		
 		AdminDashboardDTO adminDashboardDTO=new AdminDashboardDTO();
@@ -58,7 +69,55 @@ public class AdminServiceImpl implements AdminService {
 		return adminDashboardDTO;
 	
 	}
+
+	@Override
+	public AdminCustomerInfoDTO getAdminCustomerInfo() {
+		
+		AdminCustomerInfoDTO adminCustomerInfoDTO=new AdminCustomerInfoDTO();
+		
+		adminCustomerInfoDTO.setTotalCustomers(customerRepository.getAdminTotalCustomers());
+		
+		adminCustomerInfoDTO.setTotalBalance(customerRepository.getAdminTotalBankAssets());
+		
+		adminCustomerInfoDTO.setAverageBalance(customerRepository.getAdminAverageBalance());
+		
+		return adminCustomerInfoDTO;
+	}
+
+	@Override
+	public List<AdminCustomerListDTO> getAdminCustomerList() {
+		
+		return customerRepository.getAdminCustomerList();
+		
+	}
+
+	@Override
+	public long getAdminActiveManagers() {
+		
+		return userRepository.getAdminActiveManagers();
+	}
+
+	@Override
+	public List<AdminManagerListDTO> getAdminManagerList() {
+		
+		
+		return userRepository.getAdminManagersList();
 	
-	
-	
+	}
+
+	@Override
+	public GeneralResponseDTO addManager(AdminCreateManagerDTO manager) {
+
+		User user=modelMapper.map(manager,User.class);
+		
+		user.setRole(Role.ROLE_MANAGER);
+		user.setStatus(Status.ACTIVE);
+		user.setPassword("manager");
+		user.setCustomerVerified(true);
+		
+		userRepository.save(user);
+		
+		return new GeneralResponseDTO("Success","Manager created with ID : "+user.getId());
+	}
+		
 }
