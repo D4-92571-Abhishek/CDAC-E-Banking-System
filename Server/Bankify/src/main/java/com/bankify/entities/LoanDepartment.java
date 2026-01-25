@@ -38,6 +38,8 @@ public class LoanDepartment extends Base {
 	@Enumerated(EnumType.STRING)
 	@Column(name="loan_status",nullable = false)
 	private LoanStatus loanStatus;
+	@Column(name="loan_tenure_years",nullable = false)
+	private int loanTenureYears;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer")

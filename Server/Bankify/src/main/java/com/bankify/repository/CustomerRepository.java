@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.bankify.entities.Customer;
+import com.bankify.entities.User;
+
 import java.util.List;
 
 
@@ -21,6 +23,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     
     @Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
     double getAdminTotalBankAssets();
+
+
+	Optional<Customer> findByUser(Long userId);
 
     
     
