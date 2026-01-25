@@ -33,8 +33,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     			END
     		),0)
     		FROM Transaction t
-    		WHERE t.transactionTime>=: startDate
-    		AND t.transactionTime<: endDate
+    		WHERE t.transactionTime>=:startDate
+    		AND t.transactionTime<:endDate
     		""")
     double getAdminDashboardMonthlyCashFlow(@Param("startDate") LocalDateTime startDate,@Param("endDate") LocalDateTime endDate);
     

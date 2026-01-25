@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	
-	
+	Optional<Customer> findByUser(Long userId);
 	
 	Optional<Customer> findByAccountNo(String accountNo);
 	
