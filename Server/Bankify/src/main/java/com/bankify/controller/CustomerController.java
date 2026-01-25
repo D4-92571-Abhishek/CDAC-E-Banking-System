@@ -1,9 +1,6 @@
 package com.bankify.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,13 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bankify.dto.CustomerFundTransferRequestDTO;
-import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.dto.LoanRequestDTO;
 import com.bankify.dto.CustomerSignupRequest;
-import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.service.CustomerService;
-import com.bankify.service.TransactionServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -69,6 +63,17 @@ public class CustomerController {
 	public ResponseEntity<?> getTransferEntityCredited(@PathVariable Long userId){
 		return ResponseEntity.ok(customerService.getTransactionHistoryCredited(userId));
 	}
+	
+	@PostMapping("/loan/request-new-loan/{userId}")
+	public ResponseEntity<?> requestNewLoan(@PathVariable Long userId,@RequestBody LoanRequestDTO loanRequestDTO){
+		return ResponseEntity.status(HttpStatus.CREATED).body(customerService.requestForLoan(userId,loanRequestDTO));
+	}
+	
+	@GetMapping("/loan/all-loans/{userId}")
+	public ResponseEntity<?> getAllLoanDetails (@PathVariable Long userId){
+		return ResponseEntity.ok(customerService.getAllLoanDetails(userId));
+	}
+	
 	
 
 }

@@ -1,7 +1,5 @@
 package com.bankify.entities;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,7 +15,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(exclude = {})
+@ToString(exclude = {"customer"})
 
 
 @Entity
@@ -28,10 +26,6 @@ public class Loan extends Base {
 	private double amount;
 	@Column(nullable = false)
 	private double interest;
-	@Column(name="start_date",nullable = false)
-	private LocalDate startDate;
-	@Column(name="end_date",nullable = false)
-	private LocalDate endDate;
 	@Enumerated(EnumType.STRING)
 	@Column(name="loan_type",nullable = false)
 	private LoanType loanType;

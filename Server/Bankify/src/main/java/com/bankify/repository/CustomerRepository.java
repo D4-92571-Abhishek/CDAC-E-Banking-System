@@ -6,14 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.bankify.dto.AdminCustomerListDTO;
+import org.springframework.data.repository.query.Param;
+import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.entities.Customer;
 import java.util.List;
 
-
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-	
-	Optional<Customer> findByUser(Long userId);
-	
+
 	Optional<Customer> findByAccountNo(String accountNo);
 	
     
@@ -48,4 +47,33 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
         """)
         List<AdminCustomerListDTO> getAdminCustomerList();
     
+
+	@Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
+	long getAdminTotalCustomers();
+
+	@Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
+	double getAdminTotalBankAssets();
+
+//    @Query("""
+//    		SELECT new com.bankify.dto.LoanDetailsResponseDTO(l.loanType,l.interest,(ld.principle-(ld.paidMonths * ld.emi)),ld.emi,l.loanStatus)  FROM LoanDetails ld join ld.loan l WHERE ld.customer.id = :custId
+//    		""")
+	@Query("""
+			SELECT new com.bankify.dto.LoanDetailsResponseDTO(
+			    l.loanType,
+			    ld.interest,
+			    (ld.principle - (ld.paidMonths * ld.emi)),
+			    ld.emi,
+			    l.loanStatus
+			)
+			FROM LoanDetails ld
+			LEFT JOIN ld.loan l
+			WHERE ld.customer IS NOT NULL
+					""")
+	List<LoanDetailsResponseDTO> getLoanDetailsByCustomer(@Param("custId") Long custId);
+
+	Optional<Customer> findByUser(Long userId);
+
+	@Query("SELECT c FROM Customer c where c.user.id = :userId")
+	Optional<Customer> findByUserId(@Param("userId") Long userId);
+
 }
