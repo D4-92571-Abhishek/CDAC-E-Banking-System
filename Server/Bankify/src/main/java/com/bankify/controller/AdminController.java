@@ -1,6 +1,7 @@
 package com.bankify.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/bankify/admin/")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AdminController {
 	
 
@@ -26,6 +28,8 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.addAdmin(admin));
 		
 	}
+	
+	
 	
 	@GetMapping("/adminDashboard")
 	public ResponseEntity<?> getAdminDashboardDetails(){
