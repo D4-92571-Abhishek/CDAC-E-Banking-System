@@ -5,6 +5,8 @@
 //}
 
 package com.bankify.exception_handler;
+import  com.bankify.custom_exceptions.*;
+
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -113,6 +115,22 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+    
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<String> handleInsufficientBalanceException(InsufficientBalanceException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(NoTransactionsException.class)
+    public ResponseEntity<String> handleNoTransactionsException(NoTransactionsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     
     // Handle generic runtime exceptions
     @ExceptionHandler(RuntimeException.class)

@@ -5,11 +5,15 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.bankify.entities.Address;
+import com.bankify.entities.User;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
 	
-    Optional<Address> findByUserId(Long userId);
-    Optional<Address> findByUser_Id(Long userId);
+    Optional<Address> findByUserId(Long user);
+
+//	Optional<User> findByUserId(Long userId);
+	
+	
 
 }
 

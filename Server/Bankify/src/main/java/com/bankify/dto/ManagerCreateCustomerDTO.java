@@ -36,10 +36,13 @@ import com.bankify.entities.Gender;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class ManagerCreateCustomerDTO {
+
 
     @NotBlank(message = "First name is required")
     private String firstName;
@@ -49,6 +52,7 @@ public class ManagerCreateCustomerDTO {
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
+
     private String email;
 
     @NotBlank(message = "Contact number is required")

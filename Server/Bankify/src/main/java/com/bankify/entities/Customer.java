@@ -1,6 +1,5 @@
 package com.bankify.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
@@ -37,10 +36,16 @@ public class Customer extends Base {
 	private Gender gender;
 	@Column(name="is_loan_taken",nullable = false)
 	private boolean isLoanTaken;
+	
+	@Column(name="account_no",unique = true,length = 10)
+	private String accountNo;
+	
+	@Column(name="current_balance",nullable = false)
+	private double currentBalance = 0.0;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id",nullable = false)
-	@JsonIgnore
 
 	private User user;
+
 	
 }

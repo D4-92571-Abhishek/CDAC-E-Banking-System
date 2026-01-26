@@ -39,6 +39,10 @@ const Managers = () => {
                                           <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Enter Employee ID" />
                                       </div>
                                       <div className="mb-3">
+                                          <label for="exampleFormControlInput1" className="form-label">Date Of Birth</label>
+                                          <input type="date" className="form-control" id="exampleFormControlInput1" placeholder="Enter Employee DOB" />
+                                      </div>
+                                      <div className="mb-3">
                                           <label for="exampleFormControlInput1" className="form-label">Employee Phone Number</label>
                                           <div className="input-group input-group-sm mb-3">
                                               <span className="input-group-text" id="inputGroup-sizing-sm">+91-</span>
