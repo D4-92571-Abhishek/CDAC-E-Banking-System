@@ -3,8 +3,6 @@ package com.bankify.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,11 +21,6 @@ import com.bankify.entities.User;
 import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.LoanDetailsRepository;
 import com.bankify.repository.LoanRepository;
-import com.bankify.repository.TransactionRepository;
-import com.bankify.repository.UserRepository;
-
-import com.bankify.dto.AdminDashboardDTO;
-import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
 

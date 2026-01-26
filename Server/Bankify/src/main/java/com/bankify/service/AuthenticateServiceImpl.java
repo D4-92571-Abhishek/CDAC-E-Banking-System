@@ -21,10 +21,13 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 	@Override
 	public JwtRoleResponseDTO authenticate(CredentialsDTO credentials) {
 		Authentication auth = new UsernamePasswordAuthenticationToken(credentials.getEmail(),credentials.getPassword());
-		authenticationManager.authenticate(auth);
-		String token = "";
+		System.out.println(auth);
+		auth = authenticationManager.authenticate(auth);
+		System.out.println(auth);
+		String token = jwtUtil.createToken(auth);
 		String Role = auth.getAuthorities().stream()	
 				.map(authority -> authority.getAuthority())
+				.filter(r -> !r.equals("FACTOR_PASSWORD")) 
 				.collect(Collectors.joining(","));
 		return new JwtRoleResponseDTO(token, Role);
 	}
