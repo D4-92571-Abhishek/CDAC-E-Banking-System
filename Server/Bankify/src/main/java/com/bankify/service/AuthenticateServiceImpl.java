@@ -29,6 +29,8 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 				.map(authority -> authority.getAuthority())
 				.filter(r -> !r.equals("FACTOR_PASSWORD")) 
 				.collect(Collectors.joining(","));
+		
+		System.out.println(auth.getPrincipal());
 		return new JwtRoleResponseDTO(token, Role);
 	}
 

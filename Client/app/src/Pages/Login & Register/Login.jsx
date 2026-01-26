@@ -1,11 +1,55 @@
 import "./Login.css";
 import lock from "../../images/lock.png";
 
+import {jwtDecode} from "jwt-decode";
+
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
+import  axios  from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  
+
+  const navigate = useNavigate();
+
+  const handleLogin = async() => {
+    // Implement login logic here
+    console.log("Email:", email);
+    console.log("Password:", password);
+    const body ={
+      email: email,
+      password: password
+    }
+    const response = await axios.post("http://localhost:8080/bankify/login",body)
+   
+    
+
+    if(response.status !== 200){
+      alert("Login Failed");
+      return;
+    }
+
+    const decodedToken = jwtDecode(response.data.token);
+    sessionStorage.setItem("token",response.data.token);
+    sessionStorage.setItem("userId",decodedToken.userId);
+    if(response.data.role === "ROLE_CUSTOMER"){
+      navigate("/customer");
+    }else if(response.data.role === "ROLE_MANAGER"){
+      navigate("/manager");
+    }else if(response.data.role === "ROLE_ADMIN"){
+      navigate("/admin");
+    }else{
+      alert("Invalid Credentials");
+    }
+    console.log(response.data);
+  }
+
+
+
   return (
     <div>
       <div
@@ -48,6 +92,7 @@ const Login = () => {
                 id="exampleFormControlInput1"
                 placeholder="Enter your Email"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                onChange={(e)=>setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -69,6 +114,7 @@ const Login = () => {
                     placeholder="Enter your password"
                     className="form-control bL ms-1 mt-2"
                     style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                    onChange={(e)=>setPassword(e.target.value)}
                   />
 
                   <button
@@ -97,6 +143,7 @@ const Login = () => {
               <button
                 className="btn btn-dark w-100"
                 style={{ marginBottom: "-1rem" }}
+                onClick={handleLogin}
               >
                 Sign In
               </button>

@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/bankify/customers")
 @RequiredArgsConstructor
-@CrossOrigin
+//@CrossOrigin
 public class CustomerController {
 
 	private final CustomerService customerService;

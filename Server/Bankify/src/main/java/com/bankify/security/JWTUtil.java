@@ -59,6 +59,7 @@ public class JWTUtil {
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .claim("role", roles)
+                .claim("userId", user.getId())
                 .signWith(jwtKey)   
                 .compact();
 		
@@ -81,6 +82,9 @@ public class JWTUtil {
 		
 		Authentication auth=new UsernamePasswordAuthenticationToken(userId,null, authorities);
 		
+		System.out.println(userId+" "+ roles);
+		System.out.println(auth);
+		System.out.println(auth.getPrincipal());
 		return auth;
 		
 	}
