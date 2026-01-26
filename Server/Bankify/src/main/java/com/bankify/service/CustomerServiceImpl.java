@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.CustomerDashboardResponseDTO;
@@ -49,12 +50,14 @@ public class CustomerServiceImpl implements CustomerService {
 	private final AddressRepository addressRepository;
 	private final LoanRepository loanRepository;
 	private final ModelMapper modelMapper;
+	private final PasswordEncoder passwordEncoder;
 
 
 	@Override
 	public GeneralResponseDTO signUp(CustomerSignupRequest req) {
 
 		User user = modelMapper.map(req, User.class);
+		user.setPassword(passwordEncoder.encode(req.getPassword()));
 		user.setRole(Role.ROLE_CUSTOMER);
 		user.setStatus(Status.ACTIVE);
 		System.out.println(user);

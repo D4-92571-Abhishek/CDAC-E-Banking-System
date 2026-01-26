@@ -1,11 +1,13 @@
 package com.bankify.security;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,10 +28,10 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JWTUtil {
 	
-	@Value(value = "jwt.token.expiration.millis")
+	@Value(value = "${jwt.token.expiration.millis}")
 	private long jwtExpiration;
 	
-	@Value(value = "jwt.token.secret")
+	@Value(value = "${jwt.token.secret}")
 	private String jwtSecret;
 	
 //	private Key jwtKey;
@@ -38,7 +40,8 @@ public class JWTUtil {
 	
 	@PostConstruct
 	public void init() {
-		jwtKey=Keys.hmacShaKeyFor(jwtSecret.getBytes());
+		jwtKey= new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+//		jwtKey=Keys.hmacShaKeyFor(jwtSecret.getBytes());
 	}	
 	
 	public String createToken(Authentication authentication) {
