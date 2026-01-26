@@ -58,7 +58,7 @@ public class SecurityConfig {
 			return corsConfig;
 					}))
 				.authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()
-
+				.requestMatchers(HttpMethod.POST, "/bankify/admin/signUp").permitAll()
 				.requestMatchers(HttpMethod.POST, "/bankify/login").permitAll().requestMatchers("/bankify/customers/**")
 				.hasRole("CUSTOMER").requestMatchers("/bankify/admin/**").hasRole("ADMIN")
 				.requestMatchers("/bankify/manager/**").hasRole("MANAGER")).httpBasic(httpBasic -> httpBasic.disable())

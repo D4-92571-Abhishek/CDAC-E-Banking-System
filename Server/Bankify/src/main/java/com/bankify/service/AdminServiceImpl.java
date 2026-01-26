@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.AdminCreateManagerDTO;
@@ -38,6 +39,7 @@ public class AdminServiceImpl implements AdminService {
 	private final LoanRepository loanRepository;
 	private final LoanDetailsRepository loanDetailsRepository;
 	private final ModelMapper modelMapper;
+	private final PasswordEncoder passwordEncoder;
 	
 	@Override
 	public AdminDashboardDTO getAdminDashboardDetails() {
@@ -145,6 +147,22 @@ public class AdminServiceImpl implements AdminService {
 
 	    return list;
 	
+	}
+
+	@Override
+	public GeneralResponseDTO addAdmin(AdminCreateManagerDTO admin) {
+		
+		User user=modelMapper.map(admin,User.class);
+		
+		user.setRole(Role.ROLE_ADMIN);
+		user.setStatus(Status.ACTIVE);
+		user.setPassword(passwordEncoder.encode("admin123"));
+		user.setCustomerVerified(true);
+		
+		userRepository.save(user);
+		
+		return new GeneralResponseDTO("Success","Manager created with ID : "+user.getId());
+		
 	}
 		
 	

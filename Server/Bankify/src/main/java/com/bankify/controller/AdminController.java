@@ -22,6 +22,13 @@ public class AdminController {
 
 	private final AdminService adminService;
 	
+	@PostMapping("/signUp")
+	public ResponseEntity<?> addAdmin(@RequestBody AdminCreateManagerDTO admin){
+		
+		return ResponseEntity.ok(adminService.addAdmin(admin));
+		
+	}
+	
 	
 	
 	@GetMapping("/adminDashboard")
