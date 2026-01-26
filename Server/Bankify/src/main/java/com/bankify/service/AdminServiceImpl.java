@@ -111,7 +111,8 @@ public class AdminServiceImpl implements AdminService {
 		
 		user.setRole(Role.ROLE_MANAGER);
 		user.setStatus(Status.ACTIVE);
-		user.setPassword("manager");
+		user.setContactNo(manager.getContactNo());
+		user.setPassword(passwordEncoder.encode("manager"));
 		user.setCustomerVerified(true);
 		
 		userRepository.save(user);

@@ -1,8 +1,37 @@
-import React from 'react'
+import  { useEffect, useState } from 'react'
+import axios from 'axios';
 
 const Customers = () => {
+
+    const[responseData, setResponseData] = useState();
+    const[customersListData, setCustomersListData] = useState([]);
+
+    const customersDataInfo = async () => {
+        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerInfo',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+        setResponseData(response.data);
+    }
+
+    const customersList = async () => {
+        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+        setCustomersListData(response.data);
+    }
+
+    useEffect(() => {
+        customersDataInfo();
+        customersList();
+    }, []);
+
+    console.log(customersListData);
+
+    
+
     return (
-        <div className='w-100'>
+        <div className="w-100"
+            style={{
+                marginLeft: "300px",
+                minHeight: "100vh",
+                overflowY: "auto"
+            }}>
             <div className="navbar navbar-expand-lg bg-body-tertiary px-2">
 
                 <span className='fs-5'>Customers</span>
@@ -19,8 +48,8 @@ const Customers = () => {
                             <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
                                 <h5 className="card-title fs-3">Total Customers</h5>
                                 <div>
-                                    <h3 className="card-text fs-3">1200</h3>
-                                    <h6 className="card-subtitle text-body-secondary fs-6">1200 Active Accounts</h6>
+                                    <h3 className="card-text fs-3">{responseData?.totalCustomers}</h3>
+                                    <h6 className="card-subtitle text-body-secondary fs-6">Active Accounts</h6>
                                 </div>
                             </div>
                         </div>
@@ -30,7 +59,7 @@ const Customers = () => {
                             <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
                                 <h5 className="card-title fs-3">Total Balance</h5>
                                 <div>
-                                    <h3 className="card-text fs-3">3,12,456</h3>
+                                    <h3 className="card-text fs-3">₹ {responseData?.totalBalance}</h3>
                                     <h6 className="card-subtitle text-body-secondary fs-6">Combined Customer funds</h6>
                                 </div>
                             </div>
@@ -41,7 +70,7 @@ const Customers = () => {
                             <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
                                 <h5 className="card-title fs-3">Average Balance</h5>
                                 <div>
-                                    <h3 className="card-text fs-3">18,456</h3>
+                                    <h3 className="card-text fs-3">₹ {responseData?.averageBalance?.toFixed(2)}</h3>
                                     <h6 className="card-subtitle text-body-secondary fs-6">Per Customer Account</h6>
                                 </div>
                             </div>
@@ -78,15 +107,17 @@ const Customers = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Abhishek Patel</td> 
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
-                                </tr>
+                                {customersListData.map((customer, index) => (
+                                    <tr key={index}>
+                                        <td>{customer.customerName}</td>
+                                        <td>{customer.accountNumber}</td>
+                                        <td>{customer.balance}</td>
+                                        <td>{customer.status}</td>
+                                        <td>{customer.joinDate}</td>
+                                        <td>{customer.lastTransactionTime}</td>
+                                        <td><button className="btn btn-warning">View</button></td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
