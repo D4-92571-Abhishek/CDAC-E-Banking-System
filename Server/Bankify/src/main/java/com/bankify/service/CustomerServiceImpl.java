@@ -14,6 +14,8 @@ import com.bankify.dto.CustomerDashboardResponseDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.CustomerSignupRequest;
+import com.bankify.dto.EditCustomerDetailsDTO;
+import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.dto.LoanRequestDTO;
@@ -40,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
 
+
 	private final CustomerRepository customerRepository;
 	private final TransactionRepository transactionRepository;
 	private final UserRepository userRepository;
@@ -47,8 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
 	private final LoanRepository loanRepository;
 	private final ModelMapper modelMapper;
 
+
 	@Override
-	public void signUp(CustomerSignupRequest req) {
+	public GeneralResponseDTO signUp(CustomerSignupRequest req) {
 
 		User user = modelMapper.map(req, User.class);
 		user.setRole(Role.ROLE_CUSTOMER);
@@ -67,6 +71,8 @@ public class CustomerServiceImpl implements CustomerService {
 		addressRepository.save(custAddress);
 		
 		if(user.getId() == 0) throw new RuntimeException();
+		
+		return new GeneralResponseDTO("Success","Customer Account Created Successfully");
 	}
 	
 	 public List<CustomerListResponseDTO> getActiveCustomers() {
@@ -103,6 +109,12 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
 		Pageable page = PageRequest.of(0,10);
 		Page<Transaction> transactionPage = transactionRepository.findByCustomer(c,page);
+		return transactionPage;
+	}
+	public  Page<Transaction> getCustomerTransactions(Long userId,TransactionType transactionType) {
+		Customer c = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
+		Pageable page = PageRequest.of(0,10);
+		Page<Transaction> transactionPage = transactionRepository.findByTransactionTypeAndCustomer(transactionType, c, page);
 		return transactionPage;
 	}
 
@@ -209,6 +221,54 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    return Math.max(remaining, 0);
+	}
+
+	@Override
+	public GeneralResponseDTO editCustomerDetails(Long userId, EditCustomerDetailsDTO editcustomerDetails) {
+		User u = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
+		Address custAddress = addressRepository.findByUser(u).orElseThrow(()->new RuntimeException());
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
+		
+		u.setName(editcustomerDetails.getName());
+		u.setContactNo(editcustomerDetails.getContactNo());
+		u.setDob(editcustomerDetails.getDob());
+		
+		cust.setAadharNo(editcustomerDetails.getAadharNo());
+		cust.setPanNo(editcustomerDetails.getPanNo());
+		
+		custAddress.setCompleteAddress(editcustomerDetails.getCompleteAddress());
+		custAddress.setCity(editcustomerDetails.getCity());
+		custAddress.setState(editcustomerDetails.getState());
+		custAddress.setPincode(editcustomerDetails.getPincode());
+		
+		return new GeneralResponseDTO("Success","Customer Details Updated...");
+	}
+
+	@Override
+	public GeneralResponseDTO editCustomerPassword(Long userId, EditPasswordDTO editPasswordDTO) {
+		User u = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
+		if(u.getPassword().equals(editPasswordDTO.getCurrentPassword())) {
+			u.setPassword(editPasswordDTO.getNewPassword());
+		}else {
+			throw new RuntimeException("Password is Incorrect");
+		}
+		return new GeneralResponseDTO("Success","Password Updated Successfully");
+	}
+
+	@Override
+	public EditCustomerDetailsDTO getCustomerDetails(Long userId) {
+		User u = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
+		Address address = addressRepository.findByUser(u).orElseThrow(()-> new RuntimeException());
+		EditCustomerDetailsDTO	custDetails = modelMapper.map(address, EditCustomerDetailsDTO.class);
+		custDetails.setAadharNo(cust.getAadharNo());
+		custDetails.setPanNo(cust.getPanNo());
+		custDetails.setContactNo(u.getContactNo());
+		custDetails.setName(u.getName());
+		custDetails.setDob(u.getDob());
+		
+		return custDetails;
+		
 	}
 	
 }

@@ -18,3 +18,8 @@
   color: #fff ;
   font-weight: 600;
 }
+
+.edit-input{
+  background-color: #f2f2f2ff;
+  border:none;
+}
