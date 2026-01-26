@@ -48,12 +48,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
         List<AdminCustomerListDTO> getAdminCustomerList();
     
 
-	@Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
-	long getAdminTotalCustomers();
-
-	@Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
-	double getAdminTotalBankAssets();
-
 //    @Query("""
 //    		SELECT new com.bankify.dto.LoanDetailsResponseDTO(l.loanType,l.interest,(ld.principle-(ld.paidMonths * ld.emi)),ld.emi,l.loanStatus)  FROM LoanDetails ld join ld.loan l WHERE ld.customer.id = :custId
 //    		""")

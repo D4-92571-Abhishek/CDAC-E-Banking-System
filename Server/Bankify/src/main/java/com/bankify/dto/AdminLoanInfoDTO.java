@@ -11,9 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AdminLoanInfoDTO {
 	
-	private long totalLoanAccounts;
-	private long outstandingBalance;
-	private long overdueLoanAccounts;
-	private long interest;
+	private Long totalLoanAccounts;
+	private double outstandingBalance;
+	private Long overdueLoanAccounts;
+	private double averageInterest;
 	
 }
