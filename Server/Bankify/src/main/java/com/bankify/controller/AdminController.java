@@ -62,4 +62,18 @@ public class AdminController {
 		
 	}
 	
+	@GetMapping("/adminLoanInfo")
+	public ResponseEntity<?> getAdminLoanInfo(){
+		
+		return ResponseEntity.ok(adminService.getAdminLoanInfo());
+		
+	}
+	
+	@GetMapping("/adminLoanList")
+	public ResponseEntity<?> getAdminLoanList(){
+		
+		return ResponseEntity.ok(adminService.getAdminLoanList());
+		
+	}
+	
 }
