@@ -17,6 +17,7 @@ public class GeneralResponseDTO {
 	private String status;
 	private String message;
 	private LocalDateTime timestamp = LocalDateTime.now();
+	
 	public GeneralResponseDTO(String status,String message) {
 		this.status = status;
 		this.message = message;

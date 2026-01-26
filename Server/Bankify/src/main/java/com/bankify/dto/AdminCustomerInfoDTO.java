@@ -12,7 +12,7 @@ import lombok.Setter;
 public class AdminCustomerInfoDTO {
 	
 	private long totalCustomers;
-	private long totalBalance;
-	private long averageBalance;
+	private double totalBalance;
+	private double averageBalance;
 	
 }
