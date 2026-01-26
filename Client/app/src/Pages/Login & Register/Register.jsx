@@ -4,6 +4,10 @@ import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordCnf, setShowPasswordCnf] = useState(false);
+
+  const [firstName,setFirstName] = useState("")
+
+  console.log(firstName)
   return (
     <div>
       <div
@@ -32,6 +36,7 @@ const Register = () => {
                   className="form-control"
                   placeholder="First name"
                   style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                  onChange={(e)=>setFirstName(e.target.value)}
                 />
               </div>
               <div className="col bL">
@@ -123,46 +128,46 @@ const Register = () => {
               ></textarea>
             </div>
 
-<div className="row bL mt-2">
-  <div className="col bL">
-    <label htmlFor="state" className="form-label bL ms-1">
-      State
-    </label>
-    <input
-      id="state"
-      type="text"
-      className="form-control"
-      placeholder="State"
-      style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
-    />
-  </div>
+            <div className="row bL mt-2">
+              <div className="col bL">
+                <label htmlFor="state" className="form-label bL ms-1">
+                  State
+                </label>
+                <input
+                  id="state"
+                  type="text"
+                  className="form-control"
+                  placeholder="State"
+                  style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                />
+              </div>
 
-  <div className="col bL">
-    <label htmlFor="city" className="form-label bL ms-1">
-      City
-    </label>
-    <input
-      id="city"
-      type="text"
-      className="form-control"
-      placeholder="City"
-      style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
-    />
-  </div>
-</div>
+              <div className="col bL">
+                <label htmlFor="city" className="form-label bL ms-1">
+                  City
+                </label>
+                <input
+                  id="city"
+                  type="text"
+                  className="form-control"
+                  placeholder="City"
+                  style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                />
+              </div>
+            </div>
 
-<div className="bL mt-2">
-  <label htmlFor="pincode" className="form-label bL ms-1">
-    Pincode
-  </label>
-  <input
-    id="pincode"
-    type="text"
-    className="form-control"
-    placeholder="6-digit Pincode"
-    style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
-  />
-</div>
+            <div className="bL mt-2">
+              <label htmlFor="pincode" className="form-label bL ms-1">
+                Pincode
+              </label>
+              <input
+                id="pincode"
+                type="text"
+                className="form-control"
+                placeholder="6-digit Pincode"
+                style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+              />
+            </div>
 
             <div className="row bL mb-2 mt-2">
               <div className="col bL">

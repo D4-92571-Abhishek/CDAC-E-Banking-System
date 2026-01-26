@@ -14,16 +14,16 @@ export const Navbar = () => {
         
         <div className="navbar-links">
           <Link to="/home" className="nav-link" >
-            Home
+            <span className="text-white">Home</span>
           </Link>
           <Link to="/about" className="nav-link">
-            About
+            <span className="text-white">About</span>
           </Link>
           <Link to="/services" className="nav-link">
-            Services
+            <span className="text-white">Services</span>
           </Link>
           <Link to="/contact-us" className="nav-link">
-            Contact Us
+             <span className="text-white">Contact Us</span>
           </Link>
         </div>
       </div>

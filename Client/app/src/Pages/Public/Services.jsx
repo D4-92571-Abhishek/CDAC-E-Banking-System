@@ -59,8 +59,8 @@ export const Services = () => {
         <section className="services-grid-section">
           <div className="services-grid">
             {services.map((service, index) => (
-              <div key={index} className="service-card">
-                <div className="service-icon">
+              <div key={index} className="service-card" >
+                <div className="service-icon" style={{backgroundColor:"black"}} >
                   {service.icon}
                 </div>
                 <h3>{service.title}</h3>
