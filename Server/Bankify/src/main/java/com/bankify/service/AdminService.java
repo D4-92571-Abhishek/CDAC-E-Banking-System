@@ -2,6 +2,8 @@ package com.bankify.service;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import com.bankify.dto.AdminCreateManagerDTO;
 import com.bankify.dto.AdminCustomerInfoDTO;
 import com.bankify.dto.AdminCustomerListDTO;
@@ -28,4 +30,6 @@ public interface AdminService {
 	AdminLoanInfoDTO getAdminLoanInfo();
 	
 	List<AdminLoanListDTO> getAdminLoanList();
+
+	GeneralResponseDTO addAdmin(AdminCreateManagerDTO admin);
 }
