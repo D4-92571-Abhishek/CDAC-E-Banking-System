@@ -1,6 +1,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import  "react-toastify"
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HomePage } from "./Pages/Public/HomePage";
@@ -30,6 +31,7 @@ import CreateAccount from './Pages/Manager/pages/CreateAccount';
 import ApproveReject from './Pages/Manager/pages/ApproveReject';
 import Transactions from './Pages/Manager/pages/Transactions';
 import Users from './Pages/Manager/pages/Users';
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -73,7 +75,8 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+      <ToastContainer />
+      </>
   );
 }
 
