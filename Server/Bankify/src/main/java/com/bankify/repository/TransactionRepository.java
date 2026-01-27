@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.bankify.entities.Customer;
 import com.bankify.entities.Transaction;
@@ -20,6 +21,15 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer customer);
     
     Optional<Transaction> findTopByCustomerOrderByTransactionTimeDesc(Customer customer);
+    
+    
+    @Query("""
+    		SELECT SUM(t.amount)  from Transaction t 
+    		WHERE t.customer.id = :cId
+    		GROUP BY t.transactionType
+    		HAVING t.transactionType=:trType
+    		""")
+    Double findAllAmountsByTransactionType (@Param("cId") Long cId,@Param("trType") TransactionType trType);
 
 	Page<Transaction> findByCustomer(Customer c,Pageable page);
 	

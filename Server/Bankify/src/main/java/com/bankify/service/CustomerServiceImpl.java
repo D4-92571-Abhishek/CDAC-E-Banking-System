@@ -1,7 +1,9 @@
 package com.bankify.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -15,11 +17,14 @@ import com.bankify.dto.CustomerDashboardResponseDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.CustomerSignupRequest;
+import com.bankify.dto.DisplayCustomerDetailsDTO;
 import com.bankify.dto.EditCustomerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.dto.GetCustomerAccountDetailsDTO;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.dto.LoanRequestDTO;
+import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Address;
 import com.bankify.entities.Customer;
 import com.bankify.entities.Loan;
@@ -51,6 +56,19 @@ public class CustomerServiceImpl implements CustomerService {
 	private final LoanRepository loanRepository;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
+	
+	public static String generateAccountNumber() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        // Generate 10-digit account number
+        for (int i = 0; i < 10; i++) {
+            int digit = random.nextInt(10); // 0 to 9
+            sb.append(digit);
+        }
+
+        return sb.toString();
+    }
 
 
 	@Override
@@ -60,11 +78,12 @@ public class CustomerServiceImpl implements CustomerService {
 		user.setPassword(passwordEncoder.encode(req.getPassword()));
 		user.setRole(Role.ROLE_CUSTOMER);
 		user.setStatus(Status.ACTIVE);
-		System.out.println(user);
+		
+		
 		Customer cust = modelMapper.map(req, Customer.class);
 		cust.setUser(user);
-
-		System.out.println(cust);
+		
+		cust.setAccountNo(generateAccountNumber());
 
 		Address custAddress = modelMapper.map(req, Address.class);
 		custAddress.setUser(user);
@@ -99,20 +118,27 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
 		
-		Transaction t = transactionRepository.findTopByCustomerOrderByTransactionTimeDesc(c).orElseThrow(()->new RuntimeException());
+		Transaction t = transactionRepository.findTopByCustomerOrderByTransactionTimeDesc(c).orElse(null);
 		CustomerDashboardResponseDTO res = modelMapper.map(c, CustomerDashboardResponseDTO.class);
-		res.setRecentTransactionAmount(t.getAmount());
+		res.setRecentTransactionAmount(t!=null?t.getAmount():0.0);
 		res.setName(u.getName());
 		
 		return res;
 	}
 
 	@Override
-	public  Page<Transaction> getCustomerTransactions(Long userId) {
+	public  List<TransactionResponseDTO> getCustomerTransactions(Long userId) {
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
 		Pageable page = PageRequest.of(0,10);
 		Page<Transaction> transactionPage = transactionRepository.findByCustomer(c,page);
-		return transactionPage;
+		List<TransactionResponseDTO> trResponse = new ArrayList<>(); 
+		
+		for(Transaction t : transactionPage) {
+			TransactionResponseDTO tr = modelMapper.map(t, TransactionResponseDTO.class);
+			trResponse.add(tr);
+		}
+		
+		return trResponse;
 	}
 	public  Page<Transaction> getCustomerTransactions(Long userId,TransactionType transactionType) {
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
@@ -250,8 +276,12 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public GeneralResponseDTO editCustomerPassword(Long userId, EditPasswordDTO editPasswordDTO) {
 		User u = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
-		if(u.getPassword().equals(editPasswordDTO.getCurrentPassword())) {
-			u.setPassword(editPasswordDTO.getNewPassword());
+		
+		boolean matchedPassword = passwordEncoder.matches(editPasswordDTO.getCurrentPassword(), u.getPassword());
+		System.out.println("");
+		
+		if(matchedPassword) {
+			u.setPassword(passwordEncoder.encode(editPasswordDTO.getNewPassword()));
 		}else {
 			throw new RuntimeException("Password is Incorrect");
 		}
@@ -259,18 +289,42 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public EditCustomerDetailsDTO getCustomerDetails(Long userId) {
+	public DisplayCustomerDetailsDTO getCustomerDetails(Long userId) {
 		User u = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
 		Address address = addressRepository.findByUser(u).orElseThrow(()-> new RuntimeException());
-		EditCustomerDetailsDTO	custDetails = modelMapper.map(address, EditCustomerDetailsDTO.class);
+		DisplayCustomerDetailsDTO	custDetails = modelMapper.map(address, DisplayCustomerDetailsDTO.class);
 		custDetails.setAadharNo(cust.getAadharNo());
 		custDetails.setPanNo(cust.getPanNo());
+		custDetails.setAccountNo(cust.getAccountNo());
 		custDetails.setContactNo(u.getContactNo());
 		custDetails.setName(u.getName());
 		custDetails.setDob(u.getDob());
+		custDetails.setEmail(u.getEmail());
 		
 		return custDetails;
+		
+	}
+	
+	public GetCustomerAccountDetailsDTO getCustomerAccountDetails(Long userId) {
+		
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
+		
+		Double totalOnGoingAmount = transactionRepository.findAllAmountsByTransactionType(cust.getId(), TransactionType.DEBITED);
+		Double totalInComingAmount = transactionRepository.findAllAmountsByTransactionType(cust.getId(), TransactionType.CREDITED);
+		
+		if(totalInComingAmount==null)
+			totalInComingAmount = 0.0;
+		if(totalOnGoingAmount==null)
+			totalOnGoingAmount =0.0;
+		
+		GetCustomerAccountDetailsDTO response = new GetCustomerAccountDetailsDTO();
+		
+		response.setCurrentBalance(cust.getCurrentBalance());
+		response.setTotalIncomingAmount(totalInComingAmount);
+		response.setTotalOutGoingAmount(totalOnGoingAmount);
+		
+		return response;
 		
 	}
 	

@@ -6,6 +6,7 @@ import com.bankify.entities.TransactionType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -13,9 +14,10 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @ToString
+@NoArgsConstructor
 public class TransactionResponseDTO {
 
-    private Long transactionId;           
+    private Long id;           
     private double amount;
     private TransactionType transactionType;
     private LocalDateTime transactionTime;

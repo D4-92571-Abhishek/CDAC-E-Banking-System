@@ -30,6 +30,7 @@ import CreateAccount from './Pages/Manager/pages/CreateAccount';
 import ApproveReject from './Pages/Manager/pages/ApproveReject';
 import Transactions from './Pages/Manager/pages/Transactions';
 import Users from './Pages/Manager/pages/Users';
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ToastContainer />
     </>
   );
 }
