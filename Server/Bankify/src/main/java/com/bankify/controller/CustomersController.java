@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/bankify/customers")
 @RequiredArgsConstructor
 //@CrossOrigin
-public class CustomerController {
+public class CustomersController {
 
 	private final CustomerService customerService;
 

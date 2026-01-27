@@ -2,7 +2,6 @@ package com.bankify.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -77,6 +76,16 @@ public class CustomerServiceImpl implements CustomerService {
 		
 		return new GeneralResponseDTO("Success","Customer Account Created Successfully");
 	}
+	
+	@Override
+	public List<CustomerListResponseDTO> getActiveCustomers() {
+
+	    return userRepository.getActiveCustomers(
+	            Status.ACTIVE,
+	            Role.ROLE_CUSTOMER
+	    );
+	}
+
 	
 	
 	@Override
