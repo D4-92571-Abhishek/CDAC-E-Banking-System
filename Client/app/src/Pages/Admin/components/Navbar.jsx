@@ -69,6 +69,12 @@ import { Link, useNavigate } from "react-router-dom";
 function Navbar() {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    navigate("/");
+  };
+
   return (
     <nav
       className="navbar bg-body-tertiary p-3"
@@ -123,7 +129,7 @@ function Navbar() {
         <div className="mt-auto w-100">
           <button
             className="btn btn-dark w-100 rounded-0"
-            onClick={() => navigate("/")}
+            onClick={handleLogout}
           >
             Logout
           </button>
