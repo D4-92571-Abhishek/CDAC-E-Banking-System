@@ -95,7 +95,7 @@ export const ContactUs = () => {
             </div>
 
             {/* Contact Form */}
-            <div className="contact-form-wrapper">
+            {/* <div className="contact-form-wrapper">
               <form onSubmit={handleSubmit} className="contact-form">
                 <div className="form-group">
                   <label htmlFor="name">Full Name</label>
@@ -166,7 +166,7 @@ export const ContactUs = () => {
                   Send Message
                 </button>
               </form>
-            </div>
+            </div> */}
           </div>
         </section>
       </div>

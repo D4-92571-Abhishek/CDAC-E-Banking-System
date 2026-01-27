@@ -2,7 +2,6 @@ package com.bankify.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +18,7 @@ import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.LoanRequestDTO;
 import com.bankify.service.CustomerService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,7 +31,7 @@ public class CustomerController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody CustomerSignupRequest request) {
-		
+		System.out.println(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(customerService.signUp(request));
 	}
 
@@ -82,6 +82,7 @@ public class CustomerController {
 	
 	@PutMapping("/edit-customer/{userId}")
 	public ResponseEntity<?> editCustomerDetails(@PathVariable Long userId,@RequestBody EditCustomerDetailsDTO editcustomerDetails){
+		System.out.println(editcustomerDetails);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(customerService.editCustomerDetails(userId, editcustomerDetails));
 	}
 	@GetMapping("/get-customer/{userId}")
@@ -90,7 +91,13 @@ public class CustomerController {
 	}
 	@PutMapping("/update-password/{userId}")
 	public ResponseEntity<?> updateCustomerPassword(@PathVariable Long userId,@RequestBody EditPasswordDTO editPasswordDTO){
+		System.out.println(editPasswordDTO);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(customerService.editCustomerPassword(userId, editPasswordDTO));
+	}
+	
+	@GetMapping("/get-transaction-details/{userId}")
+	public ResponseEntity<?> getTransactionDetails(@PathVariable Long userId){
+		return ResponseEntity.ok(customerService.getCustomerAccountDetails(userId));
 	}
 	
 	

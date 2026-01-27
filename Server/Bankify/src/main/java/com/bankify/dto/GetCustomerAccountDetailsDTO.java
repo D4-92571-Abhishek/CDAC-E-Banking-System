@@ -11,10 +11,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
-public class CustomerDashboardResponseDTO {
-	private String name;
-	private String accountNo;
-	private double currentBalance;
-	private double recentTransactionAmount =0;
+public class GetCustomerAccountDetailsDTO {
+	public double currentBalance;
+	public double totalIncomingAmount;
+	public double totalOutGoingAmount;
 }

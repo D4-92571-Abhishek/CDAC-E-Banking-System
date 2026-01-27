@@ -29,6 +29,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     
     @Query("""
             SELECT new com.bankify.dto.AdminCustomerListDTO(
+    		    u.id,
                 u.name,
                 c.accountNo,
                 c.currentBalance,
@@ -39,7 +40,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             FROM Customer c
             JOIN c.user u
             LEFT JOIN Transaction t ON t.customer = c
+            WHERE u.status='ACTIVE'
             GROUP BY
+    		    u.id,
                 u.name,
                 c.accountNo,
                 c.currentBalance,
@@ -64,7 +67,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 			)
 			FROM LoanDetails ld
 			LEFT JOIN ld.loan l
-			WHERE ld.customer IS NOT NULL
+			WHERE ld.customer.id =:custId
 					""")
 	List<LoanDetailsResponseDTO> getLoanDetailsByCustomer(@Param("custId") Long custId);
 

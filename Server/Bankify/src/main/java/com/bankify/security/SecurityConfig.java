@@ -23,7 +23,7 @@ public class SecurityConfig {
 
 	@Autowired
 	private JWTFilter jwtFilter;
-
+ 
 	@Autowired
 	private UserDetailsService userDetailsService;
 
@@ -54,7 +54,7 @@ public class SecurityConfig {
 			corsConfig.setAllowedOrigins(List.of("http://localhost:5173")); // allow all origins, or specify your frontend URL
 			corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 			corsConfig.setAllowedHeaders(List.of("*"));
-			corsConfig.setAllowCredentials(true); // if using cookies or credentials
+			corsConfig.setAllowCredentials(false); // if using cookies or credentials
 			return corsConfig;
 					}))
 				.authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()

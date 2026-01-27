@@ -1,9 +1,12 @@
 package com.bankify.controller;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,4 +77,31 @@ public class AdminController {
 		
 	}
 	
+	@GetMapping("/adminLoanInfo")
+	public ResponseEntity<?> getAdminLoanInfo(){
+		
+		return ResponseEntity.ok(adminService.getAdminLoanInfo());
+		
+	}
+	
+	@GetMapping("/adminLoanList")
+	public ResponseEntity<?> getAdminLoanList(){
+		
+		return ResponseEntity.ok(adminService.getAdminLoanList());
+		
+	}
+	
+	@PutMapping("/adminDeactivateManager/{employeeId}")
+	public ResponseEntity<?> deactivateManager(@PathVariable Long employeeId){
+		
+		return ResponseEntity.ok(adminService.deactivateManager(employeeId));
+		
+	}
+	
+	@PutMapping("/adminDeactivateCustomer/{id}")
+	public ResponseEntity<?> deactivateCustomer(@PathVariable Long id){
+		
+		return ResponseEntity.ok(adminService.deactivateCustomer(id));
+		
+	}
 }

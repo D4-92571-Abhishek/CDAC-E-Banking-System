@@ -9,11 +9,14 @@ import com.bankify.dto.CustomerDashboardResponseDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.CustomerSignupRequest;
+import com.bankify.dto.DisplayCustomerDetailsDTO;
 import com.bankify.dto.EditCustomerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.dto.GetCustomerAccountDetailsDTO;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.dto.LoanRequestDTO;
+import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Transaction;
 
 public interface CustomerService {
@@ -23,11 +26,11 @@ public interface CustomerService {
 
 	CustomerDashboardResponseDTO getCustomerDetailsById(Long userId);
 
-	Page<Transaction> getCustomerTransactions(Long userId);
+	List<TransactionResponseDTO> getCustomerTransactions(Long userId);
 
 	GeneralResponseDTO transferFunds(Long userId,CustomerFundTransferRequestDTO fundDetails);
 
-	Page<Transaction> getTransactionHistoryDebited(Long userId);
+	List<TransactionResponseDTO> getTransactionHistoryDebited(Long userId);
 
 	Page<Transaction> getTransactionHistoryCredited(Long userId);
 
@@ -39,7 +42,8 @@ public interface CustomerService {
 	
 	GeneralResponseDTO editCustomerPassword(Long userId, EditPasswordDTO editPasswordDTO);
 
+	GetCustomerAccountDetailsDTO getCustomerAccountDetails(Long userId);
 	
-	EditCustomerDetailsDTO getCustomerDetails(Long userId);
+	DisplayCustomerDetailsDTO getCustomerDetails(Long userId);
 }
 

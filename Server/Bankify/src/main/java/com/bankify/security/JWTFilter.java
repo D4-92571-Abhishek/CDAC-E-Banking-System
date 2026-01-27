@@ -40,7 +40,7 @@ public class JWTFilter extends OncePerRequestFilter{
 		if( auth!=null && SecurityContextHolder.getContext().getAuthentication() == null) 
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		
-			
+		
 		filterChain.doFilter(request, response);
 	}		
 	
