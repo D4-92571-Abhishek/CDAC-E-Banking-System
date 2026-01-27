@@ -118,7 +118,7 @@ public class CustomerServiceImpl implements CustomerService {
 		return transactionPage;
 	}
 	public  Page<Transaction> getCustomerTransactions(Long userId,TransactionType transactionType) {
-		Customer c = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
+		Customer c = customerRepository.findByUserId(userId).orElseThrow(()-> new CustomerNotFoundException("Customer not found with id: "+userId));
 		Pageable page = PageRequest.of(0,10);
 		Page<Transaction> transactionPage = transactionRepository.findByTransactionTypeAndCustomer(transactionType, c, page);
 		return transactionPage;
@@ -230,9 +230,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public GeneralResponseDTO editCustomerDetails(Long userId, EditCustomerDetailsDTO editcustomerDetails) {
-		User u = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
-		Address custAddress = addressRepository.findByUser(u).orElseThrow(()->new RuntimeException());
-		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
+		User u = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+		Address custAddress = addressRepository.findByUser(u).orElseThrow(()->new AddressNotFoundException("Address not found"));
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()-> new CustomerNotFoundException("Customer not found with id: "+ userId));
 		
 		u.setName(editcustomerDetails.getName());
 		u.setContactNo(editcustomerDetails.getContactNo());
@@ -251,20 +251,20 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public GeneralResponseDTO editCustomerPassword(Long userId, EditPasswordDTO editPasswordDTO) {
-		User u = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
+		User u = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found with id: " + userId));
 		if(u.getPassword().equals(editPasswordDTO.getCurrentPassword())) {
 			u.setPassword(editPasswordDTO.getNewPassword());
 		}else {
-			throw new RuntimeException("Password is Incorrect");
+			throw new IncorrectPasswordException("Password is Incorrect");
 		}
 		return new GeneralResponseDTO("Success","Password Updated Successfully");
 	}
 
 	@Override
 	public EditCustomerDetailsDTO getCustomerDetails(Long userId) {
-		User u = userRepository.findById(userId).orElseThrow(()-> new RuntimeException());
-		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
-		Address address = addressRepository.findByUser(u).orElseThrow(()-> new RuntimeException());
+		User u = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found with id: " + userId));
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()-> new CustomerNotFoundException("Customer not found with id: "+ userId));
+		Address address = addressRepository.findByUser(u).orElseThrow(()-> new AddressNotFoundException("Address not found"));;
 		EditCustomerDetailsDTO	custDetails = modelMapper.map(address, EditCustomerDetailsDTO.class);
 		custDetails.setAadharNo(cust.getAadharNo());
 		custDetails.setPanNo(cust.getPanNo());
