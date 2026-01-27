@@ -1,10 +1,10 @@
 import axios from "./axios";
 
 export const getActiveCustomers = () => {
-  return axios.get("/customers/active-customers");
+  return axios.get("/manager/active-customers");
 };
 
 
 export const getCustomerTransactions = (userId) => {
-  return axios.get(`/customers/transactions/${userId}`);
+  return axios.get(`/manager/transactions/${userId}`);
 };

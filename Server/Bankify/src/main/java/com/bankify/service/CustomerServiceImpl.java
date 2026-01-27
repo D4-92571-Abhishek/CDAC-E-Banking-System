@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,8 +15,12 @@ import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.CustomerSignupRequest;
 import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.dto.LoanDetailsResponseDTO;
+import com.bankify.dto.LoanRequestDTO;
 import com.bankify.entities.Address;
 import com.bankify.entities.Customer;
+import com.bankify.entities.Loan;
+import com.bankify.entities.LoanStatus;
 import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.Transaction;
@@ -25,6 +28,7 @@ import com.bankify.entities.TransactionType;
 import com.bankify.entities.User;
 import com.bankify.repository.AddressRepository;
 import com.bankify.repository.CustomerRepository;
+import com.bankify.repository.LoanRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
 
@@ -40,6 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private final TransactionRepository transactionRepository;
 	private final UserRepository userRepository;
 	private final AddressRepository addressRepository;
+	private final LoanRepository loanRepository;
 	private final ModelMapper modelMapper;
 
 	@Override
@@ -64,26 +69,13 @@ public class CustomerServiceImpl implements CustomerService {
 		if(user.getId() == 0) throw new RuntimeException();
 	}
 	
-	 public List<CustomerListResponseDTO> getActiveCustomers() {
-
-	        return userRepository
-	                .findByStatusAndRole(Status.ACTIVE, Role.ROLE_CUSTOMER)
-	                .stream()
-	                .map(user -> new CustomerListResponseDTO(
-	                        user.getId(),
-	                        user.getName(),
-	                        user.getEmail(),
-	                        user.getContactNo()
-	                ))
-	                .collect(Collectors.toList());
-	    }
-
+	
 	@Override
 	public CustomerDashboardResponseDTO getCustomerDetailsById(Long userId) {
 
 		User u = userRepository.findById(userId).orElseThrow(()->new RuntimeException());
 		
-		Customer c = customerRepository.findByUser(userId).orElseThrow(()->new RuntimeException());
+		Customer c = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
 		
 		Transaction t = transactionRepository.findTopByCustomerOrderByTransactionTimeDesc(c).orElseThrow(()->new RuntimeException());
 		CustomerDashboardResponseDTO res = modelMapper.map(c, CustomerDashboardResponseDTO.class);
@@ -95,7 +87,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public  Page<Transaction> getCustomerTransactions(Long userId) {
-		Customer c = customerRepository.findByUser(userId).orElseThrow(()-> new RuntimeException());
+		Customer c = customerRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
 		Pageable page = PageRequest.of(0,10);
 		Page<Transaction> transactionPage = transactionRepository.findByCustomer(c,page);
 		return transactionPage;
@@ -104,7 +96,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public GeneralResponseDTO transferFunds(Long userId,CustomerFundTransferRequestDTO fundDetails) {
 		
-		Customer sender = customerRepository.findByUser(userId).orElseThrow(()->new RuntimeException());
+		Customer sender = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
 		Customer reciever = customerRepository.findByAccountNo(fundDetails.getDestinationAccountNo()).orElseThrow(()->new RuntimeException());
 		if(sender.getCurrentBalance()<fundDetails.getAmount()) {
 			throw new RuntimeException("Insufficient Balance");
@@ -137,7 +129,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Page<Transaction> getTransactionHistoryDebited(Long userId) {
 		Pageable page = PageRequest.of(0, 10);
-		Customer cust = customerRepository.findByUser(userId).orElseThrow(()->new RuntimeException());
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
 		Page<Transaction> transactionList = transactionRepository.findByTransactionTypeAndCustomer(TransactionType.DEBITED, cust, page);
 		
 		if(transactionList.isEmpty())throw new RuntimeException("No Transactions");
@@ -146,12 +138,64 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 	public Page<Transaction> getTransactionHistoryCredited(Long userId) {
 		Pageable page = PageRequest.of(0, 10);
-		Customer cust = customerRepository.findByUser(userId).orElseThrow(()->new RuntimeException());
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
 		Page<Transaction> transactionList = transactionRepository.findByTransactionTypeAndCustomer(TransactionType.CREDITED, cust, page);
 		
 		if(transactionList.isEmpty())throw new RuntimeException("No Transactions");
 		 
 		return transactionList;
+	}
+
+	@Override
+	public GeneralResponseDTO requestForLoan(Long userId, LoanRequestDTO loanRequestDTO) {
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
+		Loan newLoanRequest = modelMapper.map(loanRequestDTO, Loan.class);
+		newLoanRequest.setLoanStatus(LoanStatus.PENDING);
+		newLoanRequest.setCustomer(cust);
+		loanRepository.save(newLoanRequest);
+		
+		return new GeneralResponseDTO("Success","Loan Request Submitted Successfully");
+	}
+
+	@Override
+	public List<LoanDetailsResponseDTO> getAllLoanDetails(Long userId) {
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException());
+		List<LoanDetailsResponseDTO> responseList  = customerRepository.getLoanDetailsByCustomer(cust.getId());
+		
+		
+		return responseList;
+	}
+	
+	
+	
+	public double getMonthlyPayment(double loanAmount, double interest, int tenureYears) {
+	    double monthlyRate = interest / 1200;
+	    int months = tenureYears * 12;
+
+	    return (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, months))
+	         / (Math.pow(1 + monthlyRate, months) - 1);
+	}
+	
+	
+
+	public double calculateRemainingAmount(
+	        double emi,
+	        int tenureYears,
+	        int paidMonths,
+	        double interestRate,
+	        double principal) {
+
+	    double monthlyRate = interestRate / 1200;
+	    double remaining = principal;
+	    int totalMonths = tenureYears * 12;
+
+	    for (int month = 1; month <= paidMonths && month <= totalMonths; month++) {
+	        double interest = remaining * monthlyRate;
+	        double principalPaid = emi - interest;
+	        remaining -= principalPaid;
+	    }
+
+	    return Math.max(remaining, 0);
 	}
 	
 }

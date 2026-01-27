@@ -4,7 +4,7 @@ export default function Header() {
       <div>
         <h6>Rajesh Kumar Singh</h6>
         <small>Manager ID: MGR001</small><br/>
-        <small>Branch: Delhi Central Branch</small>
+        <hr/>
       </div>
       <div className="text-end">
         📞 +91 98765 43210<br/>

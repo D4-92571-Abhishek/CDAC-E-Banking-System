@@ -9,7 +9,7 @@ export default function Sidebar() {
     >
       <div className="container-fluid flex-column align-items-start p-0">
 
-        {/* LOGO + TITLE */}
+
         <div className="d-flex mb-4 align-items-center">
           <img src={logo} alt="Logo" width="45" height="45" />
           <div className="fs-6 ms-3">
@@ -18,7 +18,6 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* MENU */}
         <ul className="navbar-nav flex-column w-100 mb-3">
 
           <li className="nav-item">
@@ -47,12 +46,17 @@ export default function Sidebar() {
 
         </ul>
       </div>
-             <button className="btn btn-outline-dark btn3 mt-auto">
+             <button className="btn btn-outline-dark btn3 mt-auto"
+  style={{ position: "sticky", bottom: "20px" }}
+             >
+
                 Logout
             </button>
-      {/* FOOTER */}
-      <div className="card-footer text-body-secondary w-100 text-center">
-        Manager v1.0
+
+      <div className="card-footer text-body-secondary w-100 text-center" 
+        style={{ position: "sticky", bottom: "20px" }}
+
+      >
       </div>
     </nav>
   );

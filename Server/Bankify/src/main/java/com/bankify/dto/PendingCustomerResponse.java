@@ -1,9 +1,12 @@
 package com.bankify.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
+@AllArgsConstructor
+
 public class PendingCustomerResponse {
     private Long id;
     private String name;

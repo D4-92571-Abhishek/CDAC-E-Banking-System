@@ -1,7 +1,5 @@
 package com.bankify.entities;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,21 +15,17 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(exclude = {})
+@ToString(exclude = {"customer"})
 
 
 @Entity
-@Table(name="loan_department")
+@Table(name="loans")
 @AttributeOverride(name = "id",column = @Column(name="loan_id"))
-public class LoanDepartment extends Base {
+public class Loan extends Base {
 	@Column(nullable = false)
 	private double amount;
 	@Column(nullable = false)
 	private double interest;
-	@Column(name="start_date",nullable = false)
-	private LocalDate startDate;
-	@Column(name="end_date",nullable = false)
-	private LocalDate endDate;
 	@Enumerated(EnumType.STRING)
 	@Column(name="loan_type",nullable = false)
 	private LoanType loanType;

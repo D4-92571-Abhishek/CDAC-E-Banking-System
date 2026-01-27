@@ -6,6 +6,7 @@ import com.bankify.entities.TransactionType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -13,6 +14,7 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @ToString
+@RequiredArgsConstructor
 public class TransactionResponseDTO {
 
     private Long transactionId;           

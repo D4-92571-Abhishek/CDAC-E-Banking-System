@@ -12,7 +12,7 @@ import com.bankify.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/bankify/dashboard")
 @CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class DashboardController {

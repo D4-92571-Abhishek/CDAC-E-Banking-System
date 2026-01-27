@@ -15,8 +15,7 @@ public class AdminCreateManagerDTO {
 	
 	private String name;
 	private String email;
-	private long employeeId;
 	private LocalDate dob;
-	private String contactNumber;
+	private String contactNo;
 	
 }

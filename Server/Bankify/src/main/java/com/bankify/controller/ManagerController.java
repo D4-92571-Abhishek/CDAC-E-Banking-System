@@ -2,6 +2,7 @@ package com.bankify.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,59 +13,88 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bankify.dto.EditManagerDetailsDTO;
+import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.ManagerCreateCustomerDTO;
-import com.bankify.dto.PendingCustomerResponse;
-import com.bankify.entities.User;
+import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.service.ManagerService;
 
 import lombok.RequiredArgsConstructor;
 
 
-@CrossOrigin(origins = "http://localhost:5173")
-
 @RestController
-@RequestMapping("/api/manager")
+@RequestMapping("/bankify/manager")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ManagerController {
 
     private final ManagerService managerService;
 
     @GetMapping("/pending")
-    public List<PendingCustomerResponse> getPendingCustomers() {
-        return managerService.getPendingCustomers();
+    public ResponseEntity<?> getPendingCustomers() {
+        return ResponseEntity.ok(managerService.getPendingCustomers());
     }
     
+    @GetMapping("/active-customers")
+    public ResponseEntity<?> getActiveCustomers() {
+        return ResponseEntity.ok(managerService.getActiveCustomers());
+    }
+
     @PutMapping("/verify-customer/{userId}")
-    public ResponseEntity<String> verifyCustomer(@PathVariable Long userId) {
-        managerService.verifyCustomer(userId);
-        return ResponseEntity.ok("Customer verified");
+    public ResponseEntity<?> verifyCustomer(@PathVariable Long userId) {
+        return ResponseEntity.ok(managerService.verifyCustomer(userId));
     }
 
     @PutMapping("/verify-address/{userId}")
-    public ResponseEntity<String> verifyAddress(@PathVariable Long userId) {
-        managerService.verifyAddress(userId);
-        return ResponseEntity.ok("Address verified");
+    public ResponseEntity<?> verifyAddress(@PathVariable Long userId) {
+        return ResponseEntity.ok(managerService.verifyAddress(userId));
     }
 
     @PutMapping("/approve/{userId}")
-    public ResponseEntity<String> approve(@PathVariable Long userId) {
-        managerService.approveCustomer(userId);
-        return ResponseEntity.ok("Customer approved");
+    public ResponseEntity<?> approveCustomer(@PathVariable Long userId) {
+        return ResponseEntity.ok(managerService.approveCustomer(userId));
     }
 
     @PutMapping("/reject/{userId}")
-    public ResponseEntity<String> reject(@PathVariable Long userId) {
-        managerService.rejectCustomer(userId);
-        return ResponseEntity.ok("Customer rejected");
+    public ResponseEntity<?> rejectCustomer(@PathVariable Long userId) {
+        return ResponseEntity.ok(managerService.rejectCustomer(userId));
     }
     
+    @GetMapping("/transactions/{userId}")
+  public ResponseEntity<?> getCustomerTransactions(
+         @PathVariable Long userId) {
+     return ResponseEntity.ok(managerService.getTransactionsByUserId(userId));
+    }
     
+    @PutMapping("/edit-details/{userId}")
+    public ResponseEntity<?> editManagerDetails(@PathVariable Long userId, @RequestBody EditManagerDetailsDTO dto) 
+    {
+    	
+
+        return ResponseEntity .status(HttpStatus.ACCEPTED)
+                .body(managerService.editManagerDetails(userId, dto));
+    }
+
+    @PutMapping("/update-password/{userId}")
+    public ResponseEntity<?> editManagerPassword(
+            @PathVariable Long userId,
+            @RequestBody EditPasswordDTO dto) {
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(managerService.editManagerPassword(userId, dto));
+    }
+
+    @GetMapping("/details/{userId}")
+    public ResponseEntity<?> getManagerDetails(@PathVariable Long userId) {
+        return ResponseEntity.ok(managerService.getManagerDetails(userId));
+    }
 
     @PostMapping("/create-customer")
-    public ResponseEntity<User> createCustomer(@RequestBody ManagerCreateCustomerDTO dto) {
-        User user = managerService.createCustomerAsManager(dto);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<?> createCustomer(@RequestBody ManagerCreateCustomerDTO dto) {
+        return ResponseEntity.ok(managerService.createCustomerAsManager(dto));
     }
 }
+
 
 

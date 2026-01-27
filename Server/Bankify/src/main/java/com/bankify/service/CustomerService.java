@@ -9,6 +9,8 @@ import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.CustomerListResponseDTO;
 import com.bankify.dto.CustomerSignupRequest;
 import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.dto.LoanDetailsResponseDTO;
+import com.bankify.dto.LoanRequestDTO;
 import com.bankify.entities.Transaction;
 
 public interface CustomerService {
@@ -16,9 +18,7 @@ public interface CustomerService {
 
 	CustomerDashboardResponseDTO getCustomerDetailsById(Long userId);
 
-	List<CustomerListResponseDTO> getActiveCustomers();
 
-	
 	Page<Transaction> getCustomerTransactions(Long userId);
 
 	GeneralResponseDTO transferFunds(Long userId,CustomerFundTransferRequestDTO fundDetails);
@@ -26,5 +26,9 @@ public interface CustomerService {
 	Page<Transaction> getTransactionHistoryDebited(Long userId);
 
 	Page<Transaction> getTransactionHistoryCredited(Long userId);
+
+	GeneralResponseDTO requestForLoan(Long userId, LoanRequestDTO loanRequestDTO);
+
+	List<LoanDetailsResponseDTO> getAllLoanDetails(Long userId);
 }
 

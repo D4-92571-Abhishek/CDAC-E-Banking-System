@@ -3,7 +3,7 @@ package com.bankify.service;
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.DashboardStatsDTO;
-import com.bankify.repository.DashboardRepository;
+import com.bankify.repository.ManagerDashboardRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class DashboardServiceImpl implements DashboardService {
 
-    private final DashboardRepository dashboardRepository;
+    private final ManagerDashboardRepository dashboardRepository;
 
     @Override
     public DashboardStatsDTO getDashboardStats() {

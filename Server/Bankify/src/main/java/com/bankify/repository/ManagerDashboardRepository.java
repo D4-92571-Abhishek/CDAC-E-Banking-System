@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.bankify.entities.User;
 
 @Repository
-public interface DashboardRepository  extends JpaRepository<User, Long> {
+public interface ManagerDashboardRepository  extends JpaRepository<User, Long> {
     
     @Query("SELECT COUNT(u) FROM User u WHERE u.status = com.bankify.entities.Status.ACTIVE")
 	Long getTotalAccounts();
