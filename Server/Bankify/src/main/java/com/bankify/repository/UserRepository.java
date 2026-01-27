@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	    
 	    List<User> findByStatusAndRole(Status status, Role role);
 
-	    @Query("SELECT COUNT(u) FROM User u WHERE u.role='ROLE_MANAGER'")
+	    @Query("SELECT COUNT(u) FROM User u WHERE u.role='ROLE_MANAGER' AND u.status='ACTIVE'")
 	    long getAdminActiveManagers();
 	
 	    @Query("""
@@ -33,10 +34,26 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	                u.creationDate
 	            )
 	            FROM User u
-	            WHERE u.role = 'ROLE_MANAGER'
+	            WHERE u.role = 'ROLE_MANAGER' AND u.status='ACTIVE'
 	            ORDER BY u.creationDate DESC
 	        """)
 	        List<AdminManagerListDTO> getAdminManagersList();
+
+	    @Modifying
+	    @Query("""
+	    		Update User u
+	    		SET u.status='DEACTIVATED'
+	    		WHERE u.id=:employeeId
+	    		""")
+		int deactivateManager(@Param("employeeId") Long employeeId);
+
+	    @Modifying
+	    @Query("""
+	    		Update User u
+	    		SET u.status='DEACTIVATED'
+	    		WHERE u.id=:id
+	    		""")
+		int deactivateCustomer(@Param("id") Long id);
 	    
 	    @Query("""
 	    	    SELECT new com.bankify.dto.PendingCustomerResponse(
