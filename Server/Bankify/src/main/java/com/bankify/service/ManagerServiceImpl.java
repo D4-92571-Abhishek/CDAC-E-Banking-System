@@ -2,6 +2,7 @@ package com.bankify.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.CustomerListResponseDTO;
@@ -31,6 +32,8 @@ public class ManagerServiceImpl implements ManagerService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final TransactionRepository transactionRepository;
+	private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public List<PendingCustomerResponse> getPendingCustomers() {
@@ -158,7 +161,7 @@ public class ManagerServiceImpl implements ManagerService {
         user.setName(dto.getFirstName() + " " + dto.getLastName());
         user.setEmail(dto.getEmail());
         user.setContactNo(dto.getContactNo());
-        user.setPassword(dto.getPassword());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setDob(dto.getDateOfBirth());
         user.setStatus(Status.ACTIVE);
         user.setRole(Role.ROLE_CUSTOMER);

@@ -128,7 +128,6 @@ export default function CreateAccount() {
         </div>
 
         <div className="mt-4 text-end">
-          <button className="btn btn-secondary">Reset</button>
           <button className="btn btn-dark ms-2" onClick={handleSubmit}>
             Create Account
           </button>
