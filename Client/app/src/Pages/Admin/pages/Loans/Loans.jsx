@@ -1,8 +1,35 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios';
 
 const Loans = () => {
+
+    const[responseData, setResponseData] = useState();
+    const[loansListData, setLoansListData] = useState([]);
+
+    const loanDataInfo = async () => {
+        const response = await axios.get('http://localhost:8080/bankify/admin/adminLoanInfo',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+        setResponseData(response.data);
+    };
+
+    const loansList = async () => {
+        const response = await axios.get('http://localhost:8080/bankify/admin/adminLoanList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+        setLoansListData(response.data);
+    }
+
+    useEffect(() => {
+        loanDataInfo();
+        loansList();
+    }, []);
+
+    console.log(loansListData);
+
   return (
-      <div className='w-100'>
+      <div className="w-100"
+          style={{
+              marginLeft: "300px",
+              minHeight: "100vh",
+              overflowY: "auto"
+          }}>
           <div className="navbar navbar-expand-lg bg-body-tertiary px-2">
 
               <span className='fs-5'>Loan Accounts</span>
@@ -19,7 +46,7 @@ const Loans = () => {
                           <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
                               <h5 className="card-title fs-4">Total Loans</h5>
                               <div>
-                                  <h3 className="card-text fs-3">12</h3>
+                                  <h3 className="card-text fs-3">{responseData?.totalLoanAccounts }</h3>
                                   <h6 className="card-subtitle text-body-secondary fs-6">Active Loan Accounts</h6>
                               </div>
                           </div>
@@ -30,7 +57,7 @@ const Loans = () => {
                           <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
                               <h5 className="card-title fs-4">Outstanding Balance</h5>
                               <div>
-                                  <h3 className="card-text fs-4">3,12,456</h3>
+                                  <h3 className="card-text fs-4">{responseData?.outstandingBalance}</h3>
                                   <h6 className="card-subtitle text-body-secondary fs-6">Total Remaining Debt</h6>
                               </div>
                           </div>
@@ -41,7 +68,7 @@ const Loans = () => {
                           <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
                               <h5 className="card-title fs-4">Overdue Loan Accounts</h5>
                               <div>
-                                  <h3 className="card-text fs-3">3</h3>
+                                  <h3 className="card-text fs-3">{responseData?.overdueLoanAccounts}</h3>
                                   <h6 className="card-subtitle text-body-secondary fs-6">Require Immediate Action</h6>
                               </div>
                           </div>
@@ -52,7 +79,7 @@ const Loans = () => {
                           <div className="card-body mh-100 d-flex flex-column justify-content-between" style={{ "height": "200px" }}>
                               <h5 className="card-title fs-4">Average Interest Rate</h5>
                               <div>
-                                  <h3 className="card-text fs-3">6.6 %</h3>
+                                  <h3 className="card-text fs-3">{responseData?.averageInterest }</h3>
                                   <h6 className="card-subtitle text-body-secondary fs-6">Portfolio Average</h6>
                               </div>
                           </div>
@@ -92,17 +119,20 @@ const Loans = () => {
                               </tr>
                           </thead>
                           <tbody>
-                              <tr>
-                                  <td>Abhishek Patel</td>
-                                  <td>Mark</td>
-                                  <td>Otto</td>
-                                  <td>@mdo</td>
-                                  <td>@mdo</td>
-                                  <td>@mdo</td>
-                                  <td>@mdo</td>
-                                  <td>@mdo</td>
-                                  <td>@mdo</td>
-                              </tr>
+                                {loansListData.map((loan,index) => (
+                                    <tr key={index}>
+                                        <td>{loan.customerName}</td>
+                                        <td>{loan.loanType}</td>
+                                        <td>{loan.principle}</td>
+                                        <td>{-loan.remaining}</td>
+                                        <td>{loan.rate}%</td>
+                                        <td><div className="progress">
+                                            <div className="progress-bar bg-dark" role="progressbar" style={{width: `${((-loan.remaining)/loan.principle)*100}%`}}></div>
+                                        </div></td>
+                                        <td>{loan.payment}</td>
+                                        <td>{loan.status}</td>
+                                        <td>{loan.nextDue}</td>
+                                    </tr>))}
                           </tbody>
                       </table>
                   </div>
