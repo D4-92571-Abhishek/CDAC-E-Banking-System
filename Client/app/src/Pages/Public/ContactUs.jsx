@@ -61,7 +61,7 @@ export const ContactUs = () => {
 
               <div className="info-items">
                 <div className="info-item">
-                  <div className="info-icon">
+                  <div className="info-icon"style={{background:"black"}}>
                     <Mail size={24} />
                   </div>
                   <div>
@@ -71,8 +71,8 @@ export const ContactUs = () => {
                 </div>
 
                 <div className="info-item">
-                  <div className="info-icon">
-                    <Phone size={24} />
+                  <div className="info-icon" style={{background:"black"}}>
+                    <Phone size={24}  />
                   </div>
                   <div>
                     <h3>Phone</h3>
@@ -81,7 +81,7 @@ export const ContactUs = () => {
                 </div>
 
                 <div className="info-item">
-                  <div className="info-icon">
+                  <div className="info-icon" style={{background:"black"}}>
                     <MapPin size={24} />
                   </div>
                   <div>
@@ -91,12 +91,7 @@ export const ContactUs = () => {
                 </div>
               </div>
 
-              <div className="hours-section">
-                <h3>Business Hours</h3>
-                <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                <p>Saturday: 10:00 AM - 4:00 PM</p>
-                <p>Sunday: Closed</p>
-              </div>
+              
             </div>
 
             {/* Contact Form */}
@@ -166,7 +161,7 @@ export const ContactUs = () => {
                   ></textarea>
                 </div>
 
-                <button type="submit" className="submit-btn">
+                <button type="submit" className="submit-btn" >
                   <Send size={18} />
                   Send Message
                 </button>

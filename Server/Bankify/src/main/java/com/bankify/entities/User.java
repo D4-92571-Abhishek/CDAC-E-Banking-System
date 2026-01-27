@@ -1,6 +1,12 @@
 package com.bankify.entities;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -20,7 +26,7 @@ import lombok.ToString;
 @Table(name = "users")
 
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
-public class User extends Base {
+public class User extends Base implements UserDetails {
 
 	@Column(name = "name", nullable = false, length = 100)
 	private String name;
@@ -40,5 +46,14 @@ public class User extends Base {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false)
 	private Role role;
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(role.name());
+		return authorities;
+	}
+	@Override
+	public String getUsername() {
+		return email;
+	}
 
 }

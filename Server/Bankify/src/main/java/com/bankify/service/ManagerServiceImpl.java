@@ -40,6 +40,22 @@ public class ManagerServiceImpl implements ManagerService {
     public List<User> getPendingCustomers() {
         return userRepository.findByRoleAndStatus(Role.ROLE_CUSTOMER, Status.DEACTIVATED);
     }
+    
+    @Override
+    public void notifyLowBalanceCustomers() {
+        List<Customer> lowBalanceCustomers = customerRepository.findByBalanceLessThan(5000.0);
+
+        for (Customer customer : lowBalanceCustomers) {
+            User user = customer.getUser();
+
+            String message = "Dear " + user.getName() + 
+                             ", your account balance is below Rs.5000. Please maintain minimum balance.";
+
+            // For now: just logging / console (can replace with SMS/Email later)
+            System.out.println("Sending message to " + user.getContactNo() + ": " + message);
+        }
+    }
+
 
     //Approving Customer Details
 

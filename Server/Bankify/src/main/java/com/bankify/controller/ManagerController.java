@@ -55,7 +55,11 @@ public class ManagerController {
         return ResponseEntity.ok("Customer rejected");
     }
     
-    
+    @PostMapping("/notify-low-balance")
+    public String notifyLowBalanceCustomers() {
+        managerService.notifyLowBalanceCustomers();
+        return "Low balance customers notified successfully";
+    }
 
     @PostMapping("/create-customer")
     public ResponseEntity<User> createCustomer(@Valid @RequestBody ManagerCreateCustomerDTO dto) {

@@ -18,6 +18,8 @@ public interface ManagerService {
     
     void rejectCustomer(Long userId);
     
+    void notifyLowBalanceCustomers();
+    
     User createCustomerAsManager(ManagerCreateCustomerDTO dto);
 }
 

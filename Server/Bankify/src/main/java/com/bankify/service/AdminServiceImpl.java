@@ -3,8 +3,6 @@ package com.bankify.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -13,18 +11,16 @@ import com.bankify.dto.AdminCreateManagerDTO;
 import com.bankify.dto.AdminCustomerInfoDTO;
 import com.bankify.dto.AdminCustomerListDTO;
 import com.bankify.dto.AdminDashboardDTO;
+import com.bankify.dto.AdminLoanInfoDTO;
+import com.bankify.dto.AdminLoanListDTO;
 import com.bankify.dto.AdminManagerListDTO;
 import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.User;
 import com.bankify.repository.CustomerRepository;
+import com.bankify.repository.LoanDetailsRepository;
 import com.bankify.repository.LoanRepository;
-import com.bankify.repository.TransactionRepository;
-import com.bankify.repository.UserRepository;
-
-import com.bankify.dto.AdminDashboardDTO;
-import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
 
@@ -40,6 +36,7 @@ public class AdminServiceImpl implements AdminService {
 	private final TransactionRepository transactionRepository;
 	private final UserRepository userRepository;
 	private final LoanRepository loanRepository;
+	private final LoanDetailsRepository loanDetailsRepository;
 	private final ModelMapper modelMapper;
 	
 	@Override
@@ -119,5 +116,37 @@ public class AdminServiceImpl implements AdminService {
 		
 		return new GeneralResponseDTO("Success","Manager created with ID : "+user.getId());
 	}
+
+	@Override
+	public AdminLoanInfoDTO getAdminLoanInfo() {
 		
+		AdminLoanInfoDTO adminLoanInfoDTO=new AdminLoanInfoDTO();
+		
+		adminLoanInfoDTO.setTotalLoanAccounts(loanRepository.getOutstandingLoans());
+		
+		adminLoanInfoDTO.setOutstandingBalance(loanDetailsRepository.getAdminOutstandingBalance());
+		
+		adminLoanInfoDTO.setOverdueLoanAccounts(loanDetailsRepository.getAdminOverdueLoans());
+		
+		adminLoanInfoDTO.setAverageInterest(loanDetailsRepository.getAdminAverageInterestRate());
+			
+		return adminLoanInfoDTO;
+	}
+
+	@Override
+	public List<AdminLoanListDTO> getAdminLoanList() {
+
+		List<AdminLoanListDTO> list = loanDetailsRepository.getAdminLoanList();
+
+	    list.forEach(dto -> {
+	        // nextDue = today + 1 month (or your logic)
+	        dto.setNextDue(LocalDate.now().plusMonths(1));
+	    });
+
+	    return list;
+	
+	}
+		
+	
+	
 }

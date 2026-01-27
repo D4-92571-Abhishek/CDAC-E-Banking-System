@@ -1,6 +1,10 @@
 package com.bankify.dto;
 
+import java.sql.Date;
 import java.time.LocalDate;
+
+import com.bankify.entities.LoanStatus;
+import com.bankify.entities.LoanType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,14 +18,34 @@ import lombok.Setter;
 public class AdminLoanListDTO {
 	
 	private String customerName;
-	//LoanType is Enum
-	private String loanType;
-	private long principle;
-	private long remaining;
+	private LoanType loanType;
+	private Long principle;
+	private Double remaining;
 	private double rate;
-	private long payment;
-	//status is Enum
-	private String status;
+	private Long emi;
+	private Double payment;
+	private LoanStatus status;
 	private LocalDate nextDue;
 	
+	public AdminLoanListDTO(
+		    String customerName,
+		    LoanType loanType,
+		    Double principle,
+		    Double remaining,
+		    double rate,
+		    Double emi,
+		    Double payment,
+		    LoanStatus status
+		) {
+		    this.customerName = customerName;
+		    this.loanType = loanType;
+		    this.principle = principle.longValue();
+		    this.remaining = remaining;
+		    this.rate = rate;
+		    this.emi = emi.longValue();
+		    this.payment = payment;
+		    this.status = status;
+		}
+
+	   
 }

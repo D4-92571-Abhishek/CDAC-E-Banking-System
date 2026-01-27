@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bankify.dto.AdminCreateManagerDTO;
 import com.bankify.service.AdminService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -56,7 +57,7 @@ public class AdminController {
 	}
 	
 	@PostMapping("/adminAddManager")
-	public ResponseEntity<?> addManager(@RequestBody AdminCreateManagerDTO manager){
+	public ResponseEntity<?> addManager(@RequestBody @Valid AdminCreateManagerDTO manager){
 		
 		return ResponseEntity.ok(adminService.addManager(manager));
 		

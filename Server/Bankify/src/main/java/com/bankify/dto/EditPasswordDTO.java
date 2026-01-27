@@ -4,16 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminLoanInfoDTO {
-	
-	private Long totalLoanAccounts;
-	private double outstandingBalance;
-	private Long overdueLoanAccounts;
-	private double averageInterest;
-	
+public class EditPasswordDTO {
+	private String currentPassword;
+	private String newPassword;
 }
