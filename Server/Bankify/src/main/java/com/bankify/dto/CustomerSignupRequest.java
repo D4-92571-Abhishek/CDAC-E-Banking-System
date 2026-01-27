@@ -4,12 +4,17 @@ import java.time.LocalDate;
 
 import com.bankify.entities.Gender;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class CustomerSignupRequest {
 
     private String name;

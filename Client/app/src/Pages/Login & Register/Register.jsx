@@ -1,13 +1,81 @@
 import React, { useState } from "react";
 import lock from "../../images/lock.png";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordCnf, setShowPasswordCnf] = useState(false);
 
-  const [firstName,setFirstName] = useState("")
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contactNo, setContactNo] = useState("");
+  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState("");
+  const [address, setAddress] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [aadhaarNo, setAadhaar] = useState("");
+  const [panNo, setPan] = useState("");
+  const [password, setPassword] = useState("");
+  const [cnfPassword, setCnfPassword] = useState("");
+  const navigate = useNavigate();
 
-  console.log(firstName)
+  const validation = () => {
+   
+    if(firstName === "" || lastName === "" || email === "" || contactNo === "" || dob === "" || gender === "" || address === "" || state === "" || city === "" || pincode === "" || aadhaarNo === "" || panNo === "" || password === "") {
+      toast.warning("Please fill all the fields");
+      return false;
+    }
+     if (password !== cnfPassword) {
+      toast.warning("Passwords do not match");
+      return false;
+    }
+  };
+
+  const handleRegister = async () => {
+    console.log(validation())
+    if(!validation()===false) return;
+
+    const body = {
+      name: firstName + " " + lastName,
+      email: email,
+      contactNo: contactNo,
+      dob: dob,
+      gender: gender,
+      completeAddress: address,
+      state: state,
+      city: city,
+      pincode: pincode,
+      aadharNo: aadhaarNo,
+      panNo: panNo,
+      password: password,
+    };
+    console.log(body);
+
+    const response = await axios.post(
+      "http://localhost:8080/bankify/customers/signup",
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    console.log(response);
+    if (response.data.status === "Success") {
+      toast.success("Registered Successfully! Please Login to continue.");
+      setTimeout(() => {
+        navigate("/loginlogoutpage/login");
+      }, 2000);
+    } else {
+      toast.error("Registration Failed! Please try again.");
+    }
+  };
+
   return (
     <div>
       <div
@@ -36,7 +104,7 @@ const Register = () => {
                   className="form-control"
                   placeholder="First name"
                   style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
-                  onChange={(e)=>setFirstName(e.target.value)}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div className="col bL">
@@ -49,6 +117,7 @@ const Register = () => {
                   className="form-control"
                   placeholder="Last name"
                   style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
             </div>
@@ -63,6 +132,7 @@ const Register = () => {
                 id="email"
                 placeholder="john@email.com"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="bL mt-2">
@@ -75,6 +145,7 @@ const Register = () => {
                 id="phone"
                 placeholder="+91 1234567890"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                onChange={(e) => setContactNo(e.target.value)}
               />
             </div>
             <div className="bL mt-2">
@@ -86,6 +157,7 @@ const Register = () => {
                 className="form-control bL"
                 id="dob"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                onChange={(e) => setDob(e.target.value)}
               />
             </div>
             <div className="bL mt-2">
@@ -97,21 +169,20 @@ const Register = () => {
                 className="form-select"
                 aria-label="Default select example"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                
+                onChange={(e) => setGender(e.target.value)}
               >
-                <option value="" disabled hidden>
+                <option disabled selected>
                   Select Gender
                 </option>
-                <option value="male" style={{ backgroundColor: "white" }}>
+                <option value="MALE" style={{ backgroundColor: "white" }} >
                   Male
                 </option>
-                <option value="female" style={{ backgroundColor: "white" }}>
+                <option value="FEMALE" style={{ backgroundColor: "white" }}>
                   Female
                 </option>
-                <option value="other" style={{ backgroundColor: "white" }}>
+                <option value="OTHER" style={{ backgroundColor: "white" }}>
                   Other
-                </option>
-                <option value="noSay" style={{ backgroundColor: "white" }}>
-                  Prefer Not to Say
                 </option>
               </select>
             </div>
@@ -125,6 +196,7 @@ const Register = () => {
                 rows="3"
                 placeholder="Enter your Address"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                onChange={(e) => setAddress(e.target.value)}
               ></textarea>
             </div>
 
@@ -139,6 +211,7 @@ const Register = () => {
                   className="form-control"
                   placeholder="State"
                   style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                  onChange={(e) => setState(e.target.value)}
                 />
               </div>
 
@@ -152,6 +225,7 @@ const Register = () => {
                   className="form-control"
                   placeholder="City"
                   style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                  onChange={(e) => setCity(e.target.value)}
                 />
               </div>
             </div>
@@ -166,6 +240,7 @@ const Register = () => {
                 className="form-control"
                 placeholder="6-digit Pincode"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                onChange={(e) => setPincode(e.target.value)}
               />
             </div>
 
@@ -180,6 +255,7 @@ const Register = () => {
                   className="form-control"
                   placeholder="1234 5678 9012"
                   style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                  onChange={(e) => setAadhaar(e.target.value)}
                 />
               </div>
               <div className="col bL">
@@ -192,6 +268,7 @@ const Register = () => {
                   className="form-control"
                   placeholder="ABCDE1234G"
                   style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                  onChange={(e) => setPan(e.target.value)}
                 />
               </div>
             </div>
@@ -207,6 +284,7 @@ const Register = () => {
                     placeholder="Enter your password"
                     className="form-control bL"
                     style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
 
                   <button
@@ -242,6 +320,7 @@ const Register = () => {
                     placeholder="Confirm your password"
                     className="form-control bL"
                     style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                    onChange={(e) => setCnfPassword(e.target.value)}
                   />
 
                   <button
@@ -271,6 +350,7 @@ const Register = () => {
               <button
                 className="btn btn-dark w-100"
                 style={{ marginBottom: "-1rem" }}
+                onClick={handleRegister}
               >
                 Create Account
               </button>

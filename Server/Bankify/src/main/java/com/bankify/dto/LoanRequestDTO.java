@@ -14,6 +14,6 @@ import lombok.ToString;
 public class LoanRequestDTO {
 	private double amount;
 	private double interest;
-	private int loanTenureYears;
+	private double loanTenureYears;
 	private LoanType loanType;
 }

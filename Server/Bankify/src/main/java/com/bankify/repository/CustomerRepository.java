@@ -64,7 +64,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 			)
 			FROM LoanDetails ld
 			LEFT JOIN ld.loan l
-			WHERE ld.customer IS NOT NULL
+			WHERE ld.customer.id =:custId
 					""")
 	List<LoanDetailsResponseDTO> getLoanDetailsByCustomer(@Param("custId") Long custId);
 

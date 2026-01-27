@@ -22,7 +22,7 @@ export const TermsAndServices = () => {
           <section className="mb-5">
             <h2 className="h4 mb-3 text-secondary">1. Agreement to Terms</h2>
             <p>
-              These Terms & Services ("Terms," "Agreement") constitute a legally binding agreement between you ("User," "Client," "Customer") and CDAC E-Banking System ("Company," "We," "Us," "Our"). By accessing, browsing, or using our website and services, you acknowledge that you have read, understood, and agree to be bound by all terms, conditions, and policies outlined herein.
+              These Terms & Services ("Terms," "Agreement") constitute a legally binding agreement between you ("User," "Client," "Customer") and Bankify ("Company," "We," "Us," "Our"). By accessing, browsing, or using our website and services, you acknowledge that you have read, understood, and agree to be bound by all terms, conditions, and policies outlined herein.
             </p>
             <p>
               If you do not agree to these terms, you are prohibited from using this service and must discontinue use immediately.
@@ -178,7 +178,7 @@ export const TermsAndServices = () => {
           <section className="mb-5">
             <h2 className="h4 mb-3 text-secondary">9. Intellectual Property Rights</h2>
             <p>
-              All content on our platform, including text, graphics, logos, images, software, and designs, are the property of CDAC E-Banking System or licensed to us. You may not:
+              All content on our platform, including text, graphics, logos, images, software, and designs, are the property of Bankify or licensed to us. You may not:
             </p>
             <ul>
               <li>Reproduce, distribute, or transmit any content without permission</li>
@@ -271,7 +271,7 @@ export const TermsAndServices = () => {
           <section className="mb-5">
             <h2 className="h4 mb-3 text-secondary">14. Indemnification</h2>
             <p>
-              You agree to indemnify and hold harmless CDAC E-Banking System, its officers, employees, and agents from any claims, damages, losses, or expenses (including attorney fees) arising from:
+              You agree to indemnify and hold harmless Bankify, its officers, employees, and agents from any claims, damages, losses, or expenses (including attorney fees) arising from:
             </p>
             <ul>
               <li>Your violation of these Terms & Services</li>
@@ -332,7 +332,7 @@ export const TermsAndServices = () => {
             <div className="bg-light p-4 rounded mt-3">
               <p><strong>Bankify</strong></p>
               <p>
-                Email: <a href="mailto:support@cdacebanking.com">support@cdacebanking.com</a>
+                Email: <a href="mailto:support@bankify.com">support@bankify.com</a>
               </p>
               <p>
                 Phone: +1-800-BANKING-1

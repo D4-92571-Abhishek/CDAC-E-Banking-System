@@ -34,7 +34,7 @@ import lombok.ToString;
 public class Transaction extends Base {
 	
 	@Column(name="amount")
-	private double amount;
+	private double amount =0;
 	
 	@Column(name="transaction_type")
 	@Enumerated(EnumType.STRING)
