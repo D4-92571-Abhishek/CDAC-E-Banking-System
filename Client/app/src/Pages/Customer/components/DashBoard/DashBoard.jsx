@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "./DashBoard.css";
+import axios from "axios";
 
 export default function DashboardUI() {
 
+  const [cust,setCust]= useState({})
+
+  const fetchData = async(id) =>{
+    const data  = await axios.get(`http://localhost:8080/bankify/customers/${id}`)
+    setCust(data.data);
+    // console.log(data)
+  }
+
+  useEffect(() => {
+    fetchData(1);
+  }, []);
+
+  console.log(cust)
   const navigate = useNavigate();
   return (
     <div className="d-flex">
@@ -14,7 +28,7 @@ export default function DashboardUI() {
 
         <div className="d-flex justify-content-between">
           <div>
-            <h5 className="fw-semibold">Welcome back, Rohit Patil</h5>
+            <h5 className="fw-semibold">Welcome back, {cust.name}</h5>
             <small className="text-secondary">Sunday, September 21, 2025</small>
           </div>
 
@@ -36,11 +50,11 @@ export default function DashboardUI() {
           style={{ maxWidth: "360px" }}
         >
           <div className="text-secondary small mb-1">Savings Account</div>
-          <div className="text-secondary small mb-2">Account ****5632</div>
+          <div className="text-secondary small mb-2">{cust.accountNo}</div>
 
           <div className="d-flex align-items-end gap-2">
-            <h3 className="fw-semibold mb-0">₹4,87,500.00</h3>
-            <span className="text-success fw-semibold">↑ ₹3,250.00</span>
+            <h3 className="fw-semibold mb-0">{cust.currentBalance}</h3>
+            <span className="text-success fw-semibold">{cust.recentTransactionAmount}</span>
           </div>
         </div>
 

@@ -3,10 +3,9 @@ package com.bankify.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.AdminCreateManagerDTO;
@@ -26,11 +25,6 @@ import com.bankify.repository.LoanRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
 
-import com.bankify.dto.AdminDashboardDTO;
-import com.bankify.repository.CustomerRepository;
-import com.bankify.repository.TransactionRepository;
-import com.bankify.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -45,6 +39,7 @@ public class AdminServiceImpl implements AdminService {
 	private final LoanRepository loanRepository;
 	private final LoanDetailsRepository loanDetailsRepository;
 	private final ModelMapper modelMapper;
+	private final PasswordEncoder passwordEncoder;
 	
 	@Override
 	public AdminDashboardDTO getAdminDashboardDetails() {
@@ -152,6 +147,22 @@ public class AdminServiceImpl implements AdminService {
 
 	    return list;
 	
+	}
+
+	@Override
+	public GeneralResponseDTO addAdmin(AdminCreateManagerDTO admin) {
+		
+		User user=modelMapper.map(admin,User.class);
+		
+		user.setRole(Role.ROLE_ADMIN);
+		user.setStatus(Status.ACTIVE);
+		user.setPassword(passwordEncoder.encode("admin123"));
+		user.setCustomerVerified(true);
+		
+		userRepository.save(user);
+		
+		return new GeneralResponseDTO("Success","Manager created with ID : "+user.getId());
+		
 	}
 		
 	

@@ -65,7 +65,9 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public GeneralResponseDTO verifyAddress(Long userId) {
-        Address address = addressRepository.findByUser_Id(userId)
+        Address address = addressRepository.findByUserId(userId)
+    public void verifyAddress(Long userId) {
+        Address address = addressRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Address not found"));
 
         address.setAddressVerified(true);
@@ -81,8 +83,10 @@ public class ManagerServiceImpl implements ManagerService {
         if (!user.isCustomerVerified())
             throw new RuntimeException("Customer not verified");
 
-        Address address = addressRepository.findByUser_Id(userId)
+        Address address = addressRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Address not found"));
+        Address address = addressRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Address not verified"));
 
         if (!address.isAddressVerified())
             throw new RuntimeException("Address not verified");

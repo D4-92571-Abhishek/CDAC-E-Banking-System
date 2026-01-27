@@ -1,4 +1,4 @@
-import React, { useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import bankLogo from "../../images/bank-account.png";
 // import { useNavigate } from "react-router";
 import "./Home.css";
@@ -9,14 +9,15 @@ const LoginLogoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-      // Apply page-specific background
-      document.body.style.backgroundColor = "#e0e7ff";
-  
-      // Cleanup when leaving the page
-      return () => {
-        document.body.style.backgroundColor = "";
-      };
-    }, []);
+    // Apply page-specific background
+    document.body.style.background =
+      "linear-gradient(135deg, #212529 0%, #495057 100%)";
+
+    // Cleanup when leaving the page
+    return () => {
+      document.body.style.background = "";
+    };
+  }, []);
 
   useEffect(() => {
     if (location.state?.from === "loginbtn") {
@@ -38,7 +39,7 @@ const LoginLogoutPage = () => {
     <div className="">
       <div className="d-flex justify-content-center align-items-center mt-5">
         <img src={bankLogo} alt="logo" height={50} className="me-2" />
-        <h1 className="fw-bold mt-3">Bankify</h1>
+        <h1 className="fw-bold mt-3 text-light">Bankify</h1>
       </div>
 
       <p className="text-secondary mt-2 text-center">
@@ -50,8 +51,8 @@ const LoginLogoutPage = () => {
         style={{ backgroundColor: "#f2f2f2ff", maxWidth: "38rem" }}
       >
         <button
-          className={`flex-fill btn border-0 rounded-4 fw-semibold ${
-            show ? "bg-white" : ""
+          className={`flex-fill btn border-0 rounded-4 fw-semibold text-light ${
+            show ? "bg-dark" : "text-dark"
           }`}
           onClick={login}
         >
@@ -59,8 +60,8 @@ const LoginLogoutPage = () => {
         </button>
 
         <button
-          className={`flex-fill btn border-0 rounded-4 fw-semibold ${
-            !show ? "bg-white" : ""
+          className={`flex-fill btn border-0 rounded-4 fw-semibold text-light ${
+            !show ? "bg-dark" : "text-dark"
           }`}
           onClick={register}
         >
@@ -83,16 +84,22 @@ const LoginLogoutPage = () => {
         </p>
       </div>
 
-      <div className="" style={{backgroundColor:"#e0e7ff"}}>
+      <div className="" style={{ backgroundColor: "" }}>
         <footer className="text-center py-4">
           <div className="d-flex justify-content-center flex-wrap gap-3 mb-2">
             <Link to="/privacy" className="text-secondary text-decoration-none">
               Privacy Policy
             </Link>
-            <Link to="/terms-and-services" className="text-secondary text-decoration-none">
+            <Link
+              to="/terms-and-services"
+              className="text-secondary text-decoration-none"
+            >
               Terms of Service
             </Link>
-            <Link to="/contact-us" className="text-secondary text-decoration-none">
+            <Link
+              to="/contact-us"
+              className="text-secondary text-decoration-none"
+            >
               Contact Support
             </Link>
           </div>

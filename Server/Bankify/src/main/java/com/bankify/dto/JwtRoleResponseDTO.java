@@ -8,10 +8,10 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditPasswordDTO {
-	private String currentPassword;
-	private String newPassword;
+@ToString
+public class JwtRoleResponseDTO {
+	private String token;
+	private String role;
 }
