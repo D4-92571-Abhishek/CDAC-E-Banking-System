@@ -111,7 +111,8 @@ public class AdminServiceImpl implements AdminService {
 		
 		user.setRole(Role.ROLE_MANAGER);
 		user.setStatus(Status.ACTIVE);
-		user.setPassword("manager");
+		user.setContactNo(manager.getContactNo());
+		user.setPassword(passwordEncoder.encode("manager"));
 		user.setCustomerVerified(true);
 		
 		userRepository.save(user);
@@ -163,6 +164,23 @@ public class AdminServiceImpl implements AdminService {
 		
 		return new GeneralResponseDTO("Success","Manager created with ID : "+user.getId());
 		
+	}
+
+	@Override
+	public GeneralResponseDTO deactivateManager(Long employeeId) {
+
+		userRepository.deactivateManager(employeeId);
+		
+		return null;
+	
+	}
+
+	@Override
+	public GeneralResponseDTO deactivateCustomer(Long id) {
+
+		userRepository.deactivateCustomer(id);
+		
+		return null;
 	}
 		
 	

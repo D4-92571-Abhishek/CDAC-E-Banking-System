@@ -32,4 +32,8 @@ public interface AdminService {
 	List<AdminLoanListDTO> getAdminLoanList();
 
 	GeneralResponseDTO addAdmin(AdminCreateManagerDTO admin);
+
+	GeneralResponseDTO deactivateManager(Long employeeId);
+
+	GeneralResponseDTO deactivateCustomer(Long id);
 }
