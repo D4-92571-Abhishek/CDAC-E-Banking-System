@@ -15,7 +15,7 @@ const LoginLogoutPage = () => {
 
     // Cleanup when leaving the page
     return () => {
-      document.body.style.backgroundColor = "";
+      document.body.style.background = "";
     };
   }, []);
 

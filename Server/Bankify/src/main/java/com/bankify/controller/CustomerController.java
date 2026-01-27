@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bankify.dto.CustomerFundTransferRequestDTO;
+import com.bankify.dto.LoanRequestDTO;
 import com.bankify.dto.CustomerSignupRequest;
 import com.bankify.dto.EditCustomerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/bankify/customers")
 @RequiredArgsConstructor
-@CrossOrigin
+//@CrossOrigin
 public class CustomerController {
 
 	private final CustomerService customerService;
