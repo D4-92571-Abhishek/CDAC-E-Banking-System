@@ -1,5 +1,9 @@
 import  { useEffect, useState } from 'react'
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+
+
 
 const Managers = () => {
 
@@ -8,7 +12,6 @@ const Managers = () => {
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
-        employeeId: "",
         dob: "",
         phone: ""
     });
@@ -31,15 +34,15 @@ const Managers = () => {
     }
 
     const addManager = async () => {
+        console.log(formData)
         try {
             await axios.post(
                 "http://localhost:8080/bankify/admin/adminAddManager",
                 {
-                    managerName: formData.fullName,
+                    name: formData.fullName,
                     email: formData.email,
-                    employeeId: formData.employeeId,
-                    dateOfBirth: formData.dob,
-                    phoneNumber: formData.phone
+                    dob: formData.dob,
+                    contactNo: formData.phone
                 },
                 {
                     headers: {
@@ -55,15 +58,16 @@ const Managers = () => {
             setFormData({
                 fullName: "",
                 email: "",
-                employeeId: "",
                 dob: "",
                 phone: ""
             });
 
-            const modal = window.bootstrap.Modal.getInstance(
-                document.getElementById("exampleModal")
-            );
-            modal.hide();
+            alert("Manager Added Successfully!");
+
+            // const modal = window.bootstrap.Modal.getInstance(
+            //     document.getElementById("exampleModal")
+            // );
+            // modal.hide();
 
         } catch (err) {
             console.error("Add Manager Failed:", err);
@@ -71,6 +75,27 @@ const Managers = () => {
         }
     };
 
+    const onDeactivate = async (employeeId) => {
+        try {
+            await axios.put(
+                `http://localhost:8080/bankify/admin/adminDeactivateManager/${employeeId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            managersList();
+            managersDataInfo();
+
+        } catch (err) {
+            console.error("Deactivate Manager Failed:", err);
+            alert("Failed to deactivate manager. Check console.");
+        }
+    };
 
     useEffect(() => {
         managersDataInfo();
@@ -117,10 +142,10 @@ const Managers = () => {
                                           <label for="exampleFormControlInput1" className="form-label">E-mail</label>
                                           <input type="email" name='email' className="form-control" id="exampleFormControlInput1" placeholder="name@example.com" onChange={(e)=>{handleChange(e)}} />
                                       </div>
-                                      <div className="mb-3">
+                                      {/* <div className="mb-3">
                                           <label for="exampleFormControlInput1" className="form-label">Employee ID</label>
                                           <input type="text" name='employeeId' className="form-control" id="exampleFormControlInput1" placeholder="Enter Employee ID" onChange={(e)=>{handleChange(e)}} />
-                                      </div>
+                                      </div> */}
                                       <div className="mb-3">
                                           <label for="exampleFormControlInput1" className="form-label">Date Of Birth</label>
                                           <input type="date" name='dob' className="form-control" id="exampleFormControlInput1" placeholder="Enter Employee DOB" onChange={(e)=>{handleChange(e)}} />
@@ -182,8 +207,7 @@ const Managers = () => {
                                       <td>{manager.employeeId}</td>
                                       <td>{manager.hireDate}</td>
                                       <td>
-                                          <button className="btn btn-warning me-2">Edit</button>
-                                          <button className="btn btn-danger">Delete</button>
+                                          <button className="btn btn-danger" onClick={()=>{onDeactivate(manager.employeeId)}}>Deactivate</button>
                                       </td>
                                   </tr>
                               ))}

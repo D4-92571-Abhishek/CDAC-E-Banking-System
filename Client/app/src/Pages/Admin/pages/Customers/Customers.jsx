@@ -16,6 +16,28 @@ const Customers = () => {
         setCustomersListData(response.data);
     }
 
+    const onDeactivateCustomer = async (id) => {
+        try {
+            await axios.put(
+                `http://localhost:8080/bankify/admin/adminDeactivateCustomer/${id}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            customersDataInfo();
+            customersList();
+
+        } catch (err) {
+            console.error("Deactivate Customer Failed:", err);
+            alert("Failed to deactivate customer. Check console.");
+        }
+    };
+
     useEffect(() => {
         customersDataInfo();
         customersList();
@@ -115,7 +137,7 @@ const Customers = () => {
                                         <td>{customer.status}</td>
                                         <td>{customer.joinDate}</td>
                                         <td>{customer.lastTransactionTime}</td>
-                                        <td><button className="btn btn-warning">View</button></td>
+                                        <td><button className="btn btn-danger" onClick={()=>{onDeactivateCustomer(customer.id)}}>Deactivate</button></td>
                                     </tr>
                                 ))}
                             </tbody>
