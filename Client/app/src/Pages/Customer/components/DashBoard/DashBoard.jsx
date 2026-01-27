@@ -6,7 +6,7 @@ import axios from "axios";
 import { Eye, EyeOff, CreditCard, TrendingUp, Send, ArrowDownLeft, ArrowUpRight, MoreVertical, Wallet } from "lucide-react";
 
 export default function DashboardUI() {
-  const [cust, setCust] = useState({});
+  const [cust, setCust] = useState();
   const [showBalance, setShowBalance] = useState(true);
   const [transDetails, setTransDetails] = useState();
 
@@ -38,6 +38,7 @@ export default function DashboardUI() {
     fetchTransData();
   }, []);
 
+
   console.log(transDetails)
 
 
@@ -46,7 +47,7 @@ export default function DashboardUI() {
       <div className="mb-4 mt-4">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div>
-            <h3 className="fw-bold text-dark mb-1">Welcome back, {cust.name || "Customer"}!</h3>
+            <h3 className="fw-bold text-dark mb-1">Welcome back, {cust?.name || "Customer"}!</h3>
             <p className="text-muted small mb-0">Here's your financial overview</p>
           </div>
         </div>
@@ -78,7 +79,7 @@ export default function DashboardUI() {
               <div className="d-flex justify-content-between align-items-start mb-5">
                 <div>
                   <p className="mb-1 opacity-75 small">Savings Account</p>
-                  <h6 className="fw-bold mb-0">{cust.accountNo || "XXXX XXXX XXXX"}</h6>
+                  <h6 className="fw-bold mb-0">{cust?.accountNo || "XXXX XXXX XXXX"}</h6>
                 </div>
                 <CreditCard size={32} />
               </div>
@@ -87,7 +88,7 @@ export default function DashboardUI() {
                 <p className="opacity-75 small mb-2">Current Balance</p>
                 <div className="d-flex align-items-center gap-3">
                   <h2 className="fw-bold mb-0">
-                    {showBalance ? `₹ ${cust.currentBalance ? parseInt(cust.currentBalance).toLocaleString() : "0"}` : "•••••••"}
+                    {showBalance ? `₹ ${cust?.currentBalance ? parseInt(cust?.currentBalance).toLocaleString() : "0"}` : "•••••••"}
                   </h2>
                   <button
                     className="btn btn-light btn-sm rounded-circle p-0"
@@ -101,7 +102,7 @@ export default function DashboardUI() {
 
               <div className="d-flex justify-content-between align-items-end">
                 <div>
-                  <p className="mb-0 fw-semibold">{cust.name || "Your Name"}</p>
+                  <p className="mb-0 fw-semibold">{cust?.name || "Your Name"}</p>
                 </div>
               </div>
             </div>
@@ -115,7 +116,7 @@ export default function DashboardUI() {
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
                     <p className="text-muted small mb-1">Total In-Coming Funds</p>
-                    <h5 className="fw-bold text-dark mb-0">{transDetails?.totalInComingFunds || "₹ 0"}</h5>
+                    <h5 className="fw-bold text-dark mb-0">{transDetails?.totalIncomingAmount || "₹ 0"}</h5>
                   </div>
                   <div
                     className="rounded-circle d-flex align-items-center justify-content-center"
@@ -135,7 +136,7 @@ export default function DashboardUI() {
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
                     <p className="text-muted small mb-1">Total Out-Going Funds</p>
-                    <h5 className="fw-bold text-dark mb-0">{transDetails?.totalOutGoingFunds || "₹ 0"}</h5>
+                    <h5 className="fw-bold text-dark mb-0">{transDetails?.totalOutGoingAmount || "₹ 0"}</h5>
                   </div>
                   <div
                     className="rounded-circle d-flex align-items-center justify-content-center"
@@ -150,12 +151,12 @@ export default function DashboardUI() {
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            {/* <div className="col-12">
               <div className="card border-0 rounded-3 p-4" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
                     <p className="text-muted small mb-1">Available Balance</p>
-                    <h5 className="fw-bold text-dark mb-0">{transDetails?.availableBalance || "₹ 0"}</h5>
+                    <h5 className="fw-bold text-dark mb-0">{transDetails?.currentBalance || "₹ 0"}</h5>
                   </div>
                   <div
                     className="rounded-circle d-flex align-items-center justify-content-center"
@@ -169,7 +170,7 @@ export default function DashboardUI() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

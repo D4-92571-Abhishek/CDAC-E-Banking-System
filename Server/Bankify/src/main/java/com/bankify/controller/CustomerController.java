@@ -30,7 +30,7 @@ public class CustomerController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody CustomerSignupRequest request) {
-		
+		System.out.println(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(customerService.signUp(request));
 	}
 

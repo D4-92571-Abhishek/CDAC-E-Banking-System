@@ -30,7 +30,7 @@ public interface CustomerService {
 
 	GeneralResponseDTO transferFunds(Long userId,CustomerFundTransferRequestDTO fundDetails);
 
-	Page<Transaction> getTransactionHistoryDebited(Long userId);
+	List<TransactionResponseDTO> getTransactionHistoryDebited(Long userId);
 
 	Page<Transaction> getTransactionHistoryCredited(Long userId);
 

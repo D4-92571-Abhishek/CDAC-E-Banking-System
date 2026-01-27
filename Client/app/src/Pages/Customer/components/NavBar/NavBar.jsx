@@ -125,6 +125,10 @@ export default function DashboardLayout() {
     fetchData();
   }, []);
 
+  const logoutHandler = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
   // Initialize form fields when responseData changes
   useEffect(() => {
     if (responseData) {
@@ -258,7 +262,7 @@ export default function DashboardLayout() {
         <div className="p-3 mb-3 border-top">
           <button
             className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center rounded-2 py-2"
-            onClick={() => navigate("/")}
+            onClick={logoutHandler}
           >
             <LogOut size={18} className="me-2" />
             Logout

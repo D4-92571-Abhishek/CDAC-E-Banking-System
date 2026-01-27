@@ -34,15 +34,13 @@ export default function FundTransferUI() {
     }
     else{
       setSubmitted(true);
+      setTimeout(() => {
+      setSubmitted(false);
+    }, 3000);
     }
+    return;
     console.log("Transferring funds...");
   }
-
-  const transfers = [
-    { id: 1, date: "2025-01-25", from: "John Account", to: "Jane Account", amount: 5000, status: "Success" },
-    { id: 2, date: "2025-01-20", from: "John Account", to: "Mike Account", amount: 2500, status: "Success" },
-    { id: 3, date: "2025-01-15", from: "John Account", to: "Sarah Account", amount: 10000, status: "Success" },
-  ];
 
   
   const fetchTransferHistory = async () => {
@@ -62,6 +60,10 @@ export default function FundTransferUI() {
   console.log(transferHistory)
 
   if (submitted) {
+
+    setTimeout(() => {
+      setSubmitted(false);
+    }, 3000);
     return (
       <div className="container-fluid">
         <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "400px" }}>
@@ -77,7 +79,7 @@ export default function FundTransferUI() {
               <CheckCircle size={48} className="text-white" />
             </div>
             <h3 className="fw-bold text-dark mb-2">Transfer Successful!</h3>
-            <p className="text-muted mb-0">₹ {formData.amount} has been transferred successfully.</p>
+            <p className="text-muted mb-0">₹ {amount} has been transferred successfully.</p>
           </div>
         </div>
       </div>
@@ -93,8 +95,8 @@ export default function FundTransferUI() {
       </div>
 
       <div className="row g-4">
-        {/* Main Form */}
-        <div className="col-lg-8">
+        {/* Main Form - Full Width */}
+        <div className="col-12">
           {/* Tabs */}
           <div className="mb-4" >
             <div className="btn-group w-100"  role="group">
@@ -146,7 +148,7 @@ export default function FundTransferUI() {
                     <User size={16} className="me-2" style={{ marginBottom: "2px" }} />
                     From Account
                   </label>
-                  <input type="number" name="fromAccount" className="form-control rounded-2" placeholder="Enter destination account number" value={selfAccountNo} onChange={(e)=>setSelfAccountNo(e.target.value)} style={{ borderColor: "#e0e0e0", padding: "10px 12px" }} required />
+                  <input type="text" name="fromAccount" className="form-control rounded-2" placeholder="Enter destination account number" defaultValue={selfAccountNo} onChange={(e)=>setSelfAccountNo(e.target.value)} style={{ borderColor: "#e0e0e0", padding: "10px 12px" }} required />
                 </div>
 
 
@@ -156,7 +158,7 @@ export default function FundTransferUI() {
                     <User size={16} className="me-2" style={{ marginBottom: "2px" }} />
                     To Account
                   </label>
-                  <input type="number" name="toAccount" className="form-control rounded-2" placeholder="Enter destination account number" value={destinationAccountNo}
+                  <input type="text" name="toAccount" className="form-control rounded-2" placeholder="Enter destination account number" value={destinationAccountNo}
                    onChange={(e)=>setDestinationAccountNo(e.target.value)} style={{ borderColor: "#e0e0e0", padding: "10px 12px" }} required />
                 </div>
 
@@ -224,21 +226,23 @@ export default function FundTransferUI() {
                 <table className="table mb-0">
                   <thead style={{ backgroundColor: "rgba(102, 126, 234, 0.05)" }}>
                     <tr>
-                      <th className="border-0 py-4 px-4 fw-semibold text-dark">Date</th>
-                      <th className="border-0 py-4 px-4 fw-semibold text-dark">From Account</th>
-                      <th className="border-0 py-4 px-4 fw-semibold text-dark">To Account</th>
-                      <th className="border-0 py-4 px-4 fw-semibold text-dark text-end">Amount</th>
-                      <th className="border-0 py-4 px-4 fw-semibold text-dark">Status</th>
+                      <th className="border-0 py-4 px-4 fw-semibold fs-5 text-dark">Transaction Time</th>
+                      <th className="border-0 py-4 px-4 fw-semibold fs-5 text-dark">Transaction Type</th>
+                      <th className="border-0 py-4 px-4 fw-semibold fs-5 text-dark text-end">Amount</th>
+                      <th className="border-0 py-4 px-4 fw-semibold fs-5 text-dark">Description</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {transfers.length > 0 ? (
-                      transfers.map((transfer) => (
+                    {transferHistory.length > 0 ? (
+                      transferHistory.map((transfer) => (
                         <tr key={transfer.id} style={{ borderBottom: "1px solid #e9ecef" }}>
-                          <td className="py-4 px-4 text-muted small">{transfer.date}</td>
-                          <td className="py-4 px-4 fw-semibold">{transfer.from}</td>
-                          <td className="py-4 px-4 fw-semibold">{transfer.to}</td>
-                          <td className="py-4 px-4 fw-semibold text-end">₹ {transfer.amount.toLocaleString()}</td>
+                          <td className="py-4 px-4 fw-semibold">{new Date(transfer.transactionTime).toLocaleDateString(
+                          "en-US",
+                          { month: "short", day: "numeric", year: "numeric" },
+                        )}</td>
+                          <td className="py-4 px-4 fw-semibold">{transfer.transactionType}</td>
+                          <td className="py-4 px-4 fw-semibold text-end">₹ {transfer.amount}</td>
+                          <td className="py-4 px-4 fw-semibold">{transfer.transactionDescription}</td>
                           <td className="py-4 px-4">
                             <span className="badge bg-success-subtle text-success">
                               <CheckCircle size={14} className="me-1" style={{ marginBottom: "2px" }} />
@@ -259,31 +263,6 @@ export default function FundTransferUI() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Sidebar - Quick Info */}
-        <div className="col-lg-4">
-          {/* Account Info Card */}
-          <div
-            className="card border-0 rounded-3 p-4 mb-4"
-            style={{
-              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              color: "white",
-            }}
-          >
-            <h6 className="fw-bold mb-3">Quick Transfer</h6>
-            <div className="mb-3">
-              <small className="opacity-75">Available Balance</small>
-              <h4 className="fw-bold mb-0">₹ 1,50,000</h4>
-            </div>
-            <hr className="opacity-25" />
-            <div>
-              <small className="opacity-75">Today's Transfers</small>
-              <p className="mb-0 fw-semibold">₹ 5,000</p>
-            </div>
-          </div>
-
-
         </div>
       </div>
     </div>

@@ -25,14 +25,20 @@ const Register = () => {
   const navigate = useNavigate();
 
   const validation = () => {
-    if (password !== cnfPassword) {
+   
+    if(firstName === "" || lastName === "" || email === "" || contactNo === "" || dob === "" || gender === "" || address === "" || state === "" || city === "" || pincode === "" || aadhaarNo === "" || panNo === "" || password === "") {
+      toast.warning("Please fill all the fields");
+      return false;
+    }
+     if (password !== cnfPassword) {
       toast.warning("Passwords do not match");
-      return;
+      return false;
     }
   };
 
   const handleRegister = async () => {
-    validation();
+    console.log(validation())
+    if(!validation()===false) return;
 
     const body = {
       name: firstName + " " + lastName,
@@ -60,7 +66,7 @@ const Register = () => {
       },
     );
     console.log(response);
-    if (response.status === 201) {
+    if (response.data.status === "Success") {
       toast.success("Registered Successfully! Please Login to continue.");
       setTimeout(() => {
         navigate("/loginlogoutpage/login");
@@ -163,12 +169,13 @@ const Register = () => {
                 className="form-select"
                 aria-label="Default select example"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
+                
                 onChange={(e) => setGender(e.target.value)}
               >
-                <option value="" disabled hidden>
+                <option disabled selected>
                   Select Gender
                 </option>
-                <option value="MALE" style={{ backgroundColor: "white" }}>
+                <option value="MALE" style={{ backgroundColor: "white" }} >
                   Male
                 </option>
                 <option value="FEMALE" style={{ backgroundColor: "white" }}>
