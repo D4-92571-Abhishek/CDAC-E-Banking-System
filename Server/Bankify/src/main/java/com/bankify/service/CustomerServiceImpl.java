@@ -59,10 +59,14 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public GeneralResponseDTO signUp(CustomerSignupRequest req) {
 
-		User user = modelMapper.map(req, User.class);
+		User user = new User();
+		user.setName(req.getFirstName() + " " + req.getLastName());
+		user.setEmail(req.getEmail());
+		user.setContactNo(req.getContactNo());
 		user.setPassword(passwordEncoder.encode(req.getPassword()));
 		user.setRole(Role.ROLE_CUSTOMER);
 		user.setStatus(Status.ACTIVE);
+
 		System.out.println(user);
 		Customer cust = modelMapper.map(req, Customer.class);
 		cust.setUser(user);

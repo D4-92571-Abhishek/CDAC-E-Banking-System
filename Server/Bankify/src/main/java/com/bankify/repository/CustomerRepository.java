@@ -15,8 +15,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	Optional<Customer> findByAccountNo(String accountNo);
 	
-	 List<Customer> findByBalanceLessThan(Double amount);
-	
+//	 List<Customer> findByBalanceLessThan(Double amount);
+	List<Customer> findByCurrentBalanceLessThan(double amount);
+
     
     @Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
     long getAdminTotalCustomers();
@@ -73,7 +74,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	@Query("SELECT c FROM Customer c where c.user.id = :userId")
 	Optional<Customer> findByUserId(@Param("userId") Long userId);
 
-	List<Customer> findByBalanceLessThan(double amount);
+
 
 	
 

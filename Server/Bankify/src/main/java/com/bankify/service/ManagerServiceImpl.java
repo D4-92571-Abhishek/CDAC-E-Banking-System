@@ -19,7 +19,7 @@ import com.bankify.entities.Status;
 import com.bankify.entities.User;
 import com.bankify.repository.AddressRepository;
 import com.bankify.repository.CustomerRepository;
-import com.bankify.repository.UserRepository;
+import com.bankify.repository.UserRepository;	
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class ManagerServiceImpl implements ManagerService {
     
     @Override
     public void notifyLowBalanceCustomers() {
-        List<Customer> lowBalanceCustomers = customerRepository.findByBalanceLessThan(5000.0);
+        List<Customer> lowBalanceCustomers = customerRepository.findByCurrentBalanceLessThan(5000.0);
 
         for (Customer customer : lowBalanceCustomers) {
             User user = customer.getUser();
@@ -58,7 +58,7 @@ public class ManagerServiceImpl implements ManagerService {
 
 
     //Approving Customer Details
-
+    
     @Override
     public void verifyCustomer(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new CustomerNotVerifiedException("Customer not found error"));
@@ -66,7 +66,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     //Approving Address Details
-
+    
     @Override
     public void verifyAddress(Long userId) {
         Address address = addressRepository.findByUserId(userId)

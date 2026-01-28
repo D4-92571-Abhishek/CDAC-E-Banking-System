@@ -2,9 +2,9 @@ export default function StatsCards() {
   return (
     <div className="row mb-4">
       {[
-        { title: "Total Accounts", value: "8,547", change: "+12%" },
-        { title: "Daily Transactions", value: "6,439", change: "+8%" },
-        { title: "Total Revenue", value: "₹18.4Cr", change: "+5%" },
+        { title: "Total Accounts", value: "-", change: "" },
+        { title: "Daily Transactions", value: "-", change: "" },
+        { title: "Total Revenue", value: "-", change: "" },
       ].map((item, i) => (
         <div className="col-md-4" key={i}>
           <div className="card p-3">

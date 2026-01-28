@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/manager")
+@RequestMapping("/bankify/manager")
 @RequiredArgsConstructor
 @CrossOrigin
 public class ManagerController {

@@ -56,16 +56,21 @@ public class SecurityConfig {
 			corsConfig.setAllowedHeaders(List.of("*"));
 			corsConfig.setAllowCredentials(true); // if using cookies or credentials
 			return corsConfig;
-					}))
-				.authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()
+					})).authorizeHttpRequests(auth -> auth
+					        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+					        .anyRequest().permitAll());
+				
+		return http.build();
+	}
+
+}
+
+/*
+ * .authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()
 				.requestMatchers(HttpMethod.POST, "/bankify/admin/signUp").permitAll()
 				.requestMatchers(HttpMethod.POST, "/bankify/login").permitAll().requestMatchers("/bankify/customers/**")
 				.hasRole("CUSTOMER").requestMatchers("/bankify/admin/**").hasRole("ADMIN")
 				.requestMatchers("/bankify/manager/**").hasRole("MANAGER")).httpBasic(httpBasic -> httpBasic.disable())
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-		return http.build();
-	}
-
-}
+*/
