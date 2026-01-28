@@ -1,11 +1,8 @@
 import { useState } from "react";
-import Header from "../components/Header";
 import StatsCards from "../components/StatsCards";
 import api from "../../../services/axios";
-import { Services } from './../../Public/Services';
 
 export default function CreateAccount() {
-
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -41,35 +38,34 @@ export default function CreateAccount() {
 
   return (
     <div className="content">
-      <Header />
-      <h5>Dashboard Overview</h5>
+      <h5 className="mb-3">Dashboard Overview</h5>
       <StatsCards />
 
-      <div className="card p-4">
-        <h5>Create New Account</h5>
-        <small>Create a new customer account with complete KYC</small>
-        <hr />
+      <div className="card p-4 mt-3">
+        <h5 className="mb-1">Create New Account</h5>
+        <small className="text-muted">Create a new customer account with complete KYC</small>
+        <hr className="my-3" />
 
-        <h6>Personal Information</h6>
-        <div className="row mb-3">
-
-          <div className="col-md-4 mb-3">
-            <label>First Name</label>
+        {/* Personal Information */}
+        <h6 className="mb-3">Personal Information</h6>
+        <div className="row g-3 mb-4">
+          <div className="col-md-4">
+            <label className="form-label">First Name</label>
             <input className="form-control" name="firstName" onChange={handleChange} />
           </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Last Name</label>
+          <div className="col-md-4">
+            <label className="form-label">Last Name</label>
             <input className="form-control" name="lastName" onChange={handleChange} />
           </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Date of Birth</label>
+          <div className="col-md-4">
+            <label className="form-label">Date of Birth</label>
             <input type="date" className="form-control" name="dateOfBirth" onChange={handleChange} />
           </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Gender</label>
+          <div className="col-md-4">
+            <label className="form-label">Gender</label>
             <select className="form-select" name="gender" onChange={handleChange}>
               <option value="">Select Gender</option>
               <option value="MALE">Male</option>
@@ -77,58 +73,60 @@ export default function CreateAccount() {
             </select>
           </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Mobile Number</label>
+          <div className="col-md-4">
+            <label className="form-label">Mobile Number</label>
             <input className="form-control" name="contactNo" onChange={handleChange} />
           </div>
 
-          <div className="col-md-4 mb-3">
-            <label>Password</label>
+          <div className="col-md-4">
+            <label className="form-label">Password</label>
             <input type="password" className="form-control" name="password" onChange={handleChange} />
           </div>
         </div>
 
-        <h6>Contact & Identity</h6>
-        <div className="row">
+        {/* Contact & Identity */}
+        <h6 className="mb-3">Contact & Identity</h6>
+        <div className="row g-3 mb-4">
           <div className="col-md-4">
-            <label>Email</label>
-            <input className="form-control" name="email" onChange={handleChange} />
+            <label className="form-label">Email</label>
+            <input type="email" className="form-control" name="email" onChange={handleChange} />
           </div>
           <div className="col-md-4">
-            <label>Aadhar Number</label>
+            <label className="form-label">Aadhar Number</label>
             <input className="form-control" name="aadharNo" onChange={handleChange} />
           </div>
           <div className="col-md-4">
-            <label>PAN Number</label>
+            <label className="form-label">PAN Number</label>
             <input className="form-control" name="panNo" onChange={handleChange} />
           </div>
         </div>
 
-        <h6 className="mt-3">Address</h6>
-        <div className="row">
-          <div className="col-md-12 mb-2">
-            <label>Complete Address</label>
+        {/* Address */}
+        <h6 className="mb-3">Address</h6>
+        <div className="row g-3">
+          <div className="col-12">
+            <label className="form-label">Complete Address</label>
             <input className="form-control" name="completeAddress" onChange={handleChange} />
           </div>
 
           <div className="col-md-4">
-            <label>City</label>
+            <label className="form-label">City</label>
             <input className="form-control" name="city" onChange={handleChange} />
           </div>
 
           <div className="col-md-4">
-            <label>State</label>
+            <label className="form-label">State</label>
             <input className="form-control" name="state" onChange={handleChange} />
           </div>
 
           <div className="col-md-4">
-            <label>Pin Code</label>
+            <label className="form-label">Pin Code</label>
             <input className="form-control" name="pincode" onChange={handleChange} />
           </div>
         </div>
 
         <div className="mt-4 text-end">
-          <button className="btn btn-dark ms-2" onClick={handleSubmit}>
+          <button className="btn btn-dark" onClick={handleSubmit}>
             Create Account
           </button>
         </div>

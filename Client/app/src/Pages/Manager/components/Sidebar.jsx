@@ -1,63 +1,103 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../../images/bank-account.png";
+import axios from "../../../services/axios";
+import {
+  LayoutDashboard,
+  Users,
+  CheckCircle,
+  Wallet,
+  LogOut,
+} from "lucide-react";
 
 export default function Sidebar() {
+
+  const navigate = useNavigate();
+
+  const logout = () => {
+      console.log("LOGOUT CLICKED");
+
+    sessionStorage.removeItem("token");
+    delete axios.defaults.headers.common["Authorization"];
+    navigate("/loginlogoutpage/login");
+  };
+
   return (
     <nav
-      className="navbar bg-body-tertiary d-flex flex-column p-3 shadow"
-      style={{ width: "300px", minHeight: "100vh" }}
+      className="bg-body-tertiary d-flex flex-column p-4 shadow"
+      style={{
+        width: "280px",
+        minHeight: "100vh",
+        flexShrink: 0, // 🔴 VERY IMPORTANT: prevents layout shifting
+      }}
     >
-      <div className="container-fluid flex-column align-items-start p-0">
-
-
-        <div className="d-flex mb-4 align-items-center">
-          <img src={logo} alt="Logo" width="45" height="45" />
-          <div className="fs-6 ms-3">
-            <strong>Bankify Manager</strong>
-            <div className="fs-6 opacity-50">Management Portal</div>
-          </div>
+      {/* Logo Section */}
+      <div className="d-flex align-items-center mb-4">
+        <img src={logo} alt="Logo" width="42" />
+        <div className="ms-3">
+          <h6 className="mb-0 fw-bold">Bankify Manager</h6>
+          <small className="text-muted">Management Portal</small>
         </div>
-
-        <ul className="navbar-nav flex-column w-100 mb-3">
-
-          <li className="nav-item">
-            <Link className="nav-link" to="">
-              Create Account
-            </Link>
-          </li>
-
-          <li className="nav-item">
-            <Link className="nav-link" to="dashboard">
-              Approve / Reject
-            </Link>
-          </li>
-
-          <li className="nav-item">
-            <Link className="nav-link" to="transactions">
-              Transactions
-            </Link>
-          </li>
-
-          <li className="nav-item">
-            <Link className="nav-link" to="users">
-              Manage Users
-            </Link>
-          </li>
-
-        </ul>
       </div>
-             <button className="btn btn-outline-dark btn3 mt-auto"
-  style={{ position: "sticky", bottom: "20px" }}
-             >
 
-                Logout
-            </button>
+      {/* Menu Items */}
+      <ul className="navbar-nav flex-column gap-2">
+        <li className="nav-item">
+          <NavLink
+            to=""
+            end
+            className="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+          >
+            <LayoutDashboard size={18} />
+            Create Account
+          </NavLink>
+        </li>
 
-      <div className="card-footer text-body-secondary w-100 text-center" 
-        style={{ position: "sticky", bottom: "20px" }}
+        <li className="nav-item">
+          <NavLink
+            to="dashboard"
+            className="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+          >
+            <CheckCircle size={18} />
+            Approve / Reject
+          </NavLink>
+        </li>
 
+        <li className="nav-item">
+          <NavLink
+            to="transactions"
+            className="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+          >
+            <Wallet size={18} />
+            Transactions
+          </NavLink>
+        </li>
+
+        <li className="nav-item">
+          <NavLink
+            to="users"
+            className="nav-link d-flex align-items-center gap-2 rounded px-3 py-2"
+          >
+            <Users size={18} />
+            Manage Users
+          </NavLink>
+        </li>
+      </ul>
+
+      {/* Logout Button */}
+      <button className="btn btn-outline-dark mt-auto d-flex align-items-center gap-2"
+      style={{
+    position: "fixed",
+    bottom: "20px",
+    left: "80px",
+    width: "100px",
+    zIndex: 1000
+  }}
+
+  onClick={logout}
       >
-      </div>
+        <LogOut size={18} />
+        Logout
+      </button>
     </nav>
   );
 }

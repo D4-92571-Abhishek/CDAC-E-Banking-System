@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Header from "../components/Header";
+//import Header from "../components/Header";
 import StatsCards from "../components/StatsCards";
 import {
   getActiveCustomers,
@@ -41,7 +41,6 @@ export default function Transactions() {
 
   return (
     <div className="content">
-      <Header />
       <h5>Dashboard Overview</h5>
       <StatsCards />
 

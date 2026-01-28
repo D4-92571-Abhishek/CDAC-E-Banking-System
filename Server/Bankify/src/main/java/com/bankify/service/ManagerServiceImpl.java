@@ -6,10 +6,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bankify.dto.CustomerListResponseDTO;
+import com.bankify.dto.DashboardStatsDTO;
 import com.bankify.dto.EditManagerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.dto.ManagerCreateCustomerDTO;
+import com.bankify.dto.ManagerHeaderDTO;
 import com.bankify.dto.PendingCustomerResponse;
 import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Address;
@@ -18,6 +20,7 @@ import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.User;
 import com.bankify.repository.AddressRepository;
+import com.bankify.repository.ManagerDashboardRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
 
@@ -33,6 +36,8 @@ public class ManagerServiceImpl implements ManagerService {
     private final AddressRepository addressRepository;
     private final TransactionRepository transactionRepository;
 	private final PasswordEncoder passwordEncoder;
+    private final ManagerDashboardRepository dashboardRepository;
+
 
 
     @Override
@@ -119,30 +124,37 @@ public class ManagerServiceImpl implements ManagerService {
     }
     
     
+   
+
     @Override
     public GeneralResponseDTO editManagerPassword(Long userId, EditPasswordDTO dto) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getPassword().equals(dto.getCurrentPassword())) {
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
         }
 
-        user.setPassword(dto.getNewPassword());
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
 
         return new GeneralResponseDTO("Success", "Password updated successfully");
     }
 
+
     @Override
-    public EditManagerDetailsDTO getManagerDetails(Long userId) {
+    public ManagerHeaderDTO getManagerDetails(Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new EditManagerDetailsDTO(
+        return new ManagerHeaderDTO(
+        		user.getId(),
                 user.getName(),
-                user.getContactNo()
+                user.getEmail(),
+                user.getContactNo(),
+                user.getRole().name()
         );
     }
 
@@ -153,6 +165,30 @@ public class ManagerServiceImpl implements ManagerService {
                 .findTransactionsByUserId(userId, Status.ACTIVE);
     }
 
+   /* @Override
+    public ManagerHeaderDTO getLoggedInManagerProfile(String email) {
+
+        User manager = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Manager not found"));
+
+        return new ManagerHeaderDTO(
+            manager.getId(),
+            manager.getName(),
+            manager.getEmail(),
+            manager.getContactNo(),
+            manager.getRole().name()
+        );
+    } */
+    
+    
+    @Override
+    public DashboardStatsDTO getDashboardStats() {
+        return new DashboardStatsDTO(
+            dashboardRepository.getTotalAccounts(),
+            dashboardRepository.getTodayTransactions(),
+            dashboardRepository.getTotalRevenue()
+        );
+        		}
 
 
     @Override

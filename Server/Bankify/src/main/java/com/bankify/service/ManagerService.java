@@ -3,10 +3,12 @@ package com.bankify.service;
 import java.util.List;
 
 import com.bankify.dto.CustomerListResponseDTO;
+import com.bankify.dto.DashboardStatsDTO;
 import com.bankify.dto.EditManagerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.dto.ManagerCreateCustomerDTO;
+import com.bankify.dto.ManagerHeaderDTO;
 import com.bankify.dto.PendingCustomerResponse;
 import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.User;
@@ -20,6 +22,11 @@ public interface ManagerService {
 	List<CustomerListResponseDTO> getActiveCustomers();
 
     List<TransactionResponseDTO> getTransactionsByUserId(Long userId);
+
+ //   ManagerHeaderDTO getLoggedInManagerProfile(String email);
+    
+    DashboardStatsDTO getDashboardStats();
+
 
 
     GeneralResponseDTO verifyCustomer(Long userId);
@@ -36,5 +43,5 @@ public interface ManagerService {
 
     GeneralResponseDTO editManagerPassword(Long userId, EditPasswordDTO dto);
 
-    EditManagerDetailsDTO getManagerDetails(Long userId);
+    ManagerHeaderDTO getManagerDetails(Long userId);
 }

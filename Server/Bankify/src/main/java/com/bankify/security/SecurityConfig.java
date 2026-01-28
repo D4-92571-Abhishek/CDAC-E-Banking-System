@@ -23,7 +23,7 @@ public class SecurityConfig {
 
 	@Autowired
 	private JWTFilter jwtFilter;
-
+ 
 	@Autowired
 	private UserDetailsService userDetailsService;
 
@@ -58,9 +58,13 @@ public class SecurityConfig {
 	        corsConfig.setAllowCredentials(false);
 	        return corsConfig;
 	    }))
-	    .authorizeHttpRequests(auth -> auth
-	            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-	            .anyRequest().permitAll());
+	   . authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()
+				.requestMatchers(HttpMethod.POST, "/bankify/admin/signUp").permitAll()
+				.requestMatchers(HttpMethod.POST, "/bankify/login").permitAll().requestMatchers("/bankify/customers/**")
+				.hasRole("CUSTOMER").requestMatchers("/bankify/admin/**").hasRole("ADMIN")
+				.requestMatchers("/bankify/manager/**").hasRole("MANAGER")).httpBasic(httpBasic -> httpBasic.disable())
+				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
 
