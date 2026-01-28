@@ -1,15 +1,15 @@
 package com.bankify.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.bankify.dto.AdminCustomerListDTO;
-import org.springframework.data.repository.query.Param;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.entities.Customer;
-import java.util.List;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
@@ -54,7 +54,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 //    @Query("""
 //    		SELECT new com.bankify.dto.LoanDetailsResponseDTO(l.loanType,l.interest,(ld.principle-(ld.paidMonths * ld.emi)),ld.emi,l.loanStatus)  FROM LoanDetails ld join ld.loan l WHERE ld.customer.id = :custId
 //    		""")
-	@Query("""
+	
+    @Query("""
 			SELECT new com.bankify.dto.LoanDetailsResponseDTO(
 			    l.loanType,
 			    ld.interest,
@@ -72,5 +73,11 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	@Query("SELECT c FROM Customer c where c.user.id = :userId")
 	Optional<Customer> findByUserId(@Param("userId") Long userId);
+
+    Optional<Customer> findByUser_Id(Long userId);
+    
+
+    
+    
 
 }

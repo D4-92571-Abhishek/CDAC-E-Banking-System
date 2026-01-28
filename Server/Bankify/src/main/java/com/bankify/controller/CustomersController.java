@@ -20,11 +20,12 @@ import com.bankify.service.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+
 @RestController
 @RequestMapping("/bankify/customers")
 @RequiredArgsConstructor
 //@CrossOrigin
-public class CustomerController {
+public class CustomersController {
 
 	private final CustomerService customerService;
 

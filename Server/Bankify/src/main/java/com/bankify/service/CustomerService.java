@@ -2,7 +2,6 @@ package com.bankify.service;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 
 import com.bankify.dto.CustomerDashboardResponseDTO;
@@ -26,7 +25,8 @@ public interface CustomerService {
 
 	CustomerDashboardResponseDTO getCustomerDetailsById(Long userId);
 
-	List<TransactionResponseDTO> getCustomerTransactions(Long userId);
+
+	Page<TransactionResponseDTO> getCustomerTransactions(Long userId);
 
 	GeneralResponseDTO transferFunds(Long userId,CustomerFundTransferRequestDTO fundDetails);
 

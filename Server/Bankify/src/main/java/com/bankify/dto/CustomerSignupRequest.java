@@ -3,6 +3,8 @@ package com.bankify.dto;
 import java.time.LocalDate;
 
 import com.bankify.entities.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +20,8 @@ import lombok.ToString;
 public class CustomerSignupRequest {
 
     private String name;
+    @JsonProperty("dateOfBirth")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
     private String email;
     private String contactNo;

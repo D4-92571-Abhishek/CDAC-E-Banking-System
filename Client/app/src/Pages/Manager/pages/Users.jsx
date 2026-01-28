@@ -1,10 +1,9 @@
-import Header from '../components/Header'
+//import Header from '../components/Header'
 import StatsCards from '../components/StatsCards'
 
 export default function Users() {
   return (
     <div className="content">
-      <Header />
       <h5>Dashboard Overview</h5>
       <StatsCards />
       <div className="card p-4">

@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -75,8 +75,8 @@ public class CustomerServiceImpl implements CustomerService {
 		User user = modelMapper.map(req, User.class);
 		user.setPassword(passwordEncoder.encode(req.getPassword()));
 		user.setRole(Role.ROLE_CUSTOMER);
-		user.setStatus(Status.ACTIVE);
-
+		user.setStatus(Status.DEACTIVATED);
+		System.out.println(user);
 		Customer cust = modelMapper.map(req, Customer.class);
 		cust.setUser(user);
 
@@ -88,20 +88,23 @@ public class CustomerServiceImpl implements CustomerService {
 		userRepository.save(user);
 		customerRepository.save(cust);
 		addressRepository.save(custAddress);
-
-		if (user.getId() == 0)
-			throw new RuntimeException();
-
-		return new GeneralResponseDTO("Success", "Customer Account Created Successfully");
+		
+		if(user.getId() == 0) throw new RuntimeException();
+		
+		return new GeneralResponseDTO("Success","Customer Account Created Successfully");
 	}
-
+	
+	@Override
 	public List<CustomerListResponseDTO> getActiveCustomers() {
 
-		return userRepository.findByStatusAndRole(Status.ACTIVE, Role.ROLE_CUSTOMER).stream().map(
-				user -> new CustomerListResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getContactNo()))
-				.collect(Collectors.toList());
+	    return userRepository.getActiveCustomers(
+	            Status.ACTIVE,
+	            Role.ROLE_CUSTOMER
+	    );
 	}
 
+	
+	
 	@Override
 	public CustomerDashboardResponseDTO getCustomerDetailsById(Long userId) {
 
@@ -118,19 +121,29 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<TransactionResponseDTO> getCustomerTransactions(Long userId) {
-		Customer c = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
-		Pageable page = PageRequest.of(0, 10);
-		Page<Transaction> transactionPage = transactionRepository.findByCustomer(c, page);
-		List<TransactionResponseDTO> trResponse = new ArrayList<>();
+	public Page<TransactionResponseDTO> getCustomerTransactions(Long userId) {
 
-		for (Transaction t : transactionPage) {
-			TransactionResponseDTO tr = modelMapper.map(t, TransactionResponseDTO.class);
-			trResponse.add(tr);
-		}
+	    Customer c = customerRepository.findByUserId(userId)
+	            .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-		return trResponse;
+	    Pageable page = PageRequest.of(0, 10);
+
+	    Page<Transaction> transactionPage =
+	            transactionRepository.findByCustomer(c, page);
+
+	    List<TransactionResponseDTO> trResponse = new ArrayList<>();
+
+	    for (Transaction t : transactionPage.getContent()) {
+	        trResponse.add(modelMapper.map(t, TransactionResponseDTO.class));
+	    }
+
+	    return new PageImpl<>(
+	            trResponse,
+	            page,
+	            transactionPage.getTotalElements()
+	    );
 	}
+
 
 	public Page<Transaction> getCustomerTransactions(Long userId, TransactionType transactionType) {
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());

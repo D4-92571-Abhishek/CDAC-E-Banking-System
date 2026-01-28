@@ -1,7 +1,8 @@
 import "./Login.css";
 import lock from "../../images/lock.png";
 
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+
 
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";

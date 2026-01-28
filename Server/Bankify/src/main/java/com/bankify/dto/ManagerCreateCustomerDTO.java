@@ -14,8 +14,9 @@ import lombok.ToString;
 @ToString
 public class ManagerCreateCustomerDTO {
 
-    private String name;
-    private String email;
+	  private String firstName;
+	    private String lastName;
+	    private String email;
     private String contactNo;
     private String password;
     private LocalDate dateOfBirth;
