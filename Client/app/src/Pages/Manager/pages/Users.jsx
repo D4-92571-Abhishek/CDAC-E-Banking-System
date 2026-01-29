@@ -1,12 +1,11 @@
-import Header from '../components/Header'
-import StatsCards from '../components/StatsCards'
+//import Header from '../components/Header'
+//import StatsCards from '../components/StatsCards'
 
 export default function Users() {
   return (
     <div className="content">
-      <Header />
       <h5>Dashboard Overview</h5>
-      <StatsCards />
+      {/* <StatsCards /> */}
       <div className="card p-4">
         <h5>User Management</h5>
         <small>Manage customer accounts and permissions</small>

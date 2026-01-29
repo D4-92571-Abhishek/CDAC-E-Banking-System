@@ -10,8 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Customer;
+import com.bankify.entities.Status;
 import com.bankify.entities.Transaction;
 import com.bankify.entities.TransactionType;
 
@@ -20,6 +23,15 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer customer);
     
     Optional<Transaction> findTopByCustomerOrderByTransactionTimeDesc(Customer customer);
+    
+    
+    @Query("""
+    		SELECT SUM(t.amount)  from Transaction t 
+    		WHERE t.customer.id = :cId
+    		GROUP BY t.transactionType
+    		HAVING t.transactionType=:trType
+    		""")
+    Double findAllAmountsByTransactionType (@Param("cId") Long cId,@Param("trType") TransactionType trType);
 
 	Page<Transaction> findByCustomer(Customer c,Pageable page);
 	
@@ -40,5 +52,30 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     
     Page<Transaction> findByTransactionTypeAndCustomer(TransactionType transactionType,Customer customer,Pageable page);
     
+    //Manager
+    
+    @Query("""
+    	    SELECT new com.bankify.dto.TransactionResponseDTO(
+    	        t.id,
+    	        t.amount,
+    	        t.transactionType,
+    	        t.transactionTime,
+    	        t.transactionDescription
+    	    )
+    	    FROM Transaction t
+    	    JOIN t.customer c
+    	    JOIN c.user u
+    	    WHERE u.id = :userId
+    	      AND u.status = :status
+    	    ORDER BY t.transactionTime DESC
+    	""")
+    	List<TransactionResponseDTO> findTransactionsByUserId(
+    	        @Param("userId") Long userId,
+    	        @Param("status") Status status
+    	);
+
+
+    
 }
+
 

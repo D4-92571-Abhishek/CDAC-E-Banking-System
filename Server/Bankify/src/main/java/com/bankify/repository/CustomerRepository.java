@@ -30,6 +30,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     
     @Query("""
             SELECT new com.bankify.dto.AdminCustomerListDTO(
+    		    u.id,
                 u.name,
                 c.accountNo,
                 c.currentBalance,
@@ -40,7 +41,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             FROM Customer c
             JOIN c.user u
             LEFT JOIN Transaction t ON t.customer = c
+            WHERE u.status='ACTIVE'
             GROUP BY
+    		    u.id,
                 u.name,
                 c.accountNo,
                 c.currentBalance,
@@ -55,7 +58,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 //    @Query("""
 //    		SELECT new com.bankify.dto.LoanDetailsResponseDTO(l.loanType,l.interest,(ld.principle-(ld.paidMonths * ld.emi)),ld.emi,l.loanStatus)  FROM LoanDetails ld join ld.loan l WHERE ld.customer.id = :custId
 //    		""")
-	@Query("""
+	
+    @Query("""
 			SELECT new com.bankify.dto.LoanDetailsResponseDTO(
 			    l.loanType,
 			    ld.interest,
@@ -65,7 +69,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 			)
 			FROM LoanDetails ld
 			LEFT JOIN ld.loan l
-			WHERE ld.customer IS NOT NULL
+			WHERE ld.customer.id =:custId
 					""")
 	List<LoanDetailsResponseDTO> getLoanDetailsByCustomer(@Param("custId") Long custId);
 
@@ -74,8 +78,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	@Query("SELECT c FROM Customer c where c.user.id = :userId")
 	Optional<Customer> findByUserId(@Param("userId") Long userId);
 
+    Optional<Customer> findByUser_Id(Long userId);
+    
 
-
-	
+    
+    
 
 }

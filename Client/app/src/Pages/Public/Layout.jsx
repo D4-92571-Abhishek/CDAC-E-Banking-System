@@ -1,29 +1,31 @@
 import React, { useEffect } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { Navbar } from "./Navbar";
+import StatsCards from "../Manager/components/StatsCards"; // ✅ ONLY PLACE
 import "./layout.css";
 
 export const Layout = ({ bgColor = "#e0e7ff" }) => {
   useEffect(() => {
-    // Apply page-specific background
     document.body.style.backgroundColor = bgColor;
-
-    // Cleanup when leaving the page
     return () => {
       document.body.style.backgroundColor = "";
     };
   }, [bgColor]);
 
   return (
-    <div className="layout-container d-flex flex-column min-vh-100">
+    <div className="layout-container min-vh-100">
+      {/* Header */}
       <div className="layout-header">
         <Navbar />
       </div>
-      
+
+
+      {/* Page content changes here */}
       <div className="layout-content flex-grow-1">
         <Outlet />
       </div>
 
+      {/* Footer */}
       <div className="layout-footer mt-auto">
         <footer className="footer-section">
           <div className="footer-links">

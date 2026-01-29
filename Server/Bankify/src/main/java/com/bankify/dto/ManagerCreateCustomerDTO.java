@@ -57,6 +57,7 @@ public class ManagerCreateCustomerDTO {
 
     @NotBlank(message = "Contact number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Contact number must be 10 digits")
+	
     private String contactNo;
 
     @NotBlank(message = "Password is required")

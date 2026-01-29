@@ -20,6 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AdminCustomerListDTO {
 
+	private Long id;
 	private String customerName;
 	private String accountNumber;
 	private double balance;

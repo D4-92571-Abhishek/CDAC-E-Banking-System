@@ -1,9 +1,8 @@
-*{
-  /* background-color: #e0e7ff; */
-}
+
 
 .grey{
   color: rgba(128, 128, 128, 0.395);
 --tw-gradient-from: #111827; /* Sets the starting color for the gradient */
 --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(17, 24, 39, 0));
 }
+

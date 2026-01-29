@@ -1,0 +1,20 @@
+.card {
+  border-radius: 12px;
+}
+
+table td {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.btn-outline-secondary,
+.btn-outline-primary,
+.btn-success,
+.btn-danger {
+  border-radius: 8px;
+}
+
+.hover-row:hover {
+  background-color: rgba(102, 126, 234, 0.04);
+  transition: background-color 0.2s ease;
+}

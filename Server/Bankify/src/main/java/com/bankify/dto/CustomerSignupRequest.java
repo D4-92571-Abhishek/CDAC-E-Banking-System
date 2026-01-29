@@ -34,6 +34,8 @@ import java.time.LocalDate;
 //import org.hibernate.annotations.processing.Pattern;
 
 import com.bankify.entities.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -41,12 +43,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class CustomerSignupRequest {
 
     @NotBlank(message = "First name is required")
@@ -57,6 +64,9 @@ public class CustomerSignupRequest {
 
     @NotNull(message = "Date of birth is required")
     @Past(message = "DOB must be in the past")
+    private String name;
+    @JsonProperty("dateOfBirth")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
 
     @Email(message = "Invalid email format")

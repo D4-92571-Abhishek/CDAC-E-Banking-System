@@ -1,6 +1,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import  "react-toastify"
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HomePage } from "./Pages/Public/HomePage";
@@ -25,11 +26,13 @@ import FundTransferUI from "./Pages/Customer/components/FundTransfer/FundTransfe
 import CurrentLoansUI from "./Pages/Customer/components/LoanHistory/LoanPage";
 import LoanApplicationUI from "./Pages/Customer/components/ApplyForLoan/ApplyForLoan";
 import NavBar from "./Pages/Customer/components/NavBar/NavBar";
-import { ManagerHome } from "./Pages/Manager/pages/ManagerHome";
+import ManagerHome  from "./Pages/Manager/pages/ManagerHome";
 import CreateAccount from './Pages/Manager/pages/CreateAccount';
 import ApproveReject from './Pages/Manager/pages/ApproveReject';
 import Transactions from './Pages/Manager/pages/Transactions';
 import Users from './Pages/Manager/pages/Users';
+import { ToastContainer } from "react-toastify";
+
 
 function App() {
   return (
@@ -69,11 +72,13 @@ function App() {
             <Route path="" element={<CreateAccount />} />
             <Route path="dashboard" element={<ApproveReject />} />
             <Route path="transactions" element={<Transactions />} />
+            
             <Route path="users" element={<Users />} />
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+      <ToastContainer />
+      </>
   );
 }
 

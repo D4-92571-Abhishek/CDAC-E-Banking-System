@@ -16,5 +16,5 @@ public class CustomerDashboardResponseDTO {
 	private String name;
 	private String accountNo;
 	private double currentBalance;
-	private double recentTransactionAmount;
+	private double recentTransactionAmount =0;
 }

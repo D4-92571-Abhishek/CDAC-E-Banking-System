@@ -23,7 +23,7 @@ public class SecurityConfig {
 
 	@Autowired
 	private JWTFilter jwtFilter;
-
+ 
 	@Autowired
 	private UserDetailsService userDetailsService;
 
@@ -48,29 +48,43 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain authorizeRequests(HttpSecurity http) throws Exception {
 
-			http.csrf(csrf -> csrf.disable())
-				.cors(cors -> cors.configurationSource(request -> {
-			var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-			corsConfig.setAllowedOrigins(List.of("http://localhost:5173")); // allow all origins, or specify your frontend URL
-			corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-			corsConfig.setAllowedHeaders(List.of("*"));
-			corsConfig.setAllowCredentials(true); // if using cookies or credentials
-			return corsConfig;
-					})).authorizeHttpRequests(auth -> auth
-					        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-					        .anyRequest().permitAll());
-				
-		return http.build();
-	}
-
-}
-
-/*
- * .authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()
+		http
+	    .csrf(csrf -> csrf.disable())
+	    .cors(cors -> cors.configurationSource(request -> {
+	        var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+	        corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
+	        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	        corsConfig.setAllowedHeaders(List.of("*"));
+	        corsConfig.setAllowCredentials(false);
+	        return corsConfig;
+	    }))
+	    .authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()
 				.requestMatchers(HttpMethod.POST, "/bankify/admin/signUp").permitAll()
 				.requestMatchers(HttpMethod.POST, "/bankify/login").permitAll().requestMatchers("/bankify/customers/**")
 				.hasRole("CUSTOMER").requestMatchers("/bankify/admin/**").hasRole("ADMIN")
 				.requestMatchers("/bankify/manager/**").hasRole("MANAGER")).httpBasic(httpBasic -> httpBasic.disable())
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-*/
+
+
+
+
+		return http.build();
+	}
+
+}
+
+/*
+ * authorizeHttpRequests(req -> req.requestMatchers("/bankify/customers/signup").permitAll()
+				.requestMatchers(HttpMethod.POST, "/bankify/admin/signUp").permitAll()
+				.requestMatchers(HttpMethod.POST, "/bankify/login").permitAll().requestMatchers("/bankify/customers/**")
+				.hasRole("CUSTOMER").requestMatchers("/bankify/admin/**").hasRole("ADMIN")
+				.requestMatchers("/bankify/manager/**").hasRole("MANAGER")).httpBasic(httpBasic -> httpBasic.disable())
+				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));*/
+ 
+
+
+/*.authorizeHttpRequests(auth -> auth
+        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+        .anyRequest().permitAll()*/

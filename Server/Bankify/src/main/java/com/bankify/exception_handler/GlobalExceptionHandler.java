@@ -2,80 +2,161 @@ package com.bankify.exception_handler;
 
 import com.bankify.custom_exceptions.*;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Validation errors (DTO)
+    /* ================= HELPER ================= */
+
+    private ResponseEntity<Map<String, Object>> buildResponse(
+            String message,
+            HttpStatus status
+    ) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status.value());
+        body.put("message", message);
+        return new ResponseEntity<>(body, status);
+    }
+
+    /* ================= VALIDATION ================= */
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException ex) {
-        return new ResponseEntity<>("Invalid input data", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(
+            MethodArgumentNotValidException ex
+    ) {
+        String error = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                .orElse("Invalid input data");
+
+        return buildResponse(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AddressNotFoundException.class)
-    public ResponseEntity<String> handleAddressNotFound(AddressNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    /* ================= DUPLICATE (DB UNIQUE CONSTRAINT) ================= */
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateKey(
+            DataIntegrityViolationException ex
+    ) {
+        return buildResponse(
+                "Customer already exists with same email/contact/Aadhar/PAN",
+                HttpStatus.CONFLICT
+        );
     }
 
-    @ExceptionHandler(AddressNotVerifiedException.class)
-    public ResponseEntity<String> handleAddressNotVerified(AddressNotVerifiedException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+    /* ================= DUPLICATE (SERVICE LEVEL) ================= */
 
-    @ExceptionHandler(CustomerAlreadyActiveException.class)
-    public ResponseEntity<String> handleCustomerAlreadyActive(CustomerAlreadyActiveException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(CustomerNotVerifiedException.class)
-    public ResponseEntity<String> handleCustomerNotVerified(CustomerNotVerifiedException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateResource(
+            DuplicateResourceException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(CustomerAlreadyExistsException.class)
-    public ResponseEntity<String> handleCustomerAlreadyExists(CustomerAlreadyExistsException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    public ResponseEntity<Map<String, Object>> handleCustomerAlreadyExists(
+            CustomerAlreadyExistsException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(CustomerAlreadyActiveException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomerAlreadyActive(
+            CustomerAlreadyActiveException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    /* ================= NOT FOUND ================= */
+
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(
+            UserNotFoundException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<String> handleCustomerNotFound(CustomerNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> handleCustomerNotFound(
+            CustomerNotFoundException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleAddressNotFound(
+            AddressNotFoundException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    /* ================= BAD REQUEST ================= */
+
+    @ExceptionHandler(AddressNotVerifiedException.class)
+    public ResponseEntity<Map<String, Object>> handleAddressNotVerified(
+            AddressNotVerifiedException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
-    public ResponseEntity<String> handleInsufficientBalanceException(InsufficientBalanceException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, Object>> handleInsufficientBalance(
+            InsufficientBalanceException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoTransactionsException.class)
-    public ResponseEntity<String> handleNoTransactionsException(NoTransactionsException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    /* ================= AUTH ================= */
+
+    @ExceptionHandler(CustomerNotVerifiedException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomerNotVerified(
+            CustomerNotVerifiedException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(IncorrectPasswordException.class)
-    public ResponseEntity<String> handleIncorrectPasswordException(IncorrectPasswordException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<Map<String, Object>> handleIncorrectPassword(
+            IncorrectPasswordException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    // Generic RuntimeException
+    /* ================= NO DATA ================= */
+
+    @ExceptionHandler(NoTransactionsException.class)
+    public ResponseEntity<Map<String, Object>> handleNoTransactions(
+            NoTransactionsException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    /* ================= FALLBACKS ================= */
+
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntime(RuntimeException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, Object>> handleRuntime(
+            RuntimeException ex
+    ) {
+        return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    // All other exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAll(Exception ex) {
-        return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Map<String, Object>> handleAll(
+            Exception ex
+    ) {
+        return buildResponse("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

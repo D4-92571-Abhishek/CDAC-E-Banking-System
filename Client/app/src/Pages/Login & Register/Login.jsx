@@ -1,12 +1,17 @@
 import "./Login.css";
 import lock from "../../images/lock.png";
 
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+
 
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import  axios  from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,39 +21,86 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleLogin = async() => {
-    // Implement login logic here
-    console.log("Email:", email);
-    console.log("Password:", password);
-    const body ={
-      email: email,
-      password: password
-    }
-    const response = await axios.post("http://localhost:8080/bankify/login",body)
+  // const handleLogin = async() => {
+  //   // Implement login logic here
+  //   console.log("Email:", email);
+  //   console.log("Password:", password);
+  //   const body ={
+  //     email: email,
+  //     password: password
+  //   }
+  //   const response = await axios.post("http://localhost:8080/bankify/login",body)
    
-    
+  //   if (!email || !password) {
+  //     toast.warning("Please enter email and password");
+  //     return;
+  //   }
 
-    if(response.status !== 200){
-      alert("Login Failed");
+  //   if(response.status !== 200){
+  //     // alert("Login Failed");
+  //     toast.error("Login Failed!!!");
+  //     return;
+  //   }
+
+  //   const decodedToken = jwtDecode(response.data.token);
+  //   sessionStorage.setItem("token",response.data.token);
+  //   sessionStorage.setItem("userId",decodedToken.userId);
+  //   toast.success("Login successful!!!");
+
+  //   if(response.data.role === "ROLE_CUSTOMER"){
+  //     navigate("/customer");
+  //   }else if(response.data.role === "ROLE_MANAGER"){
+  //     navigate("/manager");
+  //   }else if(response.data.role === "ROLE_ADMIN"){
+  //     navigate("/admin");
+  //   }else{
+  //     alert("Invalid Credentials");
+  //   }
+  //   console.log(response.data);
+  // }
+
+  const handleLogin = async () => {
+    // 1. Validate first
+    if (!email || !password) {
+      toast.warning("Please enter email and password");
       return;
     }
 
-    const decodedToken = jwtDecode(response.data.token);
-    sessionStorage.setItem("token",response.data.token);
-    sessionStorage.setItem("userId",decodedToken.userId);
-    if(response.data.role === "ROLE_CUSTOMER"){
-      navigate("/customer");
-    }else if(response.data.role === "ROLE_MANAGER"){
-      navigate("/manager");
-    }else if(response.data.role === "ROLE_ADMIN"){
-      navigate("/admin");
-    }else{
-      alert("Invalid Credentials");
+    try {
+      const body = {
+        email: email,
+        password: password,
+      };
+
+      const response = await axios.post(
+        "http://localhost:8080/bankify/login",
+        body
+      );
+
+      const decodedToken = jwtDecode(response.data.token);
+
+      sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("userId", decodedToken.userId);
+
+      toast.success("Login successful!");
+
+      setTimeout(() => {
+        if (response.data.role === "ROLE_CUSTOMER") {
+          navigate("/customer");
+        } else if (response.data.role === "ROLE_MANAGER") {
+          navigate("/manager");
+        } else if (response.data.role === "ROLE_ADMIN") {
+          navigate("/admin");
+        } else {
+          toast.error("Invalid role assigned");
+        }
+      }, 300);
+    } catch (error) {
+      if (error.response) {
+        toast.error("Invalid credentials");
+      }
     }
-    console.log(response.data);
-  }
-
-
+  };
 
   return (
     <div>
