@@ -14,6 +14,41 @@ import com.bankify.entities.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	Optional<Customer> findByAccountNo(String accountNo);
+	
+    
+//     @Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
+//     long getAdminTotalCustomers();
+    
+//     @Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
+//     double getAdminTotalBankAssets();
+    
+//     @Query("SELECT COALESCE(AVG(c.currentBalance), 0) FROM Customer c")
+//     double getAdminAverageBalance();
+    
+//     @Query("""
+//             SELECT new com.bankify.dto.AdminCustomerListDTO(
+//     		    u.id,
+//                 u.name,
+//                 c.accountNo,
+//                 c.currentBalance,
+//                 u.status,
+//                 u.creationDate,
+//                 MAX(t.transactionTime)
+//             )
+//             FROM Customer c
+//             JOIN c.user u
+//             LEFT JOIN Transaction t ON t.customer = c
+//             GROUP BY
+//     		    u.id,
+//                 u.name,
+//                 c.accountNo,
+//                 c.currentBalance,
+//                 u.status,
+//                 u.creationDate
+//             ORDER BY u.creationDate DESC
+//         """)
+//         List<AdminCustomerListDTO> getAdminCustomerList();
+    
 
 	@Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
 	long getAdminTotalCustomers();

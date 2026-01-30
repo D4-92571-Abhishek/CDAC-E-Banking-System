@@ -20,6 +20,8 @@ public interface ManagerService {
     List<PendingCustomerResponse> getPendingCustomers();
     
 	List<CustomerListResponseDTO> getActiveCustomers();
+	
+	List<CustomerListResponseDTO> getBlockedCustomers();
 
     List<TransactionResponseDTO> getTransactionsByUserId(Long userId);
 
@@ -36,6 +38,8 @@ public interface ManagerService {
     GeneralResponseDTO approveCustomer(Long userId);
 
     GeneralResponseDTO rejectCustomer(Long userId);
+    
+    GeneralResponseDTO unblockCustomer(Long userId);
 
     User createCustomerAsManager(ManagerCreateCustomerDTO dto);
     

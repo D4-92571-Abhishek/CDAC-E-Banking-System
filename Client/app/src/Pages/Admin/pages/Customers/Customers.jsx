@@ -1,26 +1,29 @@
-import  { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios';
 
 const Customers = () => {
 
-    const[responseData, setResponseData] = useState();
-    const[customersListData, setCustomersListData] = useState([]);
+    const [responseData, setResponseData] = useState();
+    const [customersListData, setCustomersListData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [showData, setShowData] = useState();
+    const [status, setStatus] = useState("");
 
     const customersDataInfo = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerInfo',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerInfo', { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } });
         setResponseData(response.data);
     }
 
     const customersList = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerList', { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } });
         setCustomersListData(response.data);
+        setShowData(response.data);
     }
 
-    const onDeactivateCustomer = async (id) => {
+    const onActivateDeactivateCustomer = async (id, status) => {
         try {
             await axios.put(
-                `http://localhost:8080/bankify/admin/adminDeactivateCustomer/${id}`,
-                {},
+                `http://localhost:8080/bankify/admin/adminDeactivateCustomer/${id}/${status}`,{},
                 {
                     headers: {
                         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -41,11 +44,45 @@ const Customers = () => {
     useEffect(() => {
         customersDataInfo();
         customersList();
+
     }, []);
 
-    console.log(customersListData);
+    useEffect(() => {
+        searchCustomers(searchQuery, status);
+    }, [searchQuery, status]);
 
-    
+    // console.log(customersListData);
+
+    // const searchCustomers=(data, status)=>{
+    //     console.log(data)
+    //     console.log(status)
+    //     const filteredData = customersListData.filter((item) =>
+    //         (item.status == status || status == "") &&
+    //         (item.customerName.toLowerCase().includes(data.toLowerCase()) || item.accountNumber.includes(data))
+    //     );
+    //     setShowData(filteredData);
+    // }
+
+    const searchCustomers = (text = "", status = "") => {
+        const query = text.toLowerCase();
+
+        const filteredData = customersListData.filter((item) => {
+            const name = item.customerName?.toLowerCase() || "";
+            const acc = item.accountNumber || "";
+
+            const matchesStatus = !status || item.status === status;
+            const matchesText =
+                name.includes(query) ||
+                acc.includes(text);
+
+            return matchesStatus && matchesText;
+        });
+
+        setShowData(filteredData);
+    };
+
+
+    console.log(showData)
 
     return (
         <div className="w-100"
@@ -105,13 +142,25 @@ const Customers = () => {
                         <p className='text-muted'>View and manage all customer accounts</p>
                     </div>
                     <div className='d-flex px-3 pt-3'>
-                        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                        <input
+                            className="form-control me-2"
+                            type="search"
+                            placeholder="Search by name or account number"
+                            value={searchQuery}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                if (e.target.value.trim() === "") {
+                                    customersList();
+                                } else {
+                                    searchCustomers(e.target.value);
+                                }
+                            }}
+                        />
                         <span>
-                            <select className="form-select" aria-label="Default select example">
-                                <option selected>All Status</option>
-                                <option value="1">Active</option>
-                                <option value="2">Inactive</option>
-                                <option value="3">Suspended</option>
+                            <select className="form-select" style={{ width: "130px" }} aria-label="Default select example" value={status} onChange={(e) => setStatus(e.target.value)}>
+                                <option selected value={""}>All Status</option>
+                                <option value="ACTIVE">Active</option>
+                                <option value="DEACTIVATED">Deactivated</option>
                             </select>
                         </span>
                     </div>
@@ -129,17 +178,19 @@ const Customers = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {customersListData.map((customer, index) => (
-                                    <tr key={index}>
-                                        <td>{customer.customerName}</td>
-                                        <td>{customer.accountNumber}</td>
-                                        <td>{customer.balance}</td>
-                                        <td>{customer.status}</td>
-                                        <td>{customer.joinDate}</td>
-                                        <td>{customer.lastTransactionTime}</td>
-                                        <td><button className="btn btn-danger" onClick={()=>{onDeactivateCustomer(customer.id)}}>Deactivate</button></td>
-                                    </tr>
-                                ))}
+                                {/* {customersListData.map((customer, index) => ( */}
+                                {
+                                    showData?.map((customer, index) => (
+                                        <tr key={index}>
+                                            <td>{customer.customerName}</td>
+                                            <td>{customer.accountNumber}</td>
+                                            <td>{customer.balance}</td>
+                                            <td>{customer.status}</td>
+                                            <td>{customer.joinDate}</td>
+                                            <td>{customer.lastTransactionTime}</td>
+                                            <td>{customer.status === "ACTIVE" ? <button className="btn btn-danger" onClick={() => { onActivateDeactivateCustomer(customer.id, "DEACTIVATED") }}>Deactivate</button> : <button className="btn btn-success" onClick={() => { onActivateDeactivateCustomer(customer.id, "ACTIVE") }}>Activate</button>}</td>
+                                        </tr>
+                                    ))}
                             </tbody>
                         </table>
                     </div>

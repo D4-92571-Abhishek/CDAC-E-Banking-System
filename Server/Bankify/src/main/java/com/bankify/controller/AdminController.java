@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bankify.dto.AdminCreateManagerDTO;
+import com.bankify.entities.Status;
 import com.bankify.service.AdminService;
 
 import lombok.RequiredArgsConstructor;
@@ -96,10 +97,13 @@ public class AdminController {
 		
 	}
 	
-	@PutMapping("/adminDeactivateCustomer/{id}")
-	public ResponseEntity<?> deactivateCustomer(@PathVariable Long id){
+	@PutMapping("/adminDeactivateCustomer/{id}/{status}")
+	public ResponseEntity<?> changeStatus(@PathVariable Long id,@PathVariable String status){
 		
-		return ResponseEntity.ok(adminService.deactivateCustomer(id));
+		
+		
+		return ResponseEntity.ok(adminService.changeStatus(id,Status.valueOf(status.toUpperCase())));
 		
 	}
+	
 }

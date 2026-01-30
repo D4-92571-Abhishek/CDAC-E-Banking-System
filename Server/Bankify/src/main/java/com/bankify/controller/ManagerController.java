@@ -19,6 +19,7 @@ import com.bankify.dto.ManagerCreateCustomerDTO;
 import com.bankify.dto.ManagerHeaderDTO;
 import com.bankify.entities.User;
 import com.bankify.repository.UserRepository;
+import com.bankify.service.CustomerService;
 import com.bankify.service.ManagerService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class ManagerController {
 
     private final ManagerService managerService;
+    private final CustomerService customerService;
 
 
     @GetMapping("/pending")
@@ -41,6 +43,17 @@ public class ManagerController {
     @GetMapping("/active-customers")
     public ResponseEntity<?> getActiveCustomers() {
         return ResponseEntity.ok(managerService.getActiveCustomers());
+    }
+    
+    @GetMapping("/blocked-customers")
+    public ResponseEntity<?> getBlockedCustomers() {
+        return ResponseEntity.ok(managerService.getBlockedCustomers());
+    }
+    
+    @PutMapping("/unblock/{userId}")
+    public ResponseEntity<?> unblockCustomer(@PathVariable Long userId)
+    {
+    	return ResponseEntity.ok(managerService.unblockCustomer(userId));
     }
 
     @PutMapping("/verify-customer/{userId}")
