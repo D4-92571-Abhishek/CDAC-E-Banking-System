@@ -44,6 +44,17 @@ public class ManagerController {
     public ResponseEntity<?> getActiveCustomers() {
         return ResponseEntity.ok(managerService.getActiveCustomers());
     }
+    
+    @GetMapping("/blocked-customers")
+    public ResponseEntity<?> getBlockedCustomers() {
+        return ResponseEntity.ok(managerService.getBlockedCustomers());
+    }
+    
+    @PutMapping("/unblock/{userId}")
+    public ResponseEntity<?> unblockCustomer(@PathVariable Long userId)
+    {
+    	return ResponseEntity.ok(managerService.unblockCustomer(userId));
+    }
 
     @PutMapping("/verify-customer/{userId}")
     public ResponseEntity<?> verifyCustomer(@PathVariable Long userId) {

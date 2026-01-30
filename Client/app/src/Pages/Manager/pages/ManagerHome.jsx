@@ -4,17 +4,24 @@ import Header from "../components/Header";
 
 export default function ManagerHome() {
   return (
-    <div className="d-flex" style={{ minHeight: "100vh" }}>
-      {/* Sidebar - Fixed position */}
+    <>
+      {/* FIXED SIDEBAR */}
       <Sidebar />
 
-      {/* Main Content - Uses remaining space */}
-      <div className="flex-grow-1" style={{ backgroundColor: "#f8f9fa", overflow: "auto" }}>
-        <Header />   {/* manager info + buttons */}
+      {/* MAIN CONTENT */}
+      <div
+        style={{
+          marginLeft: "280px", // 👈 same as sidebar width
+          minHeight: "100vh",
+          backgroundColor: "#f8f9fa",
+        }}
+      >
+        <Header />
+
         <div className="p-4">
-          <Outlet /> {/* pages load here */}
+          <Outlet />
         </div>
       </div>
-    </div>
+    </>
   );
 }

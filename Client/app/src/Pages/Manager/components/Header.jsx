@@ -7,7 +7,7 @@ export default function Header() {
   const [showEdit, setShowEdit] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const userId = sessionStorage.getItem("userId"); // 👈 SAME AS HIS
+  const userId = sessionStorage.getItem("userId");
 
   // edit profile
   const [name, setName] = useState("");
@@ -29,7 +29,6 @@ export default function Header() {
       .catch(() => console.error("Profile load failed"));
   }, []);
 
-  // ===== UPDATE PROFILE =====
   const updateProfile = async () => {
     try {
       await axios.put(`/manager/edit-details/${userId}`, {
@@ -45,7 +44,6 @@ export default function Header() {
     }
   };
 
-  // ===== CHANGE PASSWORD =====
   const changePassword = async () => {
     if (newPassword !== confirmPassword) {
       alert("Passwords do not match");
@@ -54,7 +52,7 @@ export default function Header() {
 
     try {
       await axios.put(`/manager/update-password/${userId}`, {
-        currentPassword: oldPassword, // 👈 backend expects this
+        currentPassword: oldPassword,
         newPassword,
       });
 
@@ -71,69 +69,99 @@ export default function Header() {
   return (
     <>
       {/* HEADER */}
-      <div className="card p-3 mb-3 shadow-sm">
-        <div className="d-flex justify-content-between align-items-center">
-          <div>
-            <h5 className="fw-bold mb-1">Welcome back, {user.name} 👋</h5>
-            <div className="text-muted small d-flex gap-3">
-              <span className="d-flex align-items-center gap-1">
-                <Phone size={14} /> {user.contactNo}
-              </span>
-              <span className="d-flex align-items-center gap-1">
-                <Mail size={14} /> {user.email}
-              </span>
-            </div>
-          </div>
-
-          <div className="d-flex gap-2">
-            <button
-              className="btn btn-outline-primary btn-sm rounded-circle"
-              onClick={() => setShowEdit(true)}
-            >
-              <Edit size={16} />
-            </button>
-
-            <button
-              className="btn btn-outline-warning btn-sm rounded-circle"
-              onClick={() => setShowPassword(true)}
-            >
-              <KeyRound size={16} />
-            </button>
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: "280px", // leave space for sidebar
+          width: "calc(100% - 280px)",
+          height: "70px",
+          backgroundColor: "#2fc65c",
+          color: "#fff",
+          zIndex: 1050,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "0 20px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+        }}
+      >
+        <div>
+          <h5 className="fw-bold mb-0">Welcome back, {user.name} 👋</h5>
+          <div className="d-flex gap-3 align-items-center mt-1">
+            <span className="d-flex align-items-center gap-1">
+              <Phone size={14} /> {user.contactNo}
+            </span>
+            <span className="d-flex align-items-center gap-1">
+              <Mail size={14} /> {user.email}
+            </span>
           </div>
         </div>
+
+        {/* FIXED BUTTONS */}
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-light btn-sm fw-semibold shadow-sm"
+            onClick={() => setShowEdit(true)}
+            style={{ minWidth: "120px" }}
+          >
+            Edit Details
+          </button>
+
+          <button
+            className="btn btn-warning btn-sm fw-semibold shadow-sm"
+            onClick={() => setShowPassword(true)}
+            style={{ minWidth: "140px" }}
+          >
+            Change Password
+          </button>
+        </div>
       </div>
+
+      {/* SPACING BELOW FIXED HEADER */}
+      <div style={{ height: "70px" }} />
 
       {/* EDIT PROFILE MODAL */}
       {showEdit && (
         <div className="modal d-block bg-dark bg-opacity-50">
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5>Edit Profile</h5>
-                <button className="btn-close" onClick={() => setShowEdit(false)} />
+            <div className="modal-content shadow-lg rounded-4">
+              <div className="modal-header bg-primary text-white rounded-top-4">
+                <h5 className="mb-0">Edit Profile</h5>
+                <button
+                  className="btn-close btn-close-white"
+                  onClick={() => setShowEdit(false)}
+                />
               </div>
-
               <div className="modal-body">
-                <input
-                  className="form-control mb-3"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Name"
-                />
-
-                <input
-                  className="form-control"
-                  value={contactNo}
-                  onChange={(e) => setContactNo(e.target.value)}
-                  placeholder="Contact No"
-                />
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Name</label>
+                  <input
+                    className="form-control form-control-lg"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Contact No</label>
+                  <input
+                    className="form-control form-control-lg"
+                    value={contactNo}
+                    onChange={(e) => setContactNo(e.target.value)}
+                  />
+                </div>
               </div>
-
               <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowEdit(false)}>
+                <button
+                  className="btn btn-secondary rounded-pill"
+                  onClick={() => setShowEdit(false)}
+                >
                   Cancel
                 </button>
-                <button className="btn btn-primary" onClick={updateProfile}>
+                <button
+                  className="btn btn-primary rounded-pill"
+                  onClick={updateProfile}
+                >
                   Update
                 </button>
               </div>
@@ -146,43 +174,57 @@ export default function Header() {
       {showPassword && (
         <div className="modal d-block bg-dark bg-opacity-50">
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5>Change Password</h5>
-                <button className="btn-close" onClick={() => setShowPassword(false)} />
+            <div className="modal-content shadow-lg rounded-4">
+              <div className="modal-header bg-warning text-dark rounded-top-4">
+                <h5 className="mb-0">Change Password</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setShowPassword(false)}
+                />
               </div>
-
               <div className="modal-body">
-                <input
-                  type="password"
-                  className="form-control mb-2"
-                  placeholder="Current Password"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                />
-
-                <input
-                  type="password"
-                  className="form-control mb-2"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Confirm New Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Current Password</label>
+                  <input
+                    type="password"
+                    className="form-control form-control-lg"
+                    placeholder="Enter current password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">New Password</label>
+                  <input
+                    type="password"
+                    className="form-control form-control-lg"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Confirm New Password</label>
+                  <input
+                    type="password"
+                    className="form-control form-control-lg"
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
               </div>
-
               <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowPassword(false)}>
+                <button
+                  className="btn btn-secondary rounded-pill"
+                  onClick={() => setShowPassword(false)}
+                >
                   Cancel
                 </button>
-                <button className="btn btn-warning" onClick={changePassword}>
+                <button
+                  className="btn btn-warning rounded-pill"
+                  onClick={changePassword}
+                >
                   Change Password
                 </button>
               </div>

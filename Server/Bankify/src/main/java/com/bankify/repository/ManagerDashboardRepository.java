@@ -9,7 +9,7 @@ import com.bankify.entities.User;
 @Repository
 public interface ManagerDashboardRepository  extends JpaRepository<User, Long> {
     
-    @Query("SELECT COUNT(u) FROM User u WHERE u.status = com.bankify.entities.Status.ACTIVE")
+    @Query("SELECT COUNT(u) FROM User u WHERE u.status = com.bankify.entities.Status.ACTIVE and u.role=com.bankify.entities.Role.ROLE_CUSTOMER")
 	Long getTotalAccounts();
 
     @Query("""

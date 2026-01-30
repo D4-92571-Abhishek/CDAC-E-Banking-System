@@ -93,7 +93,25 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	    	        @Param("status") Status status,
 	    	        @Param("role") Role role
 	    	);
+	    
+	    @Query("""
+	    	    SELECT new com.bankify.dto.CustomerListResponseDTO(
+	    	        u.id,
+	    	        u.name,
+	    	        u.email,
+	    	        u.contactNo
+	    	    )
+	    	    FROM User u
+	    	    WHERE u.status = :status
+	    	      AND u.role = :role
+	    	""")
+	    	List<CustomerListResponseDTO> getBlockedCustomers(
+	    	        @Param("status") Status status,
+	    	        @Param("role") Role role
+	    	);
 
+
+	    
 
 	    
 }
