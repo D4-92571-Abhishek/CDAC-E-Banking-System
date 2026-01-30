@@ -24,3 +24,11 @@ export const approveCustomer = (userId) =>
 // reject customer
 export const rejectCustomer = (userId) =>
   axios.put(`/manager/reject/${userId}`);
+
+// fetch blocked customers
+export const getBlockedCustomers = () =>
+  axios.get("/manager/blocked-customers");
+
+// unblock customer
+export const unblockCustomer = (userId) =>
+  axios.put(`/manager/unblock/${userId}`);

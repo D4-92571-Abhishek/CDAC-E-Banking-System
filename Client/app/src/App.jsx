@@ -30,7 +30,11 @@ import ManagerHome  from "./Pages/Manager/pages/ManagerHome";
 import CreateAccount from './Pages/Manager/pages/CreateAccount';
 import ApproveReject from './Pages/Manager/pages/ApproveReject';
 import Transactions from './Pages/Manager/pages/Transactions';
-import Users from './Pages/Manager/pages/Users';
+import BlockedCustomers from './Pages/Manager/pages/BlockedCustomers';
+import ProtectedRoute from "./Pages/Manager/pages/ProtectedRoute";
+import "react-toastify/dist/ReactToastify.css";
+
+
 import { ToastContainer } from "react-toastify";
 
 
@@ -68,12 +72,16 @@ function App() {
             <Route path="loan" element={<CurrentLoansUI />} />
             <Route path="loandepartment" element={<LoanApplicationUI />} />
           </Route>
+          
+          <Route element={<ProtectedRoute />}>
           <Route path="manager" element={<ManagerHome />}>
             <Route path="" element={<CreateAccount />} />
             <Route path="dashboard" element={<ApproveReject />} />
             <Route path="transactions" element={<Transactions />} />
             
-            <Route path="users" element={<Users />} />
+           <Route path="blocked-customers" element={<BlockedCustomers />} />
+
+          </Route>
           </Route>
         </Routes>
       </BrowserRouter>

@@ -2,6 +2,7 @@ package com.bankify.service;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.User;
 import com.bankify.repository.AddressRepository;
+import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.ManagerDashboardRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
@@ -37,6 +39,9 @@ public class ManagerServiceImpl implements ManagerService {
     private final TransactionRepository transactionRepository;
 	private final PasswordEncoder passwordEncoder;
     private final ManagerDashboardRepository dashboardRepository;
+    private final CustomerRepository customerRepository;
+    private final ModelMapper modelMapper;
+
 
 
 
@@ -57,6 +62,13 @@ public class ManagerServiceImpl implements ManagerService {
         );
     }
 
+    @Override
+    public List<CustomerListResponseDTO> getBlockedCustomers() {
+        return userRepository.getBlockedCustomers(
+                Status.BLOCKED,
+                Role.ROLE_CUSTOMER
+        );
+    }
 
 
 
@@ -110,6 +122,37 @@ public class ManagerServiceImpl implements ManagerService {
 
         return new GeneralResponseDTO("Success", "Customer rejected successfully");
     }
+    
+    @Override
+    public GeneralResponseDTO unblockCustomer(Long userId) {
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // Safety check
+        if (user.getStatus() != Status.BLOCKED) {
+            throw new IllegalStateException("Customer is not blocked");
+        }
+
+        // STEP 1: Move back to review state
+        user.setStatus(Status.DEACTIVATED);
+
+        user.setCustomerVerified(false);
+
+        Address address = addressRepository.findByUserId(userId) // Use a custom method
+            .orElseThrow(() -> new RuntimeException("Address not Found for User ID: " + userId));
+
+        address.setAddressVerified(false);
+
+        
+
+        userRepository.save(user);
+        addressRepository.save(address);
+        
+        return new GeneralResponseDTO("Success", "Customer Account is Unblocked");
+
+    }
+
     
     @Override
     public GeneralResponseDTO editManagerDetails(Long userId, EditManagerDetailsDTO dto) {
@@ -193,35 +236,30 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public User createCustomerAsManager(ManagerCreateCustomerDTO dto) {
-        User user = new User();
-        user.setName(dto.getFirstName() + " " + dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setContactNo(dto.getContactNo());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setDob(dto.getDateOfBirth());
-        user.setStatus(Status.ACTIVE);
-        user.setRole(Role.ROLE_CUSTOMER);
-        user.setCustomerVerified(true);
 
-        Customer customer = new Customer();
-        customer.setAadharNo(dto.getAadharNo());
-        customer.setPanNo(dto.getPanNo());
-        customer.setGender(dto.getGender());
-        customer.setLoanTaken(false);
-        customer.setUser(user);
+    	 User user = modelMapper.map(dto, User.class);
 
-        Address address = new Address();
-        address.setCompleteAddress(dto.getCompleteAddress());
-        address.setCity(dto.getCity());
-        address.setState(dto.getState());
-        address.setPincode(dto.getPincode());
-        address.setAddressVerified(true);
-        address.setUser(user);
+    	    user.setName(dto.getFirstName() + " " + dto.getLastName());
+    	    user.setDob(dto.getDateOfBirth());
+    	    user.setPassword(passwordEncoder.encode(dto.getPassword()));
+    	    user.setStatus(Status.ACTIVE);
+    	    user.setRole(Role.ROLE_CUSTOMER);
+    	    user.setCustomerVerified(true);
 
-        userRepository.save(user);
-        addressRepository.save(address);
 
-        return user;
+    	    Customer customer = modelMapper.map(dto, Customer.class);
+    	    customer.setLoanTaken(false);
+    	    customer.setUser(user);
+
+    	    Address address = modelMapper.map(dto, Address.class);
+    	    address.setAddressVerified(true);
+    	    address.setUser(user);
+
+    	    userRepository.save(user);
+    	    customerRepository.save(customer);
+    	    addressRepository.save(address);
+
+    	    return user;
     }
 }
 
