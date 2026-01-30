@@ -122,7 +122,11 @@ export default function DashboardLayout() {
   };
 
   useEffect(() => {
-    fetchData();
+    if(sessionStorage.getItem("token")===null||sessionStorage.getItem("token")===""){
+      navigate("/");
+    } else {
+      fetchData();
+    }
   }, []);
 
   const logoutHandler = () => {

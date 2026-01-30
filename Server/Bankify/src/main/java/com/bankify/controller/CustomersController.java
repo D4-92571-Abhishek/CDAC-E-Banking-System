@@ -72,6 +72,7 @@ public class CustomersController {
 	
 	@PostMapping("/loan/request-new-loan/{userId}")
 	public ResponseEntity<?> requestNewLoan(@PathVariable Long userId,@RequestBody LoanRequestDTO loanRequestDTO){
+		System.out.println(loanRequestDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(customerService.requestForLoan(userId,loanRequestDTO));
 	}
 	
@@ -98,6 +99,11 @@ public class CustomersController {
 	@GetMapping("/get-transaction-details/{userId}")
 	public ResponseEntity<?> getTransactionDetails(@PathVariable Long userId){
 		return ResponseEntity.ok(customerService.getCustomerAccountDetails(userId));
+	}
+	
+	@GetMapping("/get-account-nos/{userId}")
+	public ResponseEntity<?> getCustomerAccountNo(@PathVariable Long userId){
+		return ResponseEntity.ok(customerService.getAccountNo(userId));
 	}
 	
 	

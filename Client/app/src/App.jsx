@@ -24,7 +24,6 @@ import TransactionHistory from "./Pages/Customer/components/TransactionHistory/T
 import ReceivePayment from "./Pages/Customer/components/ReceivePayment/ReceivePayment";
 import FundTransferUI from "./Pages/Customer/components/FundTransfer/FundTransfer";
 import CurrentLoansUI from "./Pages/Customer/components/LoanHistory/LoanPage";
-import LoanApplicationUI from "./Pages/Customer/components/ApplyForLoan/ApplyForLoan";
 import NavBar from "./Pages/Customer/components/NavBar/NavBar";
 import ManagerHome  from "./Pages/Manager/pages/ManagerHome";
 import CreateAccount from './Pages/Manager/pages/CreateAccount';
@@ -66,7 +65,6 @@ function App() {
             <Route path="payment" element={<ReceivePayment />} />
             <Route path="fund-transfer" element={<FundTransferUI />} />
             <Route path="loan" element={<CurrentLoansUI />} />
-            <Route path="loandepartment" element={<LoanApplicationUI />} />
           </Route>
           <Route path="manager" element={<ManagerHome />}>
             <Route path="" element={<CreateAccount />} />

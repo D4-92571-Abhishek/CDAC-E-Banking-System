@@ -162,7 +162,7 @@ public class AdminServiceImpl implements AdminService {
 		
 		userRepository.save(user);
 		
-		return new GeneralResponseDTO("Success","Manager created with ID : "+user.getId());
+		return new GeneralResponseDTO("Success","Admin created with ID : "+user.getId());
 		
 	}
 
