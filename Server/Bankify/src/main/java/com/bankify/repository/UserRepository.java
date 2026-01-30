@@ -50,10 +50,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	    @Modifying
 	    @Query("""
 	    		Update User u
-	    		SET u.status='DEACTIVATED'
+	    		SET u.status=:status
 	    		WHERE u.id=:id
 	    		""")
-		int deactivateCustomer(@Param("id") Long id);
+		int changeCustomerStatus(@Param("id") Long id,@Param("status") Status status);
 	    
 	    @Query("""
 	    	    SELECT new com.bankify.dto.PendingCustomerResponse(

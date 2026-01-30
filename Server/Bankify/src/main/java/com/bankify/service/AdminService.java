@@ -2,8 +2,6 @@ package com.bankify.service;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-
 import com.bankify.dto.AdminCreateManagerDTO;
 import com.bankify.dto.AdminCustomerInfoDTO;
 import com.bankify.dto.AdminCustomerListDTO;
@@ -12,6 +10,7 @@ import com.bankify.dto.AdminLoanInfoDTO;
 import com.bankify.dto.AdminLoanListDTO;
 import com.bankify.dto.AdminManagerListDTO;
 import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.entities.Status;
 
 public interface AdminService {
 	
@@ -35,5 +34,5 @@ public interface AdminService {
 
 	GeneralResponseDTO deactivateManager(Long employeeId);
 
-	GeneralResponseDTO deactivateCustomer(Long id);
+	GeneralResponseDTO changeStatus(Long id,Status status);
 }

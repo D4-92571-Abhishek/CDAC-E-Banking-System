@@ -176,9 +176,9 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public GeneralResponseDTO deactivateCustomer(Long id) {
+	public GeneralResponseDTO changeStatus(Long id,Status status) {
 
-		userRepository.deactivateCustomer(id);
+		userRepository.changeCustomerStatus(id,status);
 		
 		return null;
 	}

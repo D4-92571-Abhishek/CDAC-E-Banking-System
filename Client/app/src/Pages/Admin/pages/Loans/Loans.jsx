@@ -91,7 +91,7 @@ const Loans = () => {
                       <p className='fs-4 fw-bold mt-2 mb-0'>Loan Accounts</p>
                       <p className='text-muted'>View and manage all customer loan accounts</p>
                   </div>
-                  <div className='d-flex px-3 pt-3'>
+                  {/* <div className='d-flex px-3 pt-3'>
                       <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
                       <span>
                           <select className="form-select" aria-label="Default select example">
@@ -102,7 +102,7 @@ const Loans = () => {
                               <option value="3">Paid Off</option>
                           </select>
                       </span>
-                  </div>
+                  </div> */}
                   <div className='px-3'>
                       <table className="table table-hover border border-grey mt-3">
                           <thead>
