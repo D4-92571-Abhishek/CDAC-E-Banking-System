@@ -2,8 +2,10 @@ package com.bankify.service;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 
+import com.bankify.dto.CustomerAccountDetailsDTO;
 import com.bankify.dto.CustomerDashboardResponseDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.CustomerListResponseDTO;
@@ -16,14 +18,20 @@ import com.bankify.dto.GetCustomerAccountDetailsDTO;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.dto.LoanRequestDTO;
 import com.bankify.dto.TransactionResponseDTO;
+import com.bankify.entities.Address;
+import com.bankify.entities.Customer;
 import com.bankify.entities.Transaction;
+import com.bankify.entities.User;
 
 public interface CustomerService {
     GeneralResponseDTO signUp(CustomerSignupRequest request);
     
+    GeneralResponseDTO signUp(User user,Customer customer,Address address);
+    
     List<CustomerListResponseDTO> getActiveCustomers();
 
 	CustomerDashboardResponseDTO getCustomerDetailsById(Long userId);
+	
 
 
 	Page<TransactionResponseDTO> getCustomerTransactions(Long userId);
@@ -45,5 +53,7 @@ public interface CustomerService {
 	GetCustomerAccountDetailsDTO getCustomerAccountDetails(Long userId);
 	
 	DisplayCustomerDetailsDTO getCustomerDetails(Long userId);
+
+    CustomerAccountDetailsDTO getAccountNo(Long userId);
 }
 

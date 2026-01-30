@@ -9,6 +9,7 @@ export default function DashboardUI() {
   const [cust, setCust] = useState();
   const [showBalance, setShowBalance] = useState(true);
   const [transDetails, setTransDetails] = useState();
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -34,6 +35,9 @@ export default function DashboardUI() {
   };
 
   useEffect(() => {
+    if(sessionStorage.getItem("token")===null||sessionStorage.getItem("token")===""){
+      navigate("/");
+    }
     fetchData();
     fetchTransData();
   }, []);

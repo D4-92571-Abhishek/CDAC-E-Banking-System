@@ -37,6 +37,7 @@ public class ManagerServiceImpl implements ManagerService {
     private final TransactionRepository transactionRepository;
 	private final PasswordEncoder passwordEncoder;
     private final ManagerDashboardRepository dashboardRepository;
+    private final CustomerService customerService;
 
 
 
@@ -218,8 +219,7 @@ public class ManagerServiceImpl implements ManagerService {
         address.setAddressVerified(true);
         address.setUser(user);
 
-        userRepository.save(user);
-        addressRepository.save(address);
+        customerService.signUp(user,customer,address);
 
         return user;
     }

@@ -41,7 +41,7 @@ public class Customer extends Base {
 	private String accountNo;
 	
 	@Column(name="current_balance",nullable = false)
-	private double currentBalance = 0.0;
+	private double currentBalance = 1000.0;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id",nullable = false)
 

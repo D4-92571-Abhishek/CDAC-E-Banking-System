@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.bankify.dto.CustomerAccountDetailsDTO;
 import com.bankify.dto.CustomerDashboardResponseDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.CustomerListResponseDTO;
@@ -28,15 +29,19 @@ import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Address;
 import com.bankify.entities.Customer;
 import com.bankify.entities.Loan;
+import com.bankify.entities.LoanDetails;
 import com.bankify.entities.LoanStatus;
 import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.Transaction;
+import com.bankify.entities.TransactionHistory;
 import com.bankify.entities.TransactionType;
 import com.bankify.entities.User;
 import com.bankify.repository.AddressRepository;
 import com.bankify.repository.CustomerRepository;
+import com.bankify.repository.LoanDetailsRepository;
 import com.bankify.repository.LoanRepository;
+import com.bankify.repository.TransactionHistoryRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
 
@@ -50,11 +55,13 @@ public class CustomerServiceImpl implements CustomerService {
 
 	private final CustomerRepository customerRepository;
 	private final TransactionRepository transactionRepository;
+	private final TransactionHistoryRepository transactionHistoryRepository;
 	private final UserRepository userRepository;
 	private final AddressRepository addressRepository;
 	private final LoanRepository loanRepository;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
+	private final LoanDetailsRepository loanDetailsRepository;
 
 	public static String generateAccountNumber() {
 		Random random = new Random();
@@ -88,6 +95,21 @@ public class CustomerServiceImpl implements CustomerService {
 		userRepository.save(user);
 		customerRepository.save(cust);
 		addressRepository.save(custAddress);
+		
+		if(user.getId() == 0) throw new RuntimeException();
+		
+		return new GeneralResponseDTO("Success","Customer Account Created Successfully");
+	}
+	public GeneralResponseDTO signUp(User user,Customer customer,Address address) {
+
+		
+		
+
+		customer.setAccountNo(generateAccountNumber());
+		
+		userRepository.save(user);
+		customerRepository.save(customer);
+		addressRepository.save(address);
 		
 		if(user.getId() == 0) throw new RuntimeException();
 		
@@ -158,7 +180,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 		Customer sender = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 		Customer reciever = customerRepository.findByAccountNo(fundDetails.getDestinationAccountNo())
-				.orElseThrow(() -> new RuntimeException());
+				.orElseThrow(() -> new RuntimeException("Reciever Account No is not valid..."));
 		if (sender.getCurrentBalance() < fundDetails.getAmount()) {
 			throw new RuntimeException("Insufficient Balance");
 		}
@@ -181,7 +203,29 @@ public class CustomerServiceImpl implements CustomerService {
 		r.setTransactionTime(LocalDateTime.now());
 		r.setCustomer(reciever);
 		r.setTransactionType(TransactionType.CREDITED);
-
+		
+		
+		TransactionHistory sen = new TransactionHistory();
+		TransactionHistory rec  = new TransactionHistory();
+		
+		sen.setAmount(fundDetails.getAmount());
+		rec.setAmount(fundDetails.getAmount());
+		
+		sen.setCustomer(sender);
+		rec.setCustomer(reciever);
+		
+		sen.setRecieverAccountNo(fundDetails.getDestinationAccountNo());
+		rec.setRecieverAccountNo(fundDetails.getSelfAccountNo());
+		
+		sen.setSenderAccountNo(fundDetails.getSelfAccountNo());
+		rec.setSenderAccountNo(fundDetails.getDestinationAccountNo());
+		
+		sen.setTransactionType(TransactionType.DEBITED);
+		rec.setTransactionType(TransactionType.CREDITED);
+		
+		transactionHistoryRepository.save(sen);
+		transactionHistoryRepository.save(rec);
+		
 		transactionRepository.save(t);
 		transactionRepository.save(r);
 		return new GeneralResponseDTO("Success", "Funds Transfer Successfully");
@@ -221,11 +265,26 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public GeneralResponseDTO requestForLoan(Long userId, LoanRequestDTO loanRequestDTO) {
+		
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 		Loan newLoanRequest = modelMapper.map(loanRequestDTO, Loan.class);
+		
+		System.out.println(newLoanRequest);
 		newLoanRequest.setLoanStatus(LoanStatus.PENDING);
 		newLoanRequest.setCustomer(cust);
+		
+		LoanDetails details = new LoanDetails();
+		
 		loanRepository.save(newLoanRequest);
+		details.setEmi(getMonthlyPayment(newLoanRequest.getAmount(), newLoanRequest.getInterest(), loanRequestDTO.getLoanTenureYears()));
+		details.setLoan(newLoanRequest);
+		details.setCustomer(cust);
+		details.setInterest(loanRequestDTO.getInterest());
+		details.setPaidMonths(0);
+		details.setPrinciple(loanRequestDTO.getAmount());
+		
+		loanDetailsRepository.save(details);
+		
 
 		return new GeneralResponseDTO("Success", "Loan Request Submitted Successfully");
 	}
@@ -233,26 +292,24 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<LoanDetailsResponseDTO> getAllLoanDetails(Long userId) {
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
-		if(cust.isLoanTaken()==true) {
+		
 		List<LoanDetailsResponseDTO> responseList = customerRepository.getLoanDetailsByCustomer(cust.getId());
 		return responseList;
-		}
-		else return new ArrayList<LoanDetailsResponseDTO>();
 	}
 
-	public double getMonthlyPayment(double loanAmount, double interest, int tenureYears) {
+	public double getMonthlyPayment(double loanAmount, double interest, double tenureYears) {
 		double monthlyRate = interest / 1200;
-		int months = tenureYears * 12;
+		double months = tenureYears * 12;
 
 		return (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
 	}
 
-	public double calculateRemainingAmount(double emi, int tenureYears, int paidMonths, double interestRate,
+	public double calculateRemainingAmount(double emi, double tenureYears, int paidMonths, double interestRate,
 			double principal) {
 
 		double monthlyRate = interestRate / 1200;
 		double remaining = principal;
-		int totalMonths = tenureYears * 12;
+		double totalMonths = tenureYears * 12;
 
 		for (int month = 1; month <= paidMonths && month <= totalMonths; month++) {
 			double interest = remaining * monthlyRate;
@@ -339,6 +396,19 @@ public class CustomerServiceImpl implements CustomerService {
 
 		return response;
 
+	}
+
+	@Override
+	public CustomerAccountDetailsDTO getAccountNo(Long userId) {
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException("Invalid User"));
+		
+		List<String> accountNo = new ArrayList<>(); 
+		CustomerAccountDetailsDTO custDetails = new CustomerAccountDetailsDTO();
+		accountNo.add(cust.getAccountNo());
+		custDetails.setUserId(userId);
+		custDetails.setAccountNos(accountNo);
+		
+		return custDetails;
 	}
 
 }

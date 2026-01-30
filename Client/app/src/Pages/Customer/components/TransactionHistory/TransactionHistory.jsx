@@ -19,12 +19,13 @@ export default function TransactionHistory() {
           },
         },
       );
-      setTransactionHistory(data.data);
+      setTransactionHistory(data.data.content);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
+  console.log(transData)
   const fetchTransData = async () => {
     try {
       const data = await axios.get(
