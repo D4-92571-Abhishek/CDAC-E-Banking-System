@@ -1,0 +1,68 @@
+
+using Serilog;
+using Serilog.Events;
+
+
+namespace BankifyLogger
+{
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var builder = WebApplication.CreateBuilder(args);
+
+			Log.Logger = new LoggerConfiguration()
+							 .MinimumLevel.Information()
+							 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+					         .MinimumLevel.Override("System", LogEventLevel.Warning)
+	                         .WriteTo.File("logs/bankify-.txt",rollingInterval: RollingInterval.Day,outputTemplate: "{Message}{NewLine}")
+							 .CreateLogger();
+
+			builder.Host.UseSerilog();
+
+			// Add services to the container.
+
+			builder.Services.AddControllers();
+
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("ReactPolicy", policy =>
+				{
+					/*					policy.WithOrigins("http://localhost:5173")
+					*/
+					policy.WithOrigins()
+						  .AllowAnyHeader()
+						  .AllowAnyMethod();
+				});
+			});
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+		/*	builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddSwaggerGen();
+
+			builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+				.AddNegotiate();*/
+
+		/*	builder.Services.AddAuthorization(options =>
+			{
+				// By default, all incoming requests will be authorized according to the default policy.
+				options.FallbackPolicy = options.DefaultPolicy;
+			});*/
+
+			var app = builder.Build();
+
+			// Configure the HTTP request pipeline.
+			/*if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+			}*/
+
+			/*app.UseAuthorization();*/
+			app.UseCors("ReactPolicy");
+
+			app.MapControllers();
+
+			app.Run();
+		}
+	}
+}

@@ -15,6 +15,8 @@ const Managers = () => {
         dob: "",
         phone: ""
     });
+    const [searchQuery, setSearchQuery] = useState("");
+    const [showData, setShowData] = useState();
 
     const managersDataInfo = async () => {
         const response = await axios.get('http://localhost:8080/bankify/admin/adminActiveManagers',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
@@ -24,6 +26,7 @@ const Managers = () => {
     const managersList = async () => {
         const response = await axios.get('http://localhost:8080/bankify/admin/adminManagerList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
         setManagersListData(response.data);
+        setShowData(response.data);
     }
 
     const handleChange = (e) => {
@@ -97,10 +100,42 @@ const Managers = () => {
         }
     };
 
+//    const searchManagers = (text = "") => {
+//         const query = text.toLowerCase();
+
+//         const filteredData = managersListData.filter((item) =>
+//             item.name.toLowerCase().includes(query) ||
+//             item.employeeId.includes(text)
+//         );
+//         setShowData(filteredData);
+//     };
+
+    const searchManagers = (text = "") => {
+        const query = text.toLowerCase();
+
+        const filteredData = managersListData.filter((item) => {
+            const name = (item.managerName || "").toLowerCase();
+            const empId = String(item.employeeId || ""); 
+
+            return (
+                name.includes(query) ||
+                empId.includes(text)
+            );
+        });
+
+        setShowData(filteredData);
+    };
+
+
+
     useEffect(() => {
         managersDataInfo();
         managersList();
     }, []);
+
+    useEffect(() => {
+        searchManagers(searchQuery);
+    }, [searchQuery]);
 
     console.log(managersListData);
 
@@ -188,7 +223,20 @@ const Managers = () => {
                       <p className='text-muted'>View and manage all Bank Manager Profiles</p>
                   </div>
                   <div className='d-flex px-3 pt-3'>
-                      <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                      <input
+                          className="form-control me-2"
+                          type="search"
+                          placeholder="Search by Manager Name or Employee ID"
+                          value={searchQuery}
+                          onChange={(e) => {
+                              setSearchQuery(e.target.value);
+                              if (e.target.value.trim() === "") {
+                                  managersList();
+                              } else {
+                                  searchManagers(e.target.value);
+                              }
+                          }}
+                      />
                   </div>
                   <div className='px-3'>
                       <table className="table table-hover border border-grey mt-3">
@@ -201,7 +249,8 @@ const Managers = () => {
                               </tr>
                           </thead>
                           <tbody>
-                              {managersListData.map((manager,index) => (
+                              {/* {managersListData.map((manager,index) => ( */}
+                                {showData?.map((manager, index) => (
                                   <tr key={index}>
                                       <td>{manager.managerName}</td>
                                       <td>{manager.employeeId}</td>

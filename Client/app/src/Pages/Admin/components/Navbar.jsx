@@ -62,12 +62,19 @@
 
 // export default Navbar;
 
-import React from "react";
+import React, { useEffect } from "react";
 import bankIcon from "../../../images/bank-account.png";
 import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+  }, []);
 
   const handleLogout = () => {
     sessionStorage.removeItem("token");
