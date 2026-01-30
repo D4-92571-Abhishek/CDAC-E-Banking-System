@@ -1,7 +1,12 @@
 package com.bankify.entities;
 
-import java.time.LocalDate;
-
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,13 +17,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-
-
-public class TransactionHistory {
+@Entity
+@AttributeOverride(name="id",column = @Column(name="transaction_id"))
+public class TransactionHistory extends Base{
+	@Column(name="sender_account_no")
 	private String senderAccountNo;
+	@Column(name="reciever_account_no")
 	private String recieverAccountNo;
 	private double amount;
-	private LocalDate time;
+	@Column(name="transaction_type")
+	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
+	
+	@ManyToOne
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
 }
