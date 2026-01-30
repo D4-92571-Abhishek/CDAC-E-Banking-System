@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+ import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../../images/bank-account.png";
 import axios from "../../../services/axios";
 import {
@@ -84,12 +84,12 @@ export default function Sidebar() {
       </ul>
 
       {/* Logout Button */}
-      <button className="btn btn-outline-dark mt-auto d-flex align-items-center gap-2"
+      <button className="btn btn-outline-danger mt-auto d-flex align-items justify-content-center gap-2"
       style={{
     position: "fixed",
     bottom: "20px",
-    left: "80px",
-    width: "100px",
+    left: "20px",
+    width: "220px",
     zIndex: 1000
   }}
 

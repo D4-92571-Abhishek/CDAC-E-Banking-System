@@ -1,6 +1,9 @@
 package com.bankify.service;
 
 import java.time.LocalDateTime;
+
+import com.bankify.custom_exceptions.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -71,6 +74,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public GeneralResponseDTO signUp(CustomerSignupRequest req) {
+
 
 		User user = modelMapper.map(req, User.class);
 		user.setPassword(passwordEncoder.encode(req.getPassword()));

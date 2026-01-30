@@ -1,16 +1,14 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { getDashboardStats } from "../../../services/dashboard";
-import { Services } from './../../Public/Services';
 
-export default function StatsCards() {
+function StatsCards() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
     getDashboardStats().then((res) => setStats(res.data));
   }, []);
 
-  if (!stats) return <p>Loading stats...</p>;
+  if (!stats) return null; // prevents loading flash
 
   return (
     <div className="row mb-4">
@@ -40,3 +38,7 @@ export default function StatsCards() {
     </div>
   );
 }
+
+export default memo(StatsCards);
+
+

@@ -1,195 +1,285 @@
-import { Phone, Mail, Edit, KeyRound } from "lucide-react";
+import { Bell, Settings, CircleUser } from "lucide-react";
 import { useEffect, useState } from "react";
-import axios from "../../../services/axios";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "./Header.css";
 
 export default function Header() {
   const [user, setUser] = useState({});
-  const [showEdit, setShowEdit] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const userId = sessionStorage.getItem("userId"); // 👈 SAME AS HIS
-
-  // edit profile
-  const [name, setName] = useState("");
-  const [contactNo, setContactNo] = useState("");
-
-  // password
-  const [oldPassword, setOldPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  useEffect(() => {
-    axios
-      .get("/manager/me")
-      .then((res) => {
-        setUser(res.data);
-        setName(res.data.name);
-        setContactNo(res.data.contactNo);
-      })
-      .catch(() => console.error("Profile load failed"));
-  }, []);
+  const userId = sessionStorage.getItem("userId");
+  const token = sessionStorage.getItem("token");
 
-  // ===== UPDATE PROFILE =====
-  const updateProfile = async () => {
+  /* ================= LOAD PROFILE ================= */
+  const loadProfile = async () => {
     try {
-      await axios.put(`/manager/edit-details/${userId}`, {
-        name,
-        contactNo,
-      });
-
-      setUser({ ...user, name, contactNo });
-      setShowEdit(false);
-      alert("Profile updated successfully");
-    } catch (err) {
-      alert("Update failed");
+      const res = await axios.get(
+        "http://localhost:8080/bankify/manager/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setUser(res.data);
+    } catch {
+      toast.error("Profile load failed");
     }
   };
 
-  // ===== CHANGE PASSWORD =====
-  const changePassword = async () => {
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  /* ================= EDIT PROFILE ================= */
+  const editManagerDetails = async () => {
+    try {
+      const body = {
+        name: user.name,
+        contactNo: user.contactNo,
+      };
+
+      const res = await axios.put(
+        `http://localhost:8080/bankify/manager/edit-details/${userId}`,
+        body,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.status === "Success") {
+        toast.success("Profile updated successfully!");
+
+        // Close modal
+        const modal = document.getElementById("editProfileModal");
+        if (modal) {
+          const closeBtn = modal.querySelector(".btn-close");
+          if (closeBtn) closeBtn.click();
+        }
+
+        // Refresh profile
+        loadProfile();
+      }
+    } catch {
+      toast.error("Failed to update profile");
+    }
+  };
+
+  /* ================= UPDATE PASSWORD ================= */
+  const updatePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.warn("All fields are required");
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
-      alert("Passwords do not match");
+      toast.warn("Passwords do not match");
       return;
     }
 
     try {
-      await axios.put(`/manager/update-password/${userId}`, {
-        currentPassword: oldPassword, // 👈 backend expects this
-        newPassword,
-      });
+      const res = await axios.put(
+        `http://localhost:8080/bankify/manager/update-password/${userId}`,
+        { currentPassword, newPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      alert("Password changed successfully");
-      setShowPassword(false);
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (err) {
-      alert("Password change failed");
+      if (res.data.status === "Success") {
+        toast.success("Password updated successfully");
+
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+
+        const modal = document.getElementById("changePasswordModal");
+        if (modal) {
+          const closeBtn = modal.querySelector(".btn-close");
+          if (closeBtn) closeBtn.click();
+        }
+      }
+    } catch {
+      toast.error("Password update failed");
     }
   };
 
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <>
-      {/* HEADER */}
-      <div className="card p-3 mb-3 shadow-sm">
-        <div className="d-flex justify-content-between align-items-center">
-          <div>
-            <h5 className="fw-bold mb-1">Welcome back, {user.name} 👋</h5>
-            <div className="text-muted small d-flex gap-3">
-              <span className="d-flex align-items-center gap-1">
-                <Phone size={14} /> {user.contactNo}
-              </span>
-              <span className="d-flex align-items-center gap-1">
-                <Mail size={14} /> {user.email}
-              </span>
+      {/* ================= HEADER ================= */}
+      <div className="dashboard-header">
+        <div className="header-left">
+          <h5 className="mb-1 fw-semibold">Welcome back, {user?.name}</h5>
+          <small>{today}</small>
+        </div>
+
+        <div className="header-right">
+          <button className="icon-btn">
+            <Bell size={20} />
+          </button>
+
+          <button
+            className="icon-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#editProfileModal"
+          >
+            <Settings size={20} />
+          </button>
+
+          <button
+            className="icon-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#viewProfileModal"
+          >
+            <CircleUser size={20} />
+          </button>
+        </div>
+      </div>
+
+      <div className="content-offset" />
+
+      {/* ================= VIEW PROFILE ================= */}
+      <div className="modal fade" id="viewProfileModal">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header gradient-header">
+              <h5 className="text-white mb-0">Profile</h5>
+              <button
+                className="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              />
             </div>
-          </div>
 
-          <div className="d-flex gap-2">
-            <button
-              className="btn btn-outline-primary btn-sm rounded-circle"
-              onClick={() => setShowEdit(true)}
-            >
-              <Edit size={16} />
-            </button>
+            <div className="modal-body">
+              <p><strong>Name:</strong> {user?.name}</p>
+              <p><strong>Email:</strong> {user?.email}</p>
+              <p><strong>Contact:</strong> {user?.contactNo}</p>
+            </div>
 
-            <button
-              className="btn btn-outline-warning btn-sm rounded-circle"
-              onClick={() => setShowPassword(true)}
-            >
-              <KeyRound size={16} />
-            </button>
+            <div className="modal-footer">
+              <button
+                className="btn btn-gradient"
+                data-bs-dismiss="modal"
+                data-bs-toggle="modal"
+                data-bs-target="#changePasswordModal"
+              >
+                Change Password
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* EDIT PROFILE MODAL */}
-      {showEdit && (
-        <div className="modal d-block bg-dark bg-opacity-50">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5>Edit Profile</h5>
-                <button className="btn-close" onClick={() => setShowEdit(false)} />
-              </div>
+      {/* ================= EDIT PROFILE ================= */}
+      <div className="modal fade" id="editProfileModal">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header gradient-header">
+              <h5 className="text-white mb-0">Edit Profile</h5>
+              <button
+                className="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              />
+            </div>
 
-              <div className="modal-body">
-                <input
-                  className="form-control mb-3"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Name"
-                />
+            <div className="modal-body">
+              <input
+                type="text"
+                className="form-control mb-2"
+                value={user.name || ""}
+                placeholder="Name"
+                onChange={(e) =>
+                  setUser({ ...user, name: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                className="form-control"
+                value={user.contactNo || ""}
+                placeholder="Contact Number"
+                onChange={(e) =>
+                  setUser({ ...user, contactNo: e.target.value })
+                }
+              />
+            </div>
 
-                <input
-                  className="form-control"
-                  value={contactNo}
-                  onChange={(e) => setContactNo(e.target.value)}
-                  placeholder="Contact No"
-                />
-              </div>
-
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowEdit(false)}>
-                  Cancel
-                </button>
-                <button className="btn btn-primary" onClick={updateProfile}>
-                  Update
-                </button>
-              </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-gradient"
+                onClick={editManagerDetails}
+              >
+                Save Changes
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* CHANGE PASSWORD MODAL */}
-      {showPassword && (
-        <div className="modal d-block bg-dark bg-opacity-50">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5>Change Password</h5>
-                <button className="btn-close" onClick={() => setShowPassword(false)} />
-              </div>
+      {/* ================= CHANGE PASSWORD ================= */}
+      <div className="modal fade" id="changePasswordModal">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header gradient-header">
+              <h5 className="text-white mb-0">Change Password</h5>
+              <button
+                className="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              />
+            </div>
 
-              <div className="modal-body">
-                <input
-                  type="password"
-                  className="form-control mb-2"
-                  placeholder="Current Password"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                />
+            <div className="modal-body">
+              <input
+                type="password"
+                className="form-control mb-2"
+                placeholder="Current Password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              <input
+                type="password"
+                className="form-control mb-2"
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
 
-                <input
-                  type="password"
-                  className="form-control mb-2"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Confirm New Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowPassword(false)}>
-                  Cancel
-                </button>
-                <button className="btn btn-warning" onClick={changePassword}>
-                  Change Password
-                </button>
-              </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-gradient"
+                onClick={updatePassword}
+              >
+                Update Password
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

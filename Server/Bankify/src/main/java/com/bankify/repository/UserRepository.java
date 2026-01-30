@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	    @Query("SELECT COUNT(u) FROM User u WHERE u.role='ROLE_MANAGER' AND u.status='ACTIVE'")
 	    long getAdminActiveManagers();
-	
+
 	    @Query("""
 	            SELECT new com.bankify.dto.AdminManagerListDTO(
 	                u.name,

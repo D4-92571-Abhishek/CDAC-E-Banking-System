@@ -21,6 +21,7 @@ import com.bankify.entities.User;
 import com.bankify.repository.UserRepository;
 import com.bankify.service.ManagerService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 

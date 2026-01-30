@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-//import Header from "../components/Header";
-import StatsCards from "../components/StatsCards";
+import "./ApproveReject.css";
+import { CheckCircle, XCircle, UserCheck, Home } from "lucide-react";
+import { toast } from "react-toastify";
 import {
   getPendingCustomers,
   verifyCustomer,
@@ -19,7 +20,7 @@ export default function ApproveReject() {
       const res = await getPendingCustomers();
       setCustomers(res.data);
     } catch (err) {
-      alert("Failed to load customers");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -29,123 +30,153 @@ export default function ApproveReject() {
     loadPendingCustomers();
   }, []);
 
-  const handleVerifyCustomer = async (id) => {
-    await verifyCustomer(id);
-    alert("Customer verified");
-    loadPendingCustomers();
-  };
-
-  const handleVerifyAddress = async (id) => {
-    await verifyAddress(id);
-    alert("Address verified");
-    loadPendingCustomers();
-  };
-
-  const handleApprove = async (id) => {
-    await approveCustomer(id);
-    alert("Customer approved");
-    loadPendingCustomers();
-  };
-
-  const handleReject = async (id) => {
-    await rejectCustomer(id);
-    alert("Customer rejected");
-    loadPendingCustomers();
-  };
-
   return (
-    <div className="content">
+    <div>
       <h5>Dashboard Overview</h5>
-      <StatsCards />
 
-      <div className="card p-4 mt-4">
-        <h6>Account Approval & Rejection</h6>
+      <div className="mt-4 mb-4">
+        <h2 className="fw-bold text-dark mb-2">Customer Approvals</h2>
+        <p className="text-muted">Verify KYC and approve or reject customers</p>
+      </div>
 
-        {loading && <p>Loading...</p>}
-
-        <table className="table mt-3">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Mobile</th>
-              <th>Customer KYC</th>
-              <th>Address</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {customers.map((user) => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.contactNo}</td>
-
-                <td>
-                  {user.customerVerified ? (
-                    <span className="badge bg-success">Verified</span>
-                  ) : (
-                    <button
-                      className="btn btn-sm btn-warning"
-                      onClick={() => handleVerifyCustomer(user.id)}
-                    >
-                      Verify
-                    </button>
-                  )}
-                </td>
-
-                <td>
-                  {user.addressVerified ? (
-                    <span className="badge bg-success">Verified</span>
-                  ) : (
-                    <button
-                      className="btn btn-sm btn-warning"
-                      onClick={() => handleVerifyAddress(user.id)}
-                    >
-                      Verify
-                    </button>
-                  )}
-                </td>
-
-                <td>
-                  <button
-                    className="btn btn-sm btn-success me-2"
-                    disabled={!user.customerVerified || !user.addressVerified}
-                    onClick={() => handleApprove(user.id)}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleReject(user.id)}
-                  >
-                    Reject
-                  </button>
-                </td>
-
-    
-              </tr>
-            ))}
-
-            {customers.length === 0 && !loading && (
+      <div className="card border-0 shadow-sm rounded-3 overflow-hidden mt-4">
+        <div className="table-responsive">
+          <table className="table mb-0">
+            <thead style={{ backgroundColor: "rgba(102, 126, 234, 0.05)" }}>
               <tr>
-                <td colSpan="6" className="text-center">
-                  No pending customers
-                </td>
+                <th className="border-0 py-4 px-4 fw-semibold">Name</th>
+                <th className="border-0 py-4 px-4 fw-semibold">Email</th>
+                <th className="border-0 py-4 px-4 fw-semibold">Mobile</th>
+                <th className="border-0 py-4 px-4 fw-semibold">Customer KYC</th>
+                <th className="border-0 py-4 px-4 fw-semibold">Address</th>
+                <th className="border-0 py-4 px-4 fw-semibold text-center">
+                  Action
+                </th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {loading && (
+                <tr>
+                  <td colSpan="6" className="py-5 text-center text-muted">
+                    Loading pending customers...
+                  </td>
+                </tr>
+              )}
+
+              {!loading && customers.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="py-5 text-center text-muted">
+                    No pending customers
+                  </td>
+                </tr>
+              )}
+
+              {customers.map((user) => (
+                <tr key={user.id} className="border-bottom hover-row">
+                  <td className="py-4 px-4 fw-semibold">{user.name}</td>
+                  <td className="py-4 px-4 text-muted">{user.email}</td>
+                  <td className="py-4 px-4">{user.contactNo}</td>
+
+                  {/* Customer Verified */}
+                  <td className="py-4 px-4">
+                    {user.customerVerified ? (
+                      <span
+                        className="badge text-success"
+                        style={{ backgroundColor: "rgba(40,167,69,0.1)" }}
+                      >
+                        <UserCheck size={14} className="me-1" />
+                        Verified
+                      </span>
+                    ) : (
+                      <button
+                        className="btn btn-sm btn-outline-primary rounded-2"
+                        onClick={async () => {
+                          try {
+                            await verifyCustomer(user.id);
+                            toast.success("Customer verified successfully ✅");
+                            loadPendingCustomers();
+                          } catch {
+                            toast.error("Failed to verify customer");
+                          }
+                        }}
+                      >
+                        Verify
+                      </button>
+                    )}
+                  </td>
+
+                  {/* Address Verified */}
+                  <td className="py-4 px-4">
+                    {user.addressVerified ? (
+                      <span
+                        className="badge text-success"
+                        style={{ backgroundColor: "rgba(40,167,69,0.1)" }}
+                      >
+                        <Home size={14} className="me-1" />
+                        Verified
+                      </span>
+                    ) : (
+                      <button
+                        className="btn btn-sm btn-outline-primary rounded-2"
+                        onClick={async () => {
+                          try {
+                            await verifyAddress(user.id);
+                            toast.success("Address verified successfully 🏠");
+                            loadPendingCustomers();
+                          } catch {
+                            toast.error("Failed to verify address");
+                          }
+                        }}
+                      >
+                        Verify
+                      </button>
+                    )}
+                  </td>
+
+                  {/* Approve / Reject */}
+                  <td className="py-4 px-4 text-center">
+                    <button
+                      className="btn btn-sm btn-success me-2 rounded-2"
+                      disabled={
+                        !user.customerVerified || !user.addressVerified
+                      }
+                      onClick={async () => {
+                        try {
+                          await approveCustomer(user.id);
+                          toast.success("Customer approved successfully 🎉");
+                          loadPendingCustomers();
+                        } catch {
+                          toast.error("Failed to approve customer");
+                        }
+                      }}
+                    >
+                      <CheckCircle size={14} className="me-1" />
+                      Approve
+                    </button>
+
+                    <button
+                      className="btn btn-sm btn-danger rounded-2"
+                      onClick={async () => {
+                        try {
+                          await rejectCustomer(user.id);
+                          toast.success("Customer rejected ❌");
+                          loadPendingCustomers();
+                        } catch {
+                          toast.error("Failed to reject customer");
+                        }
+                      }}
+                    >
+                      <XCircle size={14} className="me-1" />
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 }
-
-
-/*
-      <td>
-                  CV: {String(user.customerVerified)} <br />
-                  AV: {String(user.addressVerified)}
-                </td>
-*/

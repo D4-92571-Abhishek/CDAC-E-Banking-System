@@ -15,6 +15,7 @@ import com.bankify.dto.LoanRequestDTO;
 import com.bankify.dto.CustomerSignupRequest;
 import com.bankify.dto.EditCustomerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
+import com.bankify.dto.LoanRequestDTO;
 import com.bankify.service.CustomerService;
 
 import jakarta.servlet.http.HttpServletRequest;

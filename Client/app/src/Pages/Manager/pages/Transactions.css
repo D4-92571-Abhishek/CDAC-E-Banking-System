@@ -1,0 +1,15 @@
+.bg-success-subtle {
+  background-color: #e8f9ef !important;
+}
+
+.bg-danger-subtle {
+  background-color: #fdecea !important;
+}
+
+.btn {
+  padding: 6px 12px;
+}
+
+table td {
+  vertical-align: middle;
+}

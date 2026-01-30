@@ -15,6 +15,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	Optional<Customer> findByAccountNo(String accountNo);
 	
+//	 List<Customer> findByBalanceLessThan(Double amount);
+	List<Customer> findByCurrentBalanceLessThan(double amount);
+
     
     @Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
     long getAdminTotalCustomers();
@@ -50,6 +53,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
         """)
         List<AdminCustomerListDTO> getAdminCustomerList();
     
+
 
 //    @Query("""
 //    		SELECT new com.bankify.dto.LoanDetailsResponseDTO(l.loanType,l.interest,(ld.principle-(ld.paidMonths * ld.emi)),ld.emi,l.loanStatus)  FROM LoanDetails ld join ld.loan l WHERE ld.customer.id = :custId

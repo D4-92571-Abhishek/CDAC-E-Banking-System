@@ -1,8 +1,22 @@
-import { useState } from "react";
-import StatsCards from "../components/StatsCards";
+import React, { useState } from "react";
+import {
+  UserPlus,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  MapPin,
+  FileText,
+  CheckCircle,
+} from "lucide-react";
 import api from "../../../services/axios";
+import { toast } from "react-toastify";
+import "./CreateAccount.css";
 
-export default function CreateAccount() {
+export default function CreateAccountUI() {
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -20,117 +34,202 @@ export default function CreateAccount() {
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    let { name, value } = e.target;
+
+    if (name === "panNo") value = value.toUpperCase();
+    if (["aadharNo", "contactNo", "pincode"].includes(name)) {
+      value = value.replace(/\D/g, "");
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
+  /* ================= VALIDATIONS ================= */
+  const validateForm = () => {
+    const {
+      firstName,
+      lastName,
+      email,
+      contactNo,
+      password,
+      dateOfBirth,
+      gender,
+      aadharNo,
+      panNo,
+      completeAddress,
+      city,
+      state,
+      pincode,
+    } = formData;
+
+    if (!firstName.trim()) return toast.error("First name is required"), false;
+    if (!lastName.trim()) return toast.error("Last name is required"), false;
+
+    if (!email.trim()) return toast.error("Email is required"), false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return toast.error("Invalid email format"), false;
+
+    if (!contactNo.trim())
+      return toast.error("Contact number is required"), false;
+    if (!/^[0-9]{10}$/.test(contactNo))
+      return toast.error("Contact number must be 10 digits"), false;
+
+    if (!password) return toast.error("Password is required"), false;
+    if (password.length < 6)
+      return toast.error("Password must be at least 6 characters"), false;
+
+    if (!dateOfBirth)
+      return toast.error("Date of birth is required"), false;
+    if (new Date(dateOfBirth) >= new Date())
+      return toast.error("Date of birth must be in the past"), false;
+
+    if (!gender) return toast.error("Please select gender"), false;
+
+    if (!aadharNo.trim())
+      return toast.error("Aadhar number is required"), false;
+    if (!/^[0-9]{12}$/.test(aadharNo))
+      return toast.error("Aadhar number must be 12 digits"), false;
+
+    if (!panNo.trim()) return toast.error("PAN number is required"), false;
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(panNo))
+      return toast.error("Invalid PAN format (ABCDE1234F)"), false;
+
+    if (!completeAddress.trim())
+      return toast.error("Complete address is required"), false;
+    if (!city.trim()) return toast.error("City is required"), false;
+    if (!state.trim()) return toast.error("State is required"), false;
+
+    if (!pincode.trim())
+      return toast.error("Pincode is required"), false;
+    if (!/^[0-9]{6}$/.test(pincode))
+      return toast.error("Pincode must be 6 digits"), false;
+
+    return true;
+  };
+
+  /* ================= SUBMIT ================= */
   const handleSubmit = async () => {
+    if (!validateForm()) return;
+
+    setLoading(true);
+
     try {
       await api.post("/manager/create-customer", formData);
-      alert("Customer account created successfully!");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to create customer account");
+      toast.success("Customer account created successfully 🎉");
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+    } catch (err) {
+      // ✅ UNIVERSAL ERROR HANDLING (VERY IMPORTANT)
+      const message =
+        err?.response?.data?.message || // normal backend JSON
+        err?.response?.data ||          // plain string response
+        err?.data?.message ||           // axios interceptor case
+        err?.message ||                 // JS error
+        "Failed to create customer account";
+
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (submitted) {
+    return (
+      <div className="container-fluid">
+        <div
+          className="d-flex align-items-center justify-content-center"
+          style={{ minHeight: "400px" }}
+        >
+          <div className="text-center">
+            <div className="success-circle">
+              <CheckCircle size={48} className="text-white" />
+            </div>
+            <h4 className="fw-bold mt-3">Account Created</h4>
+            <p className="text-muted">
+              Customer account created successfully
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="content">
-      <h5 className="mb-3">Dashboard Overview</h5>
-      <StatsCards />
+    <div className="container-fluid">
+      <div className="mb-4 mt-4">
+        <h4 className="fw-bold">Create Customer Account</h4>
+        <p className="text-muted">
+          Enter customer details to create a new account
+        </p>
+      </div>
 
-      <div className="card p-4 mt-3">
-        <h5 className="mb-1">Create New Account</h5>
-        <small className="text-muted">Create a new customer account with complete KYC</small>
-        <hr className="my-3" />
+      <div className="card border-0 rounded-3 p-5 shadow-sm">
+        <h6 className="fw-bold mb-4">
+          <UserPlus size={18} className="me-2" />
+          Customer Information
+        </h6>
 
-        {/* Personal Information */}
-        <h6 className="mb-3">Personal Information</h6>
-        <div className="row g-3 mb-4">
-          <div className="col-md-4">
-            <label className="form-label">First Name</label>
-            <input className="form-control" name="firstName" onChange={handleChange} />
-          </div>
-
-          <div className="col-md-4">
-            <label className="form-label">Last Name</label>
-            <input className="form-control" name="lastName" onChange={handleChange} />
-          </div>
-
-          <div className="col-md-4">
-            <label className="form-label">Date of Birth</label>
-            <input type="date" className="form-control" name="dateOfBirth" onChange={handleChange} />
-          </div>
-
-          <div className="col-md-4">
-            <label className="form-label">Gender</label>
-            <select className="form-select" name="gender" onChange={handleChange}>
-              <option value="">Select Gender</option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-            </select>
-          </div>
-
-          <div className="col-md-4">
-            <label className="form-label">Mobile Number</label>
-            <input className="form-control" name="contactNo" onChange={handleChange} />
-          </div>
-
-          <div className="col-md-4">
-            <label className="form-label">Password</label>
-            <input type="password" className="form-control" name="password" onChange={handleChange} />
-          </div>
-        </div>
-
-        {/* Contact & Identity */}
-        <h6 className="mb-3">Contact & Identity</h6>
-        <div className="row g-3 mb-4">
-          <div className="col-md-4">
-            <label className="form-label">Email</label>
-            <input type="email" className="form-control" name="email" onChange={handleChange} />
-          </div>
-          <div className="col-md-4">
-            <label className="form-label">Aadhar Number</label>
-            <input className="form-control" name="aadharNo" onChange={handleChange} />
-          </div>
-          <div className="col-md-4">
-            <label className="form-label">PAN Number</label>
-            <input className="form-control" name="panNo" onChange={handleChange} />
-          </div>
-        </div>
-
-        {/* Address */}
-        <h6 className="mb-3">Address</h6>
         <div className="row g-3">
-          <div className="col-12">
-            <label className="form-label">Complete Address</label>
-            <input className="form-control" name="completeAddress" onChange={handleChange} />
-          </div>
+          <Input icon={<User size={16} />} label="First Name" name="firstName" onChange={handleChange} />
+          <Input icon={<User size={16} />} label="Last Name" name="lastName" onChange={handleChange} />
+          <Input type="date" label="Date of Birth" name="dateOfBirth" onChange={handleChange} />
+          <Select label="Gender" name="gender" onChange={handleChange} />
+          <Input icon={<Phone size={16} />} label="Mobile Number" name="contactNo" onChange={handleChange} />
+          <Input icon={<Lock size={16} />} type="password" label="Password" name="password" onChange={handleChange} />
 
-          <div className="col-md-4">
-            <label className="form-label">City</label>
-            <input className="form-control" name="city" onChange={handleChange} />
-          </div>
+          <Input icon={<Mail size={16} />} type="email" label="Email" name="email" onChange={handleChange} />
+          <Input icon={<FileText size={16} />} label="Aadhar Number" name="aadharNo" onChange={handleChange} />
+          <Input icon={<FileText size={16} />} label="PAN Number" name="panNo" onChange={handleChange} />
 
-          <div className="col-md-4">
-            <label className="form-label">State</label>
-            <input className="form-control" name="state" onChange={handleChange} />
-          </div>
-
-          <div className="col-md-4">
-            <label className="form-label">Pin Code</label>
-            <input className="form-control" name="pincode" onChange={handleChange} />
-          </div>
+          <Input icon={<MapPin size={16} />} label="Complete Address" name="completeAddress" onChange={handleChange} />
+          <Input label="City" name="city" onChange={handleChange} />
+          <Input label="State" name="state" onChange={handleChange} />
+          <Input label="Pin Code" name="pincode" onChange={handleChange} />
         </div>
 
-        <div className="mt-4 text-end">
-          <button className="btn btn-dark" onClick={handleSubmit}>
-            Create Account
+        <div className="mt-4">
+          <button
+            className="btn btn-primary w-100 py-3 fw-semibold gradient-btn"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            <UserPlus size={18} className="me-2" />
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
         </div>
       </div>
     </div>
   );
 }
+
+/* ========== Reusable Inputs ========== */
+
+const Input = ({ label, icon, type = "text", name, onChange }) => (
+  <div className="col-md-4">
+    <label className="form-label fw-semibold">
+      {icon && <span className="me-2">{icon}</span>}
+      {label}
+    </label>
+    <input
+      type={type}
+      name={name}
+      className="form-control rounded-2"
+      onChange={onChange}
+    />
+  </div>
+);
+
+const Select = ({ label, name, onChange }) => (
+  <div className="col-md-4">
+    <label className="form-label fw-semibold">{label}</label>
+    <select
+      name={name}
+      className="form-select rounded-2"
+      onChange={onChange}
+    >
+      <option value="">Select</option>
+      <option value="MALE">Male</option>
+      <option value="FEMALE">Female</option>
+    </select>
+  </div>
+);

@@ -2,7 +2,7 @@
 <section name="Workbench">
 	<section name="MavenProjectImportWizardPage">
 		<list key="rootDirectory">
-			<item value="F:\DATA\CDAC Submission\Project\Updated GitFiced Issue\CDAC-E-Banking-System\Server"/>
+			<item value="C:\CDAC_PROJECT\CDAC-E-Banking-System\Server\Bankify"/>
 		</list>
 		<list key="projectNameTemplate">
 			<item value="[artifactId]"/>
