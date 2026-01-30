@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoanApplicationUI from "../ApplyForLoan/ApplyForLoan";
 import "./LoanPage.css";
+import { toast } from "react-toastify";
 import {
   CreditCard,
   TrendingDown,
@@ -21,21 +22,70 @@ export default function CurrentLoansUI() {
   const [tenure, setTenure] = useState(0);
   const [loanType, setLoanType] = useState("");
 
+
+  const navigate = useNavigate();
+
   const applyForLoan = async () => {
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+    if (!token || !userId) {
+      toast.warn("Authentication missing — please log in again.");
+      return;
+    }
+
     const body = {
-      amount: amount,
-      interest: interest,
-      loanTenureYears: calculateTenureYears(tenure),
+      amount: Number(amount) || 0,
+      interest: Number(interest) || 0,
+      loanTenureYears: calculateTenureYears(Number(tenure) || 0),
       loanType: loanType,
     };
-    const response = await axios.post(
-      `http://localhost:8080/bankify/customers/loan/request-new-loan/${sessionStorage.getItem("userId")}`,
-      body,
-      {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      },
-    );
-    console.log(response);
+
+    try {
+      console.log("Submitting loan request", body);
+      const response = await axios.post(
+        `http://localhost:8080/bankify/customers/loan/request-new-loan/${userId}`,
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      console.log("Loan response:", response?.status, response?.data);
+      if (response?.data?.status === "Success") {
+        toast.success("Loan application submitted");
+        // close modal by clicking its close button (no bootstrap global required)
+        const modal = document.getElementById("applyforLoanModal");
+        if (modal) {
+          const closeBtn = modal.querySelector('.btn-close');
+          if (closeBtn) closeBtn.click();
+        }
+        // refresh loans
+        fetchAllLoans();
+      } else {
+        toast.error(response?.data?.message || "Loan request failed");
+      }
+    } catch (err) {
+      console.error("applyForLoan error:", err);
+      if (err.response) {
+        // Server returned a response (403, 400, etc.)
+        const status = err.response.status;
+        const data = err.response.data;
+        console.error("Server response:", status, data);
+        if (status === 403) {
+          toast.error(data?.message || "Forbidden: you don't have permission to apply for a loan.");
+        } else {
+          toast.error(data?.message || `Request failed: ${status}`);
+        }
+      } else if (err.request) {
+        // No response received
+        toast.error("No response from server — check network or server logs.");
+      } else {
+        toast.error("Error: " + err.message);
+      }
+    }
   };
 
   const calculateTenureYears = (months) => {
@@ -60,6 +110,9 @@ export default function CurrentLoansUI() {
 
   React.useEffect(() => {
     fetchAllLoans();
+    if(sessionStorage.getItem("token")===null||sessionStorage.getItem("token")===""){
+      navigate("/");
+    }
   }, []);
 
   console.log(allLoans);
@@ -308,98 +361,93 @@ export default function CurrentLoansUI() {
                 ></button>
               </div>
               <div className="modal-body p-4">
-                <form className="d-flex flex-column gap-3">
-                  <div>
-                    <label className="form-label fw-semibold mb-2">
-                      Loan Type
-                    </label>
-                    <select
-                      className="form-select rounded-2"
-                      style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
-                      onChange={(e)=>setLoanType(e.target.value)}
-                    >
-                      <option>Select loan type</option>
-                      <option value="Personal">Personal Loan</option>
-                      <option value="Home">Home Loan</option>
-                      <option value="Education">Education Loan</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="form-label fw-semibold mb-2">
+                    Loan Type
+                  </label>
+                  <select
+                    className="form-select rounded-2"
+                    style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
+                    onChange={(e) => setLoanType(e.target.value)}
+                  >
+                    <option>Select loan type</option>
+                    <option value="PERSONAL">Personal Loan</option>
+                    <option value="HOME">Home Loan</option>
+                    <option value="STUDENT">Education Loan</option>
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="form-label fw-semibold mb-2">
-                      Loan Amount (₹)
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control rounded-2"
-                      placeholder="Enter amount in ₹"
-                      onChange={(e)=>setAmount(e.target.value)}
-                      style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
-                    />
-                    <small className="text-muted">
-                      Between ₹10,000 - ₹50,00,000
-                    </small>
-                  </div>
-                  <div>
-                    <label className="form-label fw-semibold mb-2">
-                      Loan Interest (%)
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control rounded-2"
-                      placeholder="Enter interest rate in %"
-                      onChange={(e)=>setInterest(e.target.value)}
-                      style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
-                    />
-                    <small className="text-muted">
-                      Between 5% - 25%
-                    </small>
-                  </div>
+                <div>
+                  <label className="form-label fw-semibold mb-2">
+                    Loan Amount (₹)
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control rounded-2"
+                    placeholder="Enter amount in ₹"
+                    onChange={(e) => setAmount(e.target.value)}
+                    style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
+                  />
+                  <small className="text-muted">
+                    Between ₹10,000 - ₹50,00,000
+                  </small>
+                </div>
+                <div>
+                  <label className="form-label fw-semibold mb-2">
+                    Loan Interest (%)
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control rounded-2"
+                    placeholder="Enter interest rate in %"
+                    onChange={(e) => setInterest(e.target.value)}
+                    style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
+                  />
+                  <small className="text-muted">Between 5% - 25%</small>
+                </div>
 
-                  <div>
-                    <label className="form-label fw-semibold mb-2">
-                      Loan Tenure (months)
-                    </label>
-                    <select
-                      className="form-select rounded-2"
-                      onChange={(e) => setTenure(e.target.value)}
-                      style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
-                    >
-                      <option>Select tenure</option>
-                      <option value="6">6 months</option>
-                      <option value="12">12 months</option>
-                      <option value="24">24 months</option>
-                      <option value="36">36 months</option>
-                      <option value="48">48 months</option>
-                      <option value="60">60 months</option>
-                    </select>
-                  </div>
-                  <div className="d-flex gap-2 mt-3">
-                    <button
-                      type="submit"
-                      className="btn btn-primary flex-fill rounded-2 fw-semibold"
-                      onClick={applyForLoan}
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                        border: "none",
-                        textAlign: "center",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      Submit Application
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary flex-fill rounded-2 fw-semibold"
-                      data-bs-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
+                <div>
+                  <label className="form-label fw-semibold mb-2">
+                    Loan Tenure (months)
+                  </label>
+                  <select
+                    className="form-select rounded-2"
+                    onChange={(e) => setTenure(e.target.value)}
+                    style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
+                  >
+                    <option>Select tenure</option>
+                    <option value="12">12 months</option>
+                    <option value="24">24 months</option>
+                    <option value="36">36 months</option>
+                    <option value="48">48 months</option>
+                    <option value="60">60 months</option>
+                  </select>
+                </div>
+                <div className="d-flex gap-2 mt-3">
+                  <button
+                    type="button"
+                    className="btn btn-primary flex-fill rounded-2 fw-semibold"
+                    onClick={applyForLoan}
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      border: "none",
+                      textAlign: "center",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    Submit Application
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary flex-fill rounded-2 fw-semibold"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>

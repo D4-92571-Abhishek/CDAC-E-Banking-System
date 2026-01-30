@@ -7,6 +7,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -28,15 +29,15 @@ public class LoanDetails extends Base {
 	private double emi;
 	@Column(nullable = false)
 	private int paidMonths =0;
-	@Column(name="start_date",nullable = false)
+	@Column(name="start_date")
 	private LocalDate startDate = LocalDate.now();
-	@Column(name="end_date",nullable = false)
+	@Column(name="end_date")
 	private LocalDate endDate;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "loan_id")
 	private Loan loan;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="customer_id")
 	private Customer customer;
 }
