@@ -1,42 +1,43 @@
 import React, { useEffect, useState } from "react";
 import "./TransactionHistory.css";
 import { ArrowDownLeft, ArrowUpRight, Calendar, Search } from "lucide-react";
-import axios from "axios";
-import Transactions from "./../../../Manager/pages/Transactions";
+import { fetchTransactionSanpleData,fetchTransactionHistory} from "../../Service/apiCall";
 
 export default function TransactionHistory() {
-  const [filterType, setFilterType] = useState("all");
 
   const [transactionHistory, setTransactionHistory] = useState([]);
   const [transData, setTransData] = useState({});
 
   const fetchTransHistoryData = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/transactions/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/transactions/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const data = await fetchTransactionHistory();
+
       setTransactionHistory(data.data.content);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  console.log(transData);
+  // console.log(transData);
   const fetchTransData = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/get-transaction-details/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/get-transaction-details/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const data = await fetchTransactionSanpleData();
       setTransData(data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -48,8 +49,8 @@ export default function TransactionHistory() {
     fetchTransData();
   }, []);
 
-  console.log(transactionHistory);
-  console.log(transData);
+  // console.log(transactionHistory);
+  // console.log(transData);
 
   
 

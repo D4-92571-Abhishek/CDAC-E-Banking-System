@@ -11,9 +11,8 @@ import {
   Settings,
 } from "lucide-react";
 import {  useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { customerDetails,customerDetailsEdit } from "../../Service/apiCall";
+import { customerDetails,customerDetailsEdit,updatePasswordApi  } from "../../Service/apiCall";
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -45,13 +44,15 @@ export default function DashboardLayout() {
       newPassword: newPassword,
     };
 
-    const responseData = await axios.put(
-      `http://localhost:8080/bankify/customers/update-password/${sessionStorage.getItem("userId")}`,
-      body,
-      {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      },
-    );
+    // const responseData = await axios.put(
+    //   `http://localhost:8080/bankify/customers/update-password/${sessionStorage.getItem("userId")}`,
+    //   body,
+    //   {
+    //     headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+    //   },
+    // );
+
+    const responseData = await updatePasswordApi(body);
 
    
 
@@ -72,7 +73,7 @@ export default function DashboardLayout() {
         bsModal.hide();
       }
     }
-    console.log(responseData);
+    // console.log(responseData);
   };
 
    const editDetails = async () => {
@@ -150,7 +151,7 @@ export default function DashboardLayout() {
     }
   }, [responseData]);
 
-  console.log(responseData);
+  // console.log(responseData);
 
   const today = new Date();
   const dateStr = today.toLocaleDateString("en-US", {

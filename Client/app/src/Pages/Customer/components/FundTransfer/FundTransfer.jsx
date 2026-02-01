@@ -9,9 +9,15 @@ import {
   FileText,
   CheckCircle,
 } from "lucide-react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import {
+  customerAccountDetails,
+  customerSendOtp,
+  customerValidateOtpApi,
+  fetchTransferHistoryDebited,
+  cancelFundstransferApi
+} from "../../Service/apiCall";
 
 export default function FundTransferUI() {
   const [activeTab, setActiveTab] = useState("new");
@@ -34,14 +40,17 @@ export default function FundTransferUI() {
 
   const fetchAccountNos = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/get-account-nos/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/get-account-nos/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+
+      const data = await customerAccountDetails();
+
       setAccountNo(data.data);
     } catch (error) {
       console.log("Error fetching data:", error);
@@ -55,89 +64,91 @@ export default function FundTransferUI() {
       message: message,
     };
 
-    console.log(body);
-    const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/send-otp/${sessionStorage.getItem("userId")}`, body,{
-      headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
-    });
+    // console.log(body);
+    // const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/send-otp/${sessionStorage.getItem("userId")}`, body,{
+    //   headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
+    // });
+
+    const response = await customerSendOtp(body);
 
     const data = await response.data;
-    if(data.status!=="Success"){
+    if (data.status !== "Success") {
       toast.error("Transfer Failed! Please try again.");
       return;
-    }
-    else{
+    } else {
       setOtpResult(data);
       setShowOtpModal(true);
     }
     return;
   };
   const handleTransferFunds = async () => {
-    try{
-    const body = {
-      selfAccountNo: selfAccountNo,
-      destinationAccountNo: destinationAccountNo,
-      amount: amount,
-      message: message,
-      transactionId: otpResult.transId,
-      otpId: otpResult.otpId,
-      inputOTP: currentInputOtp,
-      cancelTransaction: "FALSE"
-    };
+    try {
+      const body = {
+        selfAccountNo: selfAccountNo,
+        destinationAccountNo: destinationAccountNo,
+        amount: amount,
+        message: message,
+        transactionId: otpResult.transId,
+        otpId: otpResult.otpId,
+        inputOTP: currentInputOtp,
+        cancelTransaction: "FALSE",
+      };
 
-    console.log(body);
-    
-    const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/validate-otp/${sessionStorage.getItem("userId")}`, body,{
-      headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
-    });
+      // console.log(body);
 
-    const data = await response.data;
-    if(data.status!=="Success"){
-      toast.error("Transfer Failed! Please try again.");
-      
+      // const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/validate-otp/${sessionStorage.getItem("userId")}`, body,{
+      //   headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
+      // });
+      const response = await customerValidateOtpApi(body);
+      const data = await response.data;
+      if (data.status !== "Success") {
+        toast.error("Transfer Failed! Please try again.");
+
+        return;
+      } else {
+        setShowOtpModal(false);
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 3000);
+        // Reset form
+        setSelfAccountNo("");
+        setDestinationAccountNo("");
+        setAmount("");
+        setMessage("");
+        setCurrentInputOtp("");
+        toast.success("Transfer successful!");
+      }
+      fetchTransferHistory();
       return;
-    }
-    else{
+    } catch (error) {
+      console.error("Error during fund transfer:", error);
+      toast.error(
+        error.response?.data?.message || "Transfer Failed! Please try again.",
+      );
       setShowOtpModal(false);
-      setSubmitted(true);
-      setTimeout(() => {
-      setSubmitted(false);
-    }, 3000);
-      // Reset form
-      setSelfAccountNo("");
-      setDestinationAccountNo("");
-      setAmount("");
-      setMessage("");
-      setCurrentInputOtp("");
-      toast.success("Transfer successful!");
     }
-    fetchTransferHistory()
-    return;
-  } catch (error) {
-    console.error("Error during fund transfer:", error);
-    toast.error(error.response?.data?.message || "Transfer Failed! Please try again.");
-    setShowOtpModal(false);
-  }
   };
-
 
   // console.log(accountNo)
 
   const fetchTransferHistory = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/transaction-history-debited/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/transaction-history-debited/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const data = await fetchTransferHistoryDebited();
       setTransferHistory(data.data);
     } catch (error) {
       console.log("Error fetching data:", error);
     }
   };
-   const cancelTransferFunds = async () => {
+  const cancelTransferFunds = async () => {
     const body = {
       selfAccountNo: selfAccountNo,
       destinationAccountNo: destinationAccountNo,
@@ -146,23 +157,24 @@ export default function FundTransferUI() {
       transactionId: otpResult.transId,
       otpId: otpResult.otpId,
       inputOTP: currentInputOtp,
-      cancelTransaction: "TRUE"
+      cancelTransaction: "TRUE",
     };
 
-    console.log(body);
-    const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/validate-otp/${sessionStorage.getItem("userId")}`, body,{
-      headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
-    });
+    // console.log(body);
+    // const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/validate-otp/${sessionStorage.getItem("userId")}`, body,{
+    //   headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
+    // });
+
+    const response = await cancelFundstransferApi(body);
 
     const data = await response.data;
-    if(data.status!=="Success"){
+    if (data.status !== "Success") {
       toast.error("Transfer Failed! Please try again.");
       return;
-    }
-    else{
+    } else {
       setShowOtpModal(false);
       setSubmitted(false);
-   
+
       // Reset form
       setSelfAccountNo("");
       setDestinationAccountNo("");
@@ -170,22 +182,22 @@ export default function FundTransferUI() {
       setMessage("");
       setCurrentInputOtp("");
       toast.success("Transfer Cancelled successfully!");
-      fetchTransferHistory()
+      fetchTransferHistory();
     }
     return;
   };
 
-
-
-
   useEffect(() => {
     fetchTransferHistory();
     fetchAccountNos();
-    if(sessionStorage.getItem("token")===null||sessionStorage.getItem("token")===""){
+    if (
+      sessionStorage.getItem("token") === null ||
+      sessionStorage.getItem("token") === ""
+    ) {
       navigate("/");
     }
   }, []);
-  console.log(transferHistory)
+  // console.log(transferHistory);
 
   if (submitted) {
     setTimeout(() => {
@@ -218,7 +230,7 @@ export default function FundTransferUI() {
     );
   }
 
-  console.log(currentInputOtp)
+  // console.log(currentInputOtp);
   // OTP Modal Component
   const OtpModal = () => {
     return (
@@ -246,8 +258,6 @@ export default function FundTransferUI() {
             display: showOtpModal ? "block" : "none",
           }}
         >
-
-
           {/* Modal Header */}
           <div className="text-center mb-4">
             <div
@@ -291,7 +301,11 @@ export default function FundTransferUI() {
               className="form-control"
               placeholder="Enter 6-digit OTP"
               value={currentInputOtp || ""}
-              onChange={(e) => setCurrentInputOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              onChange={(e) =>
+                setCurrentInputOtp(
+                  e.target.value.replace(/\D/g, "").slice(0, 6),
+                )
+              }
               maxLength="6"
               inputMode="numeric"
               style={{
@@ -338,7 +352,6 @@ export default function FundTransferUI() {
               </button>
             </div>
           </div>
-
         </div>
       </>
     );
@@ -473,7 +486,7 @@ export default function FundTransferUI() {
                   name="toAccount"
                   className="form-control rounded-2"
                   placeholder="Enter destination account number"
-                  value={destinationAccountNo}
+                  value={destinationAccountNo||""}
                   onChange={(e) => setDestinationAccountNo(e.target.value)}
                   style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
                   required
@@ -495,7 +508,7 @@ export default function FundTransferUI() {
                   name="amount"
                   className="form-control rounded-2"
                   placeholder="Enter amount"
-                  value={amount}
+                  value={amount||""}
                   onChange={(e) => setAmount(e.target.value)}
                   style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
                   required
@@ -517,7 +530,7 @@ export default function FundTransferUI() {
                   name="memo"
                   className="form-control rounded-2"
                   placeholder="Enter transfer description"
-                  value={message}
+                  value={message||""}
                   onChange={(e) => setMessage(e.target.value)}
                   style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
                 />

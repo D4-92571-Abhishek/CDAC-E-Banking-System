@@ -12,7 +12,8 @@ import {
   Clock,
   XCircle,
 } from "lucide-react";
-import axios from "axios";
+
+import {requestNewLoanApi,fetchAllLoansApi} from "../../Service/apiCall";
 
 export default function CurrentLoansUI() {
   const [allLoans, setAllLoans] = useState();
@@ -21,6 +22,8 @@ export default function CurrentLoansUI() {
   const [interest, setInterest] = useState(0);
   const [tenure, setTenure] = useState(0);
   const [loanType, setLoanType] = useState("");
+
+  let id=0;
 
 
   const navigate = useNavigate();
@@ -42,18 +45,19 @@ export default function CurrentLoansUI() {
 
     try {
       console.log("Submitting loan request", body);
-      const response = await axios.post(
-        `http://localhost:8080/bankify/customers/loan/request-new-loan/${userId}`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      // const response = await axios.post(
+      //   `http://localhost:8080/bankify/customers/loan/request-new-loan/${userId}`,
+      //   body,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //       "Content-Type": "application/json",
+      //     },
+      //   },
+      // );
+      const response = await requestNewLoanApi(body);
 
-      console.log("Loan response:", response?.status, response?.data);
+      // console.log("Loan response:", response?.status, response?.data);
       if (response?.data?.status === "Success") {
         toast.success("Loan application submitted");
         // close modal by clicking its close button (no bootstrap global required)
@@ -94,14 +98,17 @@ export default function CurrentLoansUI() {
 
   const fetchAllLoans = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/loan/all-loans/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/loan/all-loans/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+
+      const data = await fetchAllLoansApi();
+      // console.log(data)
       setAllLoans(data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -115,7 +122,7 @@ export default function CurrentLoansUI() {
     }
   }, []);
 
-  console.log(allLoans);
+  // console.log(allLoans);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -291,7 +298,7 @@ export default function CurrentLoansUI() {
               <tbody>
                 {allLoans?.map((loan) => (
                   <tr
-                    key={loan.id}
+                    key={++id}
                     style={{ borderBottom: "1px solid #e9ecef" }}
                   >
                     <td className="py-4 px-4">
