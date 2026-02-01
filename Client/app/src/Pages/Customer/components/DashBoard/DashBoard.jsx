@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./DashBoard.css";
 import axios from "axios";
 import { Eye, EyeOff, CreditCard, TrendingUp, Send, ArrowDownLeft, ArrowUpRight, MoreVertical, Wallet } from "lucide-react";
+import { useRef } from 'react';
+import { sendLog } from "../../../../services/loggerService";
 import { fetchTransactionSanpleData,fetchCustomerSampleDetails } from "../../Service/apiCall";
 
 export default function DashboardUI() {
@@ -11,6 +13,14 @@ export default function DashboardUI() {
   const [showBalance, setShowBalance] = useState(true);
   const [transDetails, setTransDetails] = useState();
   const navigate = useNavigate();
+  const loggedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loggedRef.current) {
+        sendLog("CUSTOMER_DASHBOARD_ACCESSED", sessionStorage.getItem("userId") || "Unknown Customer");
+        loggedRef.current = true;
+    }
+  }, []);
 
   const fetchData = async () => {
     try {
