@@ -1,9 +1,10 @@
 package com.bankify.utils;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class OtpVisuals {
-	public static String buildOtpEmailTemplate(String name,String otp,LocalDateTime transactionTime) {
+	public static String buildOtpEmailTemplate(String name,String otp,String amount,LocalDateTime transactionTime) {
 
 		String html = """
 				<!DOCTYPE html>
@@ -94,10 +95,13 @@ public class OtpVisuals {
 
 				""";
 
-		
-		html = html.replace("{{OTP}}", otp);
-		html = html.replace("{{NAME}}", name);
-		html = html.replace("{{TRANSACTION_TIME}}", transactionTime.toString());
+		DateTimeFormatter formatter =
+		        DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a");
+		html = html
+		.replace("{{OTP}}", otp)
+		.replace("{{NAME}}", name)
+		.replace("{{AMOUNT}}",amount)
+		.replace("{{TRANSACTION_TIME}}", transactionTime.format(formatter));
 		return html;
 	}
 }
