@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Services } from './../../Public/Services';
 import { getDashboardStats } from "../../../services/dashboard";
 
 export default function StatsCards() {
@@ -9,26 +8,25 @@ export default function StatsCards() {
     getDashboardStats().then((res) => setStats(res.data));
   }, []);
 
-  if (!stats) return <p className="text-center py-5">Loading stats...</p>;
+  if (!stats) {
+    return <p className="text-center py-4 text-muted">Loading stats...</p>;
+  }
 
   const cardData = [
     {
       title: "Total Accounts",
       value: stats.totalAccounts,
       subtitle: "Live data",
-      color: "bg-primary",
     },
     {
       title: "Daily Transactions",
       value: stats.dailyTransactions,
       subtitle: "Today",
-      color: "bg-success",
     },
     {
       title: "Total Revenue",
-      value: `₹${stats.totalRevenue}`,
+      value: `₹ ${stats.totalRevenue}`,
       subtitle: "Overall",
-      color: "bg-warning text-dark",
     },
   ];
 
@@ -36,10 +34,12 @@ export default function StatsCards() {
     <div className="row g-3 mb-4">
       {cardData.map((card, idx) => (
         <div key={idx} className="col-md-4">
-          <div className={`card shadow-sm border-0 ${card.color} text-white p-4 h-100`}>
-            <h6 className="mb-2">{card.title}</h6>
-            <h3 className="fw-bold">{card.value}</h3>
-            <small className="opacity-75">{card.subtitle}</small>
+          <div className="card border shadow-sm h-100">
+            <div className="card-body">
+              <h6 className="text-muted mb-1">{card.title}</h6>
+              <h3 className="fw-bold mb-0">{card.value}</h3>
+              <small className="text-muted">{card.subtitle}</small>
+            </div>
           </div>
         </div>
       ))}

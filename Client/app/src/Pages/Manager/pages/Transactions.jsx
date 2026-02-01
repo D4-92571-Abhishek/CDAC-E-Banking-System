@@ -86,9 +86,7 @@ export default function Transactions() {
 
   return (
     <div className="content container py-4">
-      {/* DASHBOARD STATS */}
-      <h4 className="mb-4 fw-bold text-primary">Dashboard Overview</h4>
-      <StatsCards />
+      
 
       {/* ACTIVE CUSTOMERS */}
       <div className="card shadow-sm mb-5 rounded-4 border-0">

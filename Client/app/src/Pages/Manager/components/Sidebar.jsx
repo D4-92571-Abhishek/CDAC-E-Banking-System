@@ -27,7 +27,7 @@ export default function Sidebar() {
         position: "fixed",
         left: 0,
         top: 0,
-        backgroundColor: "#527ba3",
+backgroundColor: "#e5e7eb",
         zIndex: 1000,
       }}
     >
