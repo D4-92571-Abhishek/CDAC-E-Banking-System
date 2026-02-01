@@ -19,7 +19,7 @@ namespace BankifyLogger.Controllers
 				activityLogDTO.UserId,
 				activityLogDTO.Action,
 				activityLogDTO.IpAddress,
-				DateTime.UtcNow);
+				DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
 
 
 			return Ok(new { message = "Log written to file" });

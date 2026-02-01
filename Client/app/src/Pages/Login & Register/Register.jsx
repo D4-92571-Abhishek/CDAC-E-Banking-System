@@ -25,20 +25,33 @@ const Register = () => {
   const navigate = useNavigate();
 
   const validation = () => {
-   
-    if(firstName === "" || lastName === "" || email === "" || contactNo === "" || dob === "" || gender === "" || address === "" || state === "" || city === "" || pincode === "" || aadhaarNo === "" || panNo === "" || password === "") {
+    if (
+      firstName === "" ||
+      lastName === "" ||
+      email === "" ||
+      contactNo === "" ||
+      dob === "" ||
+      gender === "" ||
+      address === "" ||
+      state === "" ||
+      city === "" ||
+      pincode === "" ||
+      aadhaarNo === "" ||
+      panNo === "" ||
+      password === ""
+    ) {
       toast.warning("Please fill all the fields");
       return false;
     }
-     if (password !== cnfPassword) {
+    if (password !== cnfPassword) {
       toast.warning("Passwords do not match");
       return false;
     }
   };
 
   const handleRegister = async () => {
-    console.log(validation())
-    if(!validation()===false) return;
+    console.log(validation());
+    if (!validation() === false) return;
 
     const body = {
       name: firstName + " " + lastName,
@@ -55,7 +68,7 @@ const Register = () => {
       password: password,
     };
     console.log(body);
-
+    // return;
     const response = await axios.post(
       "http://localhost:8080/bankify/customers/signup",
       body,
@@ -69,7 +82,9 @@ const Register = () => {
     if (response.data.status === "Success") {
       toast.success("Registered Successfully! Please Login to continue.");
       setTimeout(() => {
-        navigate("/loginlogoutpage/login");
+        navigate("/loginlogoutpage/login", {
+          state: { from: "loginbtn" },
+        });
       }, 2000);
     } else {
       toast.error("Registration Failed! Please try again.");
@@ -169,13 +184,12 @@ const Register = () => {
                 className="form-select"
                 aria-label="Default select example"
                 style={{ backgroundColor: "#f2f2f2ff", border: "none" }}
-                
                 onChange={(e) => setGender(e.target.value)}
               >
                 <option disabled selected>
                   Select Gender
                 </option>
-                <option value="MALE" style={{ backgroundColor: "white" }} >
+                <option value="MALE" style={{ backgroundColor: "white" }}>
                   Male
                 </option>
                 <option value="FEMALE" style={{ backgroundColor: "white" }}>

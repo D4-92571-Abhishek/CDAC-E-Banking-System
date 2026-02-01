@@ -1,41 +1,43 @@
 import React, { useEffect, useState } from "react";
 import "./TransactionHistory.css";
 import { ArrowDownLeft, ArrowUpRight, Calendar, Search } from "lucide-react";
-import axios from "axios";
+import { fetchTransactionSanpleData,fetchTransactionHistory} from "../../Service/apiCall";
 
 export default function TransactionHistory() {
-  const [filterType, setFilterType] = useState("all");
 
   const [transactionHistory, setTransactionHistory] = useState([]);
   const [transData, setTransData] = useState({});
 
   const fetchTransHistoryData = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/transactions/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/transactions/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const data = await fetchTransactionHistory();
+
       setTransactionHistory(data.data.content);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  console.log(transData)
+  // console.log(transData);
   const fetchTransData = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/get-transaction-details/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/get-transaction-details/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const data = await fetchTransactionSanpleData();
       setTransData(data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -47,19 +49,10 @@ export default function TransactionHistory() {
     fetchTransData();
   }, []);
 
-  console.log(transactionHistory);
-  console.log(transData);
+  // console.log(transactionHistory);
+  // console.log(transData);
 
-  const transactions = [
-    {
-      id: 1,
-      date: "2025-01-27",
-      description: "Online Purchase - Amazon",
-      amount: -200.0,
-      type: "expense",
-      category: "Shopping",
-    },
-  ];
+  
 
   const getTransactionIcon = (type) => {
     if (type === "CREDITED") {
@@ -95,20 +88,6 @@ export default function TransactionHistory() {
     }
   };
 
-  const filteredTransactions = transactions.filter((t) => {
-    const matchesFilter = filterType === "all" || t.type === filterType;
-    return matchesFilter;
-  });
-
-  const totalIncome = transactions
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + t.amount, 0);
-  const totalExpense = Math.abs(
-    transactions
-      .filter((t) => t.type === "expense")
-      .reduce((sum, t) => sum + t.amount, 0),
-  );
-
   return (
     <div>
       {/* Header Section */}
@@ -124,7 +103,7 @@ export default function TransactionHistory() {
             <div className="card-body">
               <div className="d-flex align-items-center justify-content-between">
                 <div>
-                  <p className="text-muted small mb-2">Total Income</p>
+                  <p className="text-muted small mb-2">Current Balance</p>
                   <h4 className="fw-bold text-success mb-0">
                     ₹{transData?.currentBalance}
                   </h4>
@@ -174,17 +153,13 @@ export default function TransactionHistory() {
             <div className="card-body">
               <div className="d-flex align-items-center justify-content-between">
                 <div>
-                  <p className="text-muted small mb-2">Net Balance</p>
+                  <p className="text-muted small mb-2">Net Transaction</p>
                   <h4 className="fw-bold text-primary mb-0">
                     ₹
-                    {transData &&
-                    transData.currentBalance &&
-                    transData.totalOutGoingAmount
-                      ? (
-                          transData.currentBalance -
-                          transData.totalOutGoingAmount
-                        ).toFixed(2)
-                      : "0.00"}
+                    {(
+                      transData.totalIncomingAmount -
+                      transData.totalOutGoingAmount
+                    ).toFixed(2)}
                   </h4>
                 </div>
                 <div
@@ -218,6 +193,9 @@ export default function TransactionHistory() {
                 <th className="border-0 py-4 px-4 fw-semibold text-dark">
                   Type
                 </th>
+                <th className="border-0 py-4 px-4 fw-semibold text-dark">
+                  Status
+                </th>
                 <th className="border-0 py-4 px-4 fw-semibold text-dark text-end">
                   Amount
                 </th>
@@ -250,11 +228,19 @@ export default function TransactionHistory() {
                     <td className="py-4 px-4">
                       {getStatusBadge(value.transactionType)}
                     </td>
+                    <td className="py-4 px-4">
+                      <span
+                        className="badge bg-success-light text-dark"
+                        style={{ backgroundColor: "rgba(40, 87, 167, 0.1)" }}
+                      >
+                        {value.transactionStatus}
+                      </span>
+                    </td>
                     <td className="py-4 px-4 text-end">
                       <span
                         className={`fw-bold ${value.amount > 0 ? "text-success" : "text-danger"}`}
                       >
-                        {value.amount > 0 ? "+" : ""}₹
+                        {value.amount > 0 ? "" : ""}₹
                         {Math.abs(value.amount).toFixed(2)}
                       </span>
                     </td>
@@ -273,7 +259,7 @@ export default function TransactionHistory() {
       </div>
 
       {/* Pagination */}
-      <div className="card border-0 shadow-sm rounded-3 mt-4 p-4">
+      {/* <div className="card border-0 shadow-sm rounded-3 mt-4 p-4">
         <div className="d-flex justify-content-between align-items-center">
           <small className="text-muted">
             Showing {transactionHistory.length} transactions
@@ -303,7 +289,7 @@ export default function TransactionHistory() {
             </ul>
           </nav>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -65,6 +65,7 @@
 import React, { useEffect } from "react";
 import bankIcon from "../../../images/bank-account.png";
 import { Link, useNavigate } from "react-router-dom";
+import { sendLog } from './../../../services/loggerService';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -79,6 +80,7 @@ function Navbar() {
   const handleLogout = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("userId");
+    sendLog("ADMIN_LOGOUT", sessionStorage.getItem("userId") || "Unknown Admin");
     navigate("/");
   };
 

@@ -16,24 +16,30 @@ import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Customer;
 import com.bankify.entities.Status;
 import com.bankify.entities.Transaction;
+import com.bankify.entities.TransactionStatus;
 import com.bankify.entities.TransactionType;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     List<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer customer);
     
-    Optional<Transaction> findTopByCustomerOrderByTransactionTimeDesc(Customer customer);
+    Optional<Transaction> findTopByCustomerAndTransactionStatusOrderByTransactionTimeDesc(Customer customer,TransactionStatus status);
     
     
     @Query("""
-    		SELECT SUM(t.amount)  from Transaction t 
-    		WHERE t.customer.id = :cId
+    		SELECT SUM(t.amount)  FROM Transaction t 
+    		WHERE t.customer.id = :cId AND t.transactionStatus = :trStatus
     		GROUP BY t.transactionType
     		HAVING t.transactionType=:trType
     		""")
-    Double findAllAmountsByTransactionType (@Param("cId") Long cId,@Param("trType") TransactionType trType);
+    Double findAllAmountsByTransactionType (@Param("cId") Long cId,@Param("trType") TransactionType trType,TransactionStatus trStatus);
 
-	Page<Transaction> findByCustomer(Customer c,Pageable page);
+	Page<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer c,Pageable page);
+	
+//	@Query("""
+//			SELECT new com.bankify.dto.TransactionResponseDTO(
+//			""")
+//	Page<TransactionResponseDTO> findCustomerTransaction(Customer c, Pageable page);
 	
     @Query("""
     		select coalesce(SUM(
@@ -50,7 +56,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     		""")
     double getAdminDashboardMonthlyCashFlow(@Param("startDate") LocalDateTime startDate,@Param("endDate") LocalDateTime endDate);
     
-    Page<Transaction> findByTransactionTypeAndCustomer(TransactionType transactionType,Customer customer,Pageable page);
+    Page<Transaction> findByTransactionTypeAndCustomerOrderByTransactionTimeDesc(TransactionType transactionType,Customer customer,Pageable page);
     
     //Manager
     
@@ -59,6 +65,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     	        t.id,
     	        t.amount,
     	        t.transactionType,
+    	        t.transactionStatus,
     	        t.transactionTime,
     	        t.transactionDescription
     	    )

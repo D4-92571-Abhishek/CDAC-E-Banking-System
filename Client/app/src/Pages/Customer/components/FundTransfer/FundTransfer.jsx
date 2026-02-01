@@ -9,9 +9,15 @@ import {
   FileText,
   CheckCircle,
 } from "lucide-react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import {
+  customerAccountDetails,
+  customerSendOtp,
+  customerValidateOtpApi,
+  fetchTransferHistoryDebited,
+  cancelFundstransferApi
+} from "../../Service/apiCall";
 
 export default function FundTransferUI() {
   const [activeTab, setActiveTab] = useState("new");
@@ -24,6 +30,9 @@ export default function FundTransferUI() {
   const [destinationAccountNo, setDestinationAccountNo] = useState();
   const [amount, setAmount] = useState();
   const [message, setMessage] = useState();
+  const [currentInputOtp, setCurrentInputOtp] = useState();
+  const [otpResult, setOtpResult] = useState();
+  const [showOtpModal, setShowOtpModal] = useState(false);
 
   const [accountNo, setAccountNo] = useState();
 
@@ -31,20 +40,23 @@ export default function FundTransferUI() {
 
   const fetchAccountNos = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/get-account-nos/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/get-account-nos/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+
+      const data = await customerAccountDetails();
+
       setAccountNo(data.data);
     } catch (error) {
       console.log("Error fetching data:", error);
     }
   };
-  const handleTransferFunds = async () => {
+  const generateOtp = async () => {
     const body = {
       selfAccountNo: selfAccountNo,
       destinationAccountNo: destinationAccountNo,
@@ -52,51 +64,140 @@ export default function FundTransferUI() {
       message: message,
     };
 
-    console.log(body);
-    const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/${sessionStorage.getItem("userId")}`, body,{
-      headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
-    });
+    // console.log(body);
+    // const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/send-otp/${sessionStorage.getItem("userId")}`, body,{
+    //   headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
+    // });
+
+    const response = await customerSendOtp(body);
 
     const data = await response.data;
-    if(data.status!=="Success"){
+    if (data.status !== "Success") {
       toast.error("Transfer Failed! Please try again.");
       return;
-    }
-    else{
-      setSubmitted(true);
-      setTimeout(() => {
-      setSubmitted(false);
-    }, 3000);
+    } else {
+      setOtpResult(data);
+      setShowOtpModal(true);
     }
     return;
+  };
+  const handleTransferFunds = async () => {
+    try {
+      const body = {
+        selfAccountNo: selfAccountNo,
+        destinationAccountNo: destinationAccountNo,
+        amount: amount,
+        message: message,
+        transactionId: otpResult.transId,
+        otpId: otpResult.otpId,
+        inputOTP: currentInputOtp,
+        cancelTransaction: "FALSE",
+      };
+
+      // console.log(body);
+
+      // const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/validate-otp/${sessionStorage.getItem("userId")}`, body,{
+      //   headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
+      // });
+      const response = await customerValidateOtpApi(body);
+      const data = await response.data;
+      if (data.status !== "Success") {
+        toast.error("Transfer Failed! Please try again.");
+
+        return;
+      } else {
+        setShowOtpModal(false);
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 3000);
+        // Reset form
+        setSelfAccountNo("");
+        setDestinationAccountNo("");
+        setAmount("");
+        setMessage("");
+        setCurrentInputOtp("");
+        toast.success("Transfer successful!");
+      }
+      fetchTransferHistory();
+      return;
+    } catch (error) {
+      console.error("Error during fund transfer:", error);
+      toast.error(
+        error.response?.data?.message || "Transfer Failed! Please try again.",
+      );
+      setShowOtpModal(false);
+    }
   };
 
   // console.log(accountNo)
 
   const fetchTransferHistory = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:8080/bankify/customers/transaction-history-debited/${sessionStorage.getItem("userId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const data = await axios.get(
+      //   `http://localhost:8080/bankify/customers/transaction-history-debited/${sessionStorage.getItem("userId")}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const data = await fetchTransferHistoryDebited();
       setTransferHistory(data.data);
     } catch (error) {
       console.log("Error fetching data:", error);
     }
   };
+  const cancelTransferFunds = async () => {
+    const body = {
+      selfAccountNo: selfAccountNo,
+      destinationAccountNo: destinationAccountNo,
+      amount: amount,
+      message: message,
+      transactionId: otpResult.transId,
+      otpId: otpResult.otpId,
+      inputOTP: currentInputOtp,
+      cancelTransaction: "TRUE",
+    };
+
+    // console.log(body);
+    // const response = await axios.post(`http://localhost:8080/bankify/customers/transfer/validate-otp/${sessionStorage.getItem("userId")}`, body,{
+    //   headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` }
+    // });
+
+    const response = await cancelFundstransferApi(body);
+
+    const data = await response.data;
+    if (data.status !== "Success") {
+      toast.error("Transfer Failed! Please try again.");
+      return;
+    } else {
+      setShowOtpModal(false);
+      setSubmitted(false);
+
+      // Reset form
+      setSelfAccountNo("");
+      setDestinationAccountNo("");
+      setAmount("");
+      setMessage("");
+      setCurrentInputOtp("");
+      toast.success("Transfer Cancelled successfully!");
+      fetchTransferHistory();
+    }
+    return;
+  };
 
   useEffect(() => {
     fetchTransferHistory();
     fetchAccountNos();
-    if(sessionStorage.getItem("token")===null||sessionStorage.getItem("token")===""){
+    if (
+      sessionStorage.getItem("token") === null ||
+      sessionStorage.getItem("token") === ""
+    ) {
       navigate("/");
     }
   }, []);
-  // console.log(transferHistory)
+  // console.log(transferHistory);
 
   if (submitted) {
     setTimeout(() => {
@@ -129,8 +230,137 @@ export default function FundTransferUI() {
     );
   }
 
+  // console.log(currentInputOtp);
+  // OTP Modal Component
+  const OtpModal = () => {
+    return (
+      <>
+        {/* Backdrop */}
+        {showOtpModal && (
+          <div
+            className="position-fixed top-0 start-0 w-100 h-100"
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 999,
+            }}
+            onClick={() => setShowOtpModal(false)}
+          />
+        )}
+
+        {/* Modal */}
+        <div
+          className="position-fixed top-50 start-50 bg-white rounded-3 p-5 shadow-lg"
+          style={{
+            transform: "translate(-50%, -50%)",
+            zIndex: 1000,
+            width: "90%",
+            maxWidth: "450px",
+            display: showOtpModal ? "block" : "none",
+          }}
+        >
+          {/* Modal Header */}
+          <div className="text-center mb-4">
+            <div
+              className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+              style={{
+                width: "70px",
+                height: "70px",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              }}
+            >
+              <span style={{ fontSize: "28px", color: "white" }}>🔐</span>
+            </div>
+            <h4 className="fw-bold text-dark">Enter OTP</h4>
+            <p className="text-muted small">
+              We've sent an OTP to your registered email
+            </p>
+          </div>
+
+          {/* Transfer Summary */}
+          <div
+            className="bg-light rounded-2 p-3 mb-4"
+            style={{ backgroundColor: "rgba(102, 126, 234, 0.05)" }}
+          >
+            <div className="row g-3">
+              <div className="col-6">
+                <small className="text-muted d-block mb-1">Amount</small>
+                <strong className="text-dark">₹ {amount}</strong>
+              </div>
+              <div className="col-6">
+                <small className="text-muted d-block mb-1">To Account</small>
+                <strong className="text-dark">{destinationAccountNo}</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* OTP Input */}
+          <div className="mb-4">
+            <label className="form-label fw-semibold mb-2">Enter OTP</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter 6-digit OTP"
+              value={currentInputOtp || ""}
+              onChange={(e) =>
+                setCurrentInputOtp(
+                  e.target.value.replace(/\D/g, "").slice(0, 6),
+                )
+              }
+              maxLength="6"
+              inputMode="numeric"
+              style={{
+                fontSize: "18px",
+                padding: "12px 16px",
+                borderColor: "#e0e0e0",
+                border: "2px solid #e0e0e0",
+                borderRadius: "8px",
+                textAlign: "center",
+                letterSpacing: "4px",
+                fontWeight: "600",
+              }}
+              autoFocus
+            />
+            <small className="text-muted d-block mt-2">
+              Enter the 6-digit code sent to your registered contact
+            </small>
+          </div>
+
+          {/* Buttons */}
+          <div className="row g-2">
+            <div className="col-6">
+              <button
+                type="button"
+                className="btn btn-outline-secondary w-100 py-2 rounded-2 fw-semibold"
+                onClick={cancelTransferFunds}
+              >
+                Cancel
+              </button>
+            </div>
+            <div className="col-6">
+              <button
+                type="button"
+                className="btn w-100 py-2 rounded-2 fw-semibold text-white"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  border: "none",
+                }}
+                onClick={handleTransferFunds}
+                disabled={!currentInputOtp || currentInputOtp.length !== 6}
+              >
+                Verify OTP
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="container-fluid">
+      {/* OTP Modal */}
+      <OtpModal />
       {/* Header */}
       <div className="mb-4 mt-4">
         <h3 className="fw-bold text-dark mb-1">Fund Transfer</h3>
@@ -256,7 +486,7 @@ export default function FundTransferUI() {
                   name="toAccount"
                   className="form-control rounded-2"
                   placeholder="Enter destination account number"
-                  value={destinationAccountNo}
+                  value={destinationAccountNo||""}
                   onChange={(e) => setDestinationAccountNo(e.target.value)}
                   style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
                   required
@@ -278,7 +508,7 @@ export default function FundTransferUI() {
                   name="amount"
                   className="form-control rounded-2"
                   placeholder="Enter amount"
-                  value={amount}
+                  value={amount||""}
                   onChange={(e) => setAmount(e.target.value)}
                   style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
                   required
@@ -300,7 +530,7 @@ export default function FundTransferUI() {
                   name="memo"
                   className="form-control rounded-2"
                   placeholder="Enter transfer description"
-                  value={message}
+                  value={message||""}
                   onChange={(e) => setMessage(e.target.value)}
                   style={{ borderColor: "#e0e0e0", padding: "10px 12px" }}
                 />
@@ -317,7 +547,7 @@ export default function FundTransferUI() {
                         "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                       border: "none",
                     }}
-                    onClick={handleTransferFunds}
+                    onClick={generateOtp}
                   >
                     <Send
                       size={18}
@@ -357,6 +587,9 @@ export default function FundTransferUI() {
                       <th className="border-0 py-4 px-4 fw-semibold fs-5 text-dark">
                         Transaction Type
                       </th>
+                      <th className="border-0 py-4 px-4 fw-semibold fs-5 text-dark">
+                        Transaction Status
+                      </th>
                       <th className="border-0 py-4 px-4 fw-semibold fs-5 text-dark text-end">
                         Amount
                       </th>
@@ -383,6 +616,9 @@ export default function FundTransferUI() {
                           </td>
                           <td className="py-4 px-4 fw-semibold">
                             {transfer.transactionType}
+                          </td>
+                          <td className="py-4 px-4 fw-semibold">
+                            {transfer.transactionStatus}
                           </td>
                           <td className="py-4 px-4 fw-semibold text-end">
                             ₹ {transfer.amount}

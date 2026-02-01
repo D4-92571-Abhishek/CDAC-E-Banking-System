@@ -10,9 +10,9 @@ import {
   Bell,
   Settings,
 } from "lucide-react";
-import { use, useEffect, useState } from "react";
-import axios from "axios";
+import {  useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { customerDetails,customerDetailsEdit,updatePasswordApi  } from "../../Service/apiCall";
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -44,13 +44,15 @@ export default function DashboardLayout() {
       newPassword: newPassword,
     };
 
-    const responseData = await axios.put(
-      `http://localhost:8080/bankify/customers/update-password/${sessionStorage.getItem("userId")}`,
-      body,
-      {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      },
-    );
+    // const responseData = await axios.put(
+    //   `http://localhost:8080/bankify/customers/update-password/${sessionStorage.getItem("userId")}`,
+    //   body,
+    //   {
+    //     headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+    //   },
+    // );
+
+    const responseData = await updatePasswordApi(body);
 
    
 
@@ -59,21 +61,19 @@ export default function DashboardLayout() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      // Close the modal
       const closeButton =
         document
           .querySelector('[data-bs-target="#changePasswordModal"]')
           ?.parentElement?.querySelector(".btn-close") ||
         document.querySelector("#changePasswordModal .btn-close");
       if (closeButton) closeButton.click();
-      // Alternative: use Bootstrap's modal API
       const modal = document.getElementById("changePasswordModal");
       if (modal) {
         const bsModal = new window.bootstrap.Modal(modal);
         bsModal.hide();
       }
     }
-    console.log(responseData);
+    // console.log(responseData);
   };
 
    const editDetails = async () => {
@@ -89,15 +89,16 @@ export default function DashboardLayout() {
         pincode: pincode,
       };
 
-      const responseEdit = await axios.put(
-        `http://localhost:8080/bankify/customers/edit-customer/${sessionStorage.getItem("userId")}`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const responseEdit = await axios.put(
+      //   `http://localhost:8080/bankify/customers/edit-customer/${sessionStorage.getItem("userId")}`,
+      //   body,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const responseEdit = await customerDetailsEdit(body);
       if(responseEdit.data.status==="Success"){
         toast.success("Profile updated successfully!");
         const modal = document.getElementById("editProfileModal");
@@ -112,12 +113,14 @@ export default function DashboardLayout() {
       }
     };
   const fetchData = async () => {
-    const data = await axios.get(
-      `http://localhost:8080/bankify/customers/get-customer/${sessionStorage.getItem("userId")}`,
-      {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      },
-    );
+    // const data = await axios.get(
+    //   `http://localhost:8080/bankify/customers/get-customer/${sessionStorage.getItem("userId")}`,
+    //   {
+    //     headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+    //   },
+    // );
+
+    const data = await customerDetails();
     setResponseData(data.data);
   };
 
@@ -148,7 +151,7 @@ export default function DashboardLayout() {
     }
   }, [responseData]);
 
-  console.log(responseData);
+  // console.log(responseData);
 
   const today = new Date();
   const dateStr = today.toLocaleDateString("en-US", {

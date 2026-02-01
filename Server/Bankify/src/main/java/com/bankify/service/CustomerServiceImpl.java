@@ -25,7 +25,9 @@ import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.dto.GetCustomerAccountDetailsDTO;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.dto.LoanRequestDTO;
+import com.bankify.dto.OtpResponseDTO;
 import com.bankify.dto.TransactionResponseDTO;
+import com.bankify.dto.ValidateCustomerTransferOtpDTO;
 import com.bankify.entities.Address;
 import com.bankify.entities.Customer;
 import com.bankify.entities.Loan;
@@ -35,15 +37,22 @@ import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.Transaction;
 import com.bankify.entities.TransactionHistory;
+import com.bankify.entities.TransactionOTP;
+import com.bankify.entities.TransactionStatus;
 import com.bankify.entities.TransactionType;
 import com.bankify.entities.User;
+import com.bankify.exception.BankifyException;
+import com.bankify.exception.UserNotFoundException;
 import com.bankify.repository.AddressRepository;
 import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.LoanDetailsRepository;
 import com.bankify.repository.LoanRepository;
 import com.bankify.repository.TransactionHistoryRepository;
+import com.bankify.repository.TransactionOTPRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
+import com.bankify.utils.OTPUtils;
+import com.bankify.utils.OtpVisuals;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 	private final LoanDetailsRepository loanDetailsRepository;
+	private final TransactionOTPRepository transactionOTPRepository;
 
 	public static String generateAccountNumber() {
 		Random random = new Random();
@@ -95,49 +105,46 @@ public class CustomerServiceImpl implements CustomerService {
 		userRepository.save(user);
 		customerRepository.save(cust);
 		addressRepository.save(custAddress);
-		
-		if(user.getId() == 0) throw new RuntimeException();
-		
-		return new GeneralResponseDTO("Success","Customer Account Created Successfully");
-	}
-	public GeneralResponseDTO signUp(User user,Customer customer,Address address) {
 
-		
-		
+		if (user.getId() == 0)
+			throw new RuntimeException();
+
+		return new GeneralResponseDTO("Success", "Customer Account Created Successfully");
+	}
+
+	public GeneralResponseDTO signUp(User user, Customer customer, Address address) {
 
 		customer.setAccountNo(generateAccountNumber());
-		
+
 		userRepository.save(user);
 		customerRepository.save(customer);
 		addressRepository.save(address);
-		
-		if(user.getId() == 0) throw new RuntimeException();
-		
-		return new GeneralResponseDTO("Success","Customer Account Created Successfully");
+
+		if (user.getId() == 0)
+			throw new RuntimeException();
+
+		return new GeneralResponseDTO("Success", "Customer Account Created Successfully");
 	}
-	
+
 	@Override
 	public List<CustomerListResponseDTO> getActiveCustomers() {
 
-	    return userRepository.getActiveCustomers(
-	            Status.ACTIVE,
-	            Role.ROLE_CUSTOMER
-	    );
+		return userRepository.getActiveCustomers(Status.ACTIVE, Role.ROLE_CUSTOMER);
 	}
 
-	
-	
 	@Override
 	public CustomerDashboardResponseDTO getCustomerDetailsById(Long userId) {
 
-		User u = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
 
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 
-		Transaction t = transactionRepository.findTopByCustomerOrderByTransactionTimeDesc(c).orElse(null);
+		Transaction t = transactionRepository.findTopByCustomerAndTransactionStatusOrderByTransactionTimeDesc(c,TransactionStatus.APPROVED)
+				.orElseGet(()->new Transaction());
 		CustomerDashboardResponseDTO res = modelMapper.map(c, CustomerDashboardResponseDTO.class);
 		res.setRecentTransactionAmount(t != null ? t.getAmount() : 0.0);
-		res.setName(u.getName());
+		res.setName(c.getUser().getName());
+		
+		System.out.println(res);
 
 		return res;
 	}
@@ -145,48 +152,42 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Page<TransactionResponseDTO> getCustomerTransactions(Long userId) {
 
-	    Customer c = customerRepository.findByUserId(userId)
-	            .orElseThrow(() -> new RuntimeException("Customer not found"));
+		Customer c = customerRepository.findByUserId(userId)
+				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
-	    Pageable page = PageRequest.of(0, 10);
+		Pageable page = PageRequest.of(0, 10);
 
-	    Page<Transaction> transactionPage =
-	            transactionRepository.findByCustomer(c, page);
+		Page<Transaction> transactionPage = transactionRepository.findByCustomerOrderByTransactionTimeDesc(c, page);
 
-	    List<TransactionResponseDTO> trResponse = new ArrayList<>();
+		List<TransactionResponseDTO> trResponse = new ArrayList<>();
 
-	    for (Transaction t : transactionPage.getContent()) {
-	        trResponse.add(modelMapper.map(t, TransactionResponseDTO.class));
-	    }
+		for (Transaction t : transactionPage.getContent()) {
+			trResponse.add(modelMapper.map(t, TransactionResponseDTO.class));
+		}
 
-	    return new PageImpl<>(
-	            trResponse,
-	            page,
-	            transactionPage.getTotalElements()
-	    );
+		return new PageImpl<>(trResponse, page, transactionPage.getTotalElements());
 	}
-
 
 	public Page<Transaction> getCustomerTransactions(Long userId, TransactionType transactionType) {
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 		Pageable page = PageRequest.of(0, 10);
-		Page<Transaction> transactionPage = transactionRepository.findByTransactionTypeAndCustomer(transactionType, c,
-				page);
+		Page<Transaction> transactionPage = transactionRepository
+				.findByTransactionTypeAndCustomerOrderByTransactionTimeDesc(transactionType, c, page);
 		return transactionPage;
 	}
 
-	@Override
-	public GeneralResponseDTO transferFunds(Long userId, CustomerFundTransferRequestDTO fundDetails) {
+	public static boolean sendOtp() {
+		return true;
+	}
 
+	public OtpResponseDTO sendOtp(Long userId, CustomerFundTransferRequestDTO fundDetails) {
+		User u = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User ID is Not Valid"));
 		Customer sender = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 		Customer reciever = customerRepository.findByAccountNo(fundDetails.getDestinationAccountNo())
 				.orElseThrow(() -> new RuntimeException("Reciever Account No is not valid..."));
 		if (sender.getCurrentBalance() < fundDetails.getAmount()) {
-			throw new RuntimeException("Insufficient Balance");
+			throw new BankifyException("Insufficient Balance");
 		}
-
-		sender.setCurrentBalance(sender.getCurrentBalance() - fundDetails.getAmount());
-		reciever.setCurrentBalance(reciever.getCurrentBalance() + fundDetails.getAmount());
 
 		Transaction t = new Transaction();
 		t.setAmount(fundDetails.getAmount());
@@ -196,6 +197,89 @@ public class CustomerServiceImpl implements CustomerService {
 		t.setCustomer(sender);
 		t.setTransactionType(TransactionType.DEBITED);
 
+		transactionRepository.save(t);
+
+		TransactionHistory sen = new TransactionHistory();
+
+		sen.setAmount(fundDetails.getAmount());
+
+		sen.setCustomer(sender);
+
+		sen.setRecieverAccountNo(fundDetails.getDestinationAccountNo());
+
+		sen.setSenderAccountNo(fundDetails.getSelfAccountNo());
+		sen.setTransactionType(TransactionType.DEBITED);
+		sen.setTransaction(t);
+
+		transactionHistoryRepository.save(sen);
+
+		TransactionOTP transOtp = new TransactionOTP();
+
+		transOtp.setOtp(OTPUtils.generateOtp());
+		transOtp.setTransaction(t);
+
+		transactionOTPRepository.save(transOtp);
+
+		boolean sendOtp = sendOtp();
+
+		if (!sendOtp)
+			throw new BankifyException("Some Internal Error Occured ....");
+
+		return new OtpResponseDTO("Success", "OTP Send Successully to your email..", t.getId().toString(),
+				transOtp.getId().toString());
+
+	}
+
+	@Override
+	public GeneralResponseDTO transferFunds(Long userId, ValidateCustomerTransferOtpDTO fundDetails) {
+
+		System.out.println(fundDetails);
+
+		Customer sender = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
+		Customer reciever = customerRepository.findByAccountNo(fundDetails.getDestinationAccountNo())
+				.orElseThrow(() -> new RuntimeException("Reciever Account No is not valid..."));
+		if (sender.getCurrentBalance() < fundDetails.getAmount()) {
+			throw new RuntimeException("Insufficient Balance");
+		}
+
+		TransactionOTP transOtp = transactionOTPRepository.findById(Long.parseLong(fundDetails.getOtpId()))
+				.orElseThrow(() -> new BankifyException("Invalid Otp Id.."));
+
+		Transaction t = transactionRepository.findById(Long.parseLong(fundDetails.getTransactionId()))
+				.orElseThrow(() -> new BankifyException("Transaction Not Found.."));
+		TransactionHistory sen = transactionHistoryRepository.findByTransaction(t)
+				.orElseThrow(() -> new BankifyException("Tranasaction not found"));
+
+		if (fundDetails.getCancelTransaction().equals("TRUE")) {
+			t.setTransactionStatus(TransactionStatus.CANCELLED);
+			sen.setTransactionStatus(TransactionStatus.CANCELLED);
+			return new GeneralResponseDTO("Success", "Transaction Cancelled..");
+		}
+
+		boolean isOtpExpired = transOtp.getExpiryTime() != null
+				&& transOtp.getExpiryTime().isBefore(LocalDateTime.now());
+
+		if (isOtpExpired) {
+			t.setTransactionStatus(TransactionStatus.DECLINED);
+			sen.setTransactionStatus(TransactionStatus.DECLINED);
+			throw new BankifyException("OTP expired");
+		}
+		boolean isValidOtp = transOtp.getOtp().equals(fundDetails.getInputOTP());
+		if (!isValidOtp) {
+			t.setTransactionStatus(TransactionStatus.DECLINED);
+			sen.setTransactionStatus(TransactionStatus.DECLINED);
+			throw new BankifyException("Invalid OTP");
+		}
+
+		transOtp.setVerified(true);
+
+		t.setTransactionStatus(TransactionStatus.APPROVED);
+
+		sen.setTransactionStatus(TransactionStatus.APPROVED);
+
+		sender.setCurrentBalance(sender.getCurrentBalance() - fundDetails.getAmount());
+		reciever.setCurrentBalance(reciever.getCurrentBalance() + fundDetails.getAmount());
+
 		Transaction r = new Transaction();
 		r.setAmount(fundDetails.getAmount());
 		r.setTransactionDescription(
@@ -203,31 +287,22 @@ public class CustomerServiceImpl implements CustomerService {
 		r.setTransactionTime(LocalDateTime.now());
 		r.setCustomer(reciever);
 		r.setTransactionType(TransactionType.CREDITED);
-		
-		
-		TransactionHistory sen = new TransactionHistory();
-		TransactionHistory rec  = new TransactionHistory();
-		
-		sen.setAmount(fundDetails.getAmount());
+		r.setTransactionStatus(TransactionStatus.COMPLETED);
+
+		TransactionHistory rec = new TransactionHistory();
+
 		rec.setAmount(fundDetails.getAmount());
-		
-		sen.setCustomer(sender);
 		rec.setCustomer(reciever);
-		
-		sen.setRecieverAccountNo(fundDetails.getDestinationAccountNo());
 		rec.setRecieverAccountNo(fundDetails.getSelfAccountNo());
-		
-		sen.setSenderAccountNo(fundDetails.getSelfAccountNo());
 		rec.setSenderAccountNo(fundDetails.getDestinationAccountNo());
-		
-		sen.setTransactionType(TransactionType.DEBITED);
 		rec.setTransactionType(TransactionType.CREDITED);
-		
-		transactionHistoryRepository.save(sen);
+		rec.setTransactionStatus(TransactionStatus.COMPLETED);
+		rec.setTransaction(r);
+
 		transactionHistoryRepository.save(rec);
-		
-		transactionRepository.save(t);
+
 		transactionRepository.save(r);
+
 		return new GeneralResponseDTO("Success", "Funds Transfer Successfully");
 	}
 
@@ -236,12 +311,11 @@ public class CustomerServiceImpl implements CustomerService {
 		Pageable page = PageRequest.of(0, 10);
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 		Page<Transaction> transactionList = transactionRepository
-				.findByTransactionTypeAndCustomer(TransactionType.DEBITED, cust, page);
+				.findByTransactionTypeAndCustomerOrderByTransactionTimeDesc(TransactionType.DEBITED, cust, page);
 
 		List<TransactionResponseDTO> trResponse = new ArrayList<>();
 		if (transactionList.isEmpty())
 			return trResponse;
-
 
 		for (Transaction t : transactionList) {
 			TransactionResponseDTO tr = modelMapper.map(t, TransactionResponseDTO.class);
@@ -255,7 +329,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Pageable page = PageRequest.of(0, 10);
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 		Page<Transaction> transactionList = transactionRepository
-				.findByTransactionTypeAndCustomer(TransactionType.CREDITED, cust, page);
+				.findByTransactionTypeAndCustomerOrderByTransactionTimeDesc(TransactionType.CREDITED, cust, page);
 
 		if (transactionList.isEmpty())
 			throw new RuntimeException("No Transactions");
@@ -265,26 +339,26 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public GeneralResponseDTO requestForLoan(Long userId, LoanRequestDTO loanRequestDTO) {
-		
+
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 		Loan newLoanRequest = modelMapper.map(loanRequestDTO, Loan.class);
-		
+
 		System.out.println(newLoanRequest);
 		newLoanRequest.setLoanStatus(LoanStatus.PENDING);
 		newLoanRequest.setCustomer(cust);
-		
+
 		LoanDetails details = new LoanDetails();
-		
+
 		loanRepository.save(newLoanRequest);
-		details.setEmi(getMonthlyPayment(newLoanRequest.getAmount(), newLoanRequest.getInterest(), loanRequestDTO.getLoanTenureYears()));
+		details.setEmi(getMonthlyPayment(newLoanRequest.getAmount(), newLoanRequest.getInterest(),
+				loanRequestDTO.getLoanTenureYears()));
 		details.setLoan(newLoanRequest);
 		details.setCustomer(cust);
 		details.setInterest(loanRequestDTO.getInterest());
 		details.setPaidMonths(0);
 		details.setPrinciple(loanRequestDTO.getAmount());
-		
+
 		loanDetailsRepository.save(details);
-		
 
 		return new GeneralResponseDTO("Success", "Loan Request Submitted Successfully");
 	}
@@ -292,7 +366,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<LoanDetailsResponseDTO> getAllLoanDetails(Long userId) {
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
-		
+
 		List<LoanDetailsResponseDTO> responseList = customerRepository.getLoanDetailsByCustomer(cust.getId());
 		return responseList;
 	}
@@ -379,9 +453,9 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 
 		Double totalOnGoingAmount = transactionRepository.findAllAmountsByTransactionType(cust.getId(),
-				TransactionType.DEBITED);
+				TransactionType.DEBITED,TransactionStatus.APPROVED);
 		Double totalInComingAmount = transactionRepository.findAllAmountsByTransactionType(cust.getId(),
-				TransactionType.CREDITED);
+				TransactionType.CREDITED,TransactionStatus.COMPLETED);
 
 		if (totalInComingAmount == null)
 			totalInComingAmount = 0.0;
@@ -400,14 +474,14 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerAccountDetailsDTO getAccountNo(Long userId) {
-		Customer cust = customerRepository.findByUserId(userId).orElseThrow(()->new RuntimeException("Invalid User"));
-		
-		List<String> accountNo = new ArrayList<>(); 
+		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Invalid User"));
+
+		List<String> accountNo = new ArrayList<>();
 		CustomerAccountDetailsDTO custDetails = new CustomerAccountDetailsDTO();
 		accountNo.add(cust.getAccountNo());
 		custDetails.setUserId(userId);
 		custDetails.setAccountNos(accountNo);
-		
+
 		return custDetails;
 	}
 

@@ -17,7 +17,9 @@ import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.dto.GetCustomerAccountDetailsDTO;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.dto.LoanRequestDTO;
+import com.bankify.dto.OtpResponseDTO;
 import com.bankify.dto.TransactionResponseDTO;
+import com.bankify.dto.ValidateCustomerTransferOtpDTO;
 import com.bankify.entities.Address;
 import com.bankify.entities.Customer;
 import com.bankify.entities.Transaction;
@@ -35,8 +37,11 @@ public interface CustomerService {
 
 
 	Page<TransactionResponseDTO> getCustomerTransactions(Long userId);
+	
+	
+	OtpResponseDTO sendOtp(Long userId, CustomerFundTransferRequestDTO fundDetails);
 
-	GeneralResponseDTO transferFunds(Long userId,CustomerFundTransferRequestDTO fundDetails);
+	GeneralResponseDTO transferFunds(Long userId,ValidateCustomerTransferOtpDTO fundDetails);
 
 	List<TransactionResponseDTO> getTransactionHistoryDebited(Long userId);
 
