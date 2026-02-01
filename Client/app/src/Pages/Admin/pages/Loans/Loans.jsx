@@ -1,10 +1,21 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios';
+import { useRef } from 'react';
+import { sendLog } from '../../../../services/loggerService';
 
 const Loans = () => {
 
     const[responseData, setResponseData] = useState();
     const[loansListData, setLoansListData] = useState([]);
+
+    const loggedRef = useRef(false);
+
+    useEffect(() => {
+        if (!loggedRef.current) {
+            sendLog("ADMIN_LOANS_PAGE_ACCESSED", sessionStorage.getItem("userId") || "Unknown Admin");
+            loggedRef.current = true;
+        }
+    }, []);
 
     const loanDataInfo = async () => {
         const response = await axios.get('http://localhost:8080/bankify/admin/adminLoanInfo',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
