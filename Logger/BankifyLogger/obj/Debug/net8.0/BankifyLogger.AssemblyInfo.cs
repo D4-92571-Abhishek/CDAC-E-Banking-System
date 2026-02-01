@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BankifyLogger")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+08778948c17bb2b20cd57556b23682ac7cc7deae")]
 [assembly: System.Reflection.AssemblyProductAttribute("BankifyLogger")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BankifyLogger")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
