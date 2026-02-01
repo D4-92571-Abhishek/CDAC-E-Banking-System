@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
 import "./TransactionHistory.css";
 import { ArrowDownLeft, ArrowUpRight, Calendar, Search } from "lucide-react";
+import Transactions from "./../../../Manager/pages/Transactions";
+import { useRef } from 'react';
+import { sendLog } from "../../../../services/loggerService";
 import { fetchTransactionSanpleData,fetchTransactionHistory} from "../../Service/apiCall";
 
 export default function TransactionHistory() {
 
   const [transactionHistory, setTransactionHistory] = useState([]);
   const [transData, setTransData] = useState({});
+
+  const loggedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loggedRef.current) {
+        sendLog("CUSTOMER_TRANSACTION_HISTORY_PAGE_ACCESSED", sessionStorage.getItem("userId") || "Unknown Customer");
+        loggedRef.current = true;
+    }
+  }, []);
 
   const fetchTransHistoryData = async () => {
     try {
