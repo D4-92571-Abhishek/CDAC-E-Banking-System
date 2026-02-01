@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.LoanRequestDTO;
+import com.bankify.dto.ValidateCustomerTransferOtpDTO;
 import com.bankify.dto.CustomerSignupRequest;
 import com.bankify.dto.EditCustomerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
@@ -55,11 +56,15 @@ public class CustomersController {
 		return ResponseEntity.ok(customerService.getCustomerTransactions(userId));
 	}
 	
-	@PostMapping("/transfer/{userId}")
+	@PostMapping("/transfer/send-otp/{userId}")
 	public ResponseEntity<?> transferFunds(@PathVariable Long userId,@RequestBody CustomerFundTransferRequestDTO fundDetails){
+		return ResponseEntity.ok(customerService.sendOtp(userId, fundDetails));
+	}
+	@PostMapping("/transfer/validate-otp/{userId}")
+	public ResponseEntity<?> transferFunds(@PathVariable Long userId,@RequestBody ValidateCustomerTransferOtpDTO fundDetails){
 		return ResponseEntity.ok(customerService.transferFunds(userId, fundDetails));
 	}
-	
+	 
 	@GetMapping("/transaction-history-debited/{userId}")
 	public ResponseEntity<?> getTransferEntityDebited(@PathVariable Long userId){
 		return ResponseEntity.ok(customerService.getTransactionHistoryDebited(userId));
