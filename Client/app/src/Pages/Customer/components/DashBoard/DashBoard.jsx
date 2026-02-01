@@ -6,6 +6,7 @@ import axios from "axios";
 import { Eye, EyeOff, CreditCard, TrendingUp, Send, ArrowDownLeft, ArrowUpRight, MoreVertical, Wallet } from "lucide-react";
 import { useRef } from 'react';
 import { sendLog } from "../../../../services/loggerService";
+import { fetchTransactionSanpleData,fetchCustomerSampleDetails } from "../../Service/apiCall";
 
 export default function DashboardUI() {
   const [cust, setCust] = useState();
@@ -23,10 +24,10 @@ export default function DashboardUI() {
 
   const fetchData = async () => {
     try {
-      const data = await axios.get(`http://localhost:8080/bankify/customers/${sessionStorage.getItem("userId")}`,
-        { headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` } }
-      );
-      console.log(data)
+      // const data = await axios.get(`http://localhost:8080/bankify/customers/${sessionStorage.getItem("userId")}`,
+      //   { headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` } }
+      // );
+      const data  = await fetchCustomerSampleDetails();
       setCust(data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -36,9 +37,10 @@ export default function DashboardUI() {
 
   const fetchTransData = async () => {
     try {
-      const data = await axios.get(`http://localhost:8080/bankify/customers/get-transaction-details/${sessionStorage.getItem("userId")}`,
-        { headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` } }
-      );
+      // const data = await axios.get(`http://localhost:8080/bankify/customers/get-transaction-details/${sessionStorage.getItem("userId")}`,
+      //   { headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` } }
+      // );
+      const data  = await fetchTransactionSanpleData();
       setTransDetails(data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -54,8 +56,7 @@ export default function DashboardUI() {
   }, []);
 
 
-  console.log(transDetails)
-  console.log(cust)
+  // console.log(transDetails)
 
 
   return (

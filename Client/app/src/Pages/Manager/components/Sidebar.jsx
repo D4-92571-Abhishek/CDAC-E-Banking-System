@@ -1,6 +1,6 @@
 import { IDLE_BLOCKER, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../../images/bank-account.png";
-import axios from "../../../services/axios";
+import axios from "../services/axios";
 import { LayoutDashboard, Users, CheckCircle, Wallet, LogOut, Blocks, Cross, X } from "lucide-react";
 
 export default function Sidebar() {
@@ -27,7 +27,7 @@ export default function Sidebar() {
         position: "fixed",
         left: 0,
         top: 0,
-        backgroundColor: "#527ba3",
+backgroundColor: "#e5e7eb",
         zIndex: 1000,
       }}
     >

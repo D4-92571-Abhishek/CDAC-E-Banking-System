@@ -3,7 +3,7 @@ import StatsCards from "../components/StatsCards";
 import {
   getActiveCustomers,
   getCustomerTransactions,
-} from "../../../services/transaction";
+} from "../services/transaction";
 import { ListOrdered } from "lucide-react";
 
 export default function Transactions() {
@@ -86,9 +86,7 @@ export default function Transactions() {
 
   return (
     <div className="content container py-4">
-      {/* DASHBOARD STATS */}
-      <h4 className="mb-4 fw-bold text-primary">Dashboard Overview</h4>
-      <StatsCards />
+      
 
       {/* ACTIVE CUSTOMERS */}
       <div className="card shadow-sm mb-5 rounded-4 border-0">
@@ -121,13 +119,11 @@ export default function Transactions() {
         className="border-bottom"
         style={{ transition: "all 0.2s ease-in-out" }}
       >
-        {/* NAME + EMAIL */}
         <td>
           <div className="fw-semibold text-primary">{cust.name}</div>
           <small className="text-muted">{cust.email}</small>
         </td>
 
-        {/* MOBILE */}
         <td className="fw-medium">{cust.contactNo}</td>
 
         {/* ACTION */}

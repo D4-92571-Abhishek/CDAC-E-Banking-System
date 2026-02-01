@@ -1,7 +1,6 @@
 import { Phone, Mail, Edit, KeyRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import axios from "../../../services/axios";
-
+import axios from "../services/axios";
 export default function Header() {
   const [user, setUser] = useState({});
   const [showEdit, setShowEdit] = useState(false);
@@ -76,7 +75,7 @@ export default function Header() {
           left: "280px", // leave space for sidebar
           width: "calc(100% - 280px)",
           height: "70px",
-          backgroundColor: "#2fc65c",
+          backgroundColor: "#606462",
           color: "#fff",
           zIndex: 1050,
           display: "flex",

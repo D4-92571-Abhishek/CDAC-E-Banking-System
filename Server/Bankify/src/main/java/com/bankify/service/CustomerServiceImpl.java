@@ -10,6 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +58,7 @@ import com.bankify.repository.UserRepository;
 import com.bankify.utils.OTPUtils;
 import com.bankify.utils.OtpVisuals;
 
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -72,6 +77,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private final PasswordEncoder passwordEncoder;
 	private final LoanDetailsRepository loanDetailsRepository;
 	private final TransactionOTPRepository transactionOTPRepository;
+	private final JavaMailSender mailSender;
 
 	public static String generateAccountNumber() {
 		Random random = new Random();
@@ -135,14 +141,16 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerDashboardResponseDTO getCustomerDetailsById(Long userId) {
 
-
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 
-		Transaction t = transactionRepository.findTopByCustomerAndTransactionStatusOrderByTransactionTimeDesc(c,TransactionStatus.APPROVED)
+		Transaction t = transactionRepository
+				.findTopByCustomerAndTransactionStatusOrderByTransactionTimeDesc(c, TransactionStatus.APPROVED)
 				.orElseGet(() -> new Transaction());
 		CustomerDashboardResponseDTO res = modelMapper.map(c, CustomerDashboardResponseDTO.class);
 		res.setRecentTransactionAmount(t != null ? t.getAmount() : 0.0);
 		res.setName(c.getUser().getName());
+
+		System.out.println(res);
 
 		return res;
 	}
@@ -174,7 +182,26 @@ public class CustomerServiceImpl implements CustomerService {
 		return transactionPage;
 	}
 
-	public static boolean sendOtp() {
+	@Async
+	public boolean sendOtpToMail(String name, String senderEmail, String otp, String amount,
+			LocalDateTime transactionTime) {
+		try {
+			MimeMessage mm = mailSender.createMimeMessage();
+			MimeMessageHelper message = new MimeMessageHelper(mm, true,"UTF-8");
+
+			message.setTo(senderEmail);
+
+			message.setFrom("Bankify Transaction Otp <no-reply@bankify.com>");
+			message.setSubject("OTP for your transaction");
+			String body = OtpVisuals.buildOtpEmailTemplate(name, otp, amount, transactionTime);
+
+			message.setText(body,true);
+			mailSender.send(mm);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 		return true;
 	}
 
@@ -218,7 +245,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 		transactionOTPRepository.save(transOtp);
 
-		boolean sendOtp = sendOtp();
+		boolean sendOtp = this.sendOtpToMail(sender.getUser().getName(), sender.getUser().getEmail(), transOtp.getOtp(),
+				String.valueOf(sen.getAmount()), t.getTransactionTime());
 
 		if (!sendOtp)
 			throw new BankifyException("Some Internal Error Occured ....");
@@ -451,9 +479,9 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer cust = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 
 		Double totalOnGoingAmount = transactionRepository.findAllAmountsByTransactionType(cust.getId(),
-				TransactionType.DEBITED,TransactionStatus.APPROVED);
+				TransactionType.DEBITED, TransactionStatus.APPROVED);
 		Double totalInComingAmount = transactionRepository.findAllAmountsByTransactionType(cust.getId(),
-				TransactionType.CREDITED,TransactionStatus.COMPLETED);
+				TransactionType.CREDITED, TransactionStatus.COMPLETED);
 
 		if (totalInComingAmount == null)
 			totalInComingAmount = 0.0;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBlockedCustomers, unblockCustomer } from "../../../services/manager";
+import { getBlockedCustomers, unblockCustomer } from "../services/manager";
 
 export default function BlockedCustomers() {
   const [blockedUsers, setBlockedUsers] = useState([]);
