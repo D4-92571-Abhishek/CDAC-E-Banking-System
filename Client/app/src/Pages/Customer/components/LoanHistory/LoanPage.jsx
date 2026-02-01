@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoanApplicationUI from "../ApplyForLoan/ApplyForLoan";
 import "./LoanPage.css";
@@ -12,6 +12,9 @@ import {
   Clock,
   XCircle,
 } from "lucide-react";
+import axios from "axios";
+import { useRef } from 'react';
+import { sendLog } from "../../../../services/loggerService";
 
 import {requestNewLoanApi,fetchAllLoansApi} from "../../Service/apiCall";
 
@@ -27,6 +30,14 @@ export default function CurrentLoansUI() {
 
 
   const navigate = useNavigate();
+  const loggedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loggedRef.current) {
+        sendLog("CUSTOMER_LOAN_PAGE_ACCESSED", sessionStorage.getItem("userId") || "Unknown Customer");
+        loggedRef.current = true;
+    }
+  }, []);
 
   const applyForLoan = async () => {
     const token = sessionStorage.getItem("token");
