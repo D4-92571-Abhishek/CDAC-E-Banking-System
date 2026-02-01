@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./TransactionHistory.css";
 import { ArrowDownLeft, ArrowUpRight, Calendar, Search } from "lucide-react";
-import axios from "axios";
 import Transactions from "./../../../Manager/pages/Transactions";
 import { useRef } from 'react';
 import { sendLog } from "../../../../services/loggerService";

@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import {  useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { customerDetails,customerDetailsEdit } from "../../Service/apiCall";
 import { sendLog } from "../../../../services/loggerService";
 import { customerDetails,customerDetailsEdit,updatePasswordApi  } from "../../Service/apiCall";
 
