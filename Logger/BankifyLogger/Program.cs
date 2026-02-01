@@ -30,7 +30,7 @@ namespace BankifyLogger
 				{
 					/*					policy.WithOrigins("http://localhost:5173")
 					*/
-					policy.WithOrigins()
+					policy.WithOrigins("http://localhost:5173")
 						  .AllowAnyHeader()
 						  .AllowAnyMethod();
 				});

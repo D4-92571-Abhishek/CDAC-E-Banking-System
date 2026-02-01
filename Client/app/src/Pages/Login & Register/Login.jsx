@@ -10,7 +10,7 @@ import  axios  from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { sendLog } from "../../services/loggerService";
 
 
 const Login = () => {
@@ -84,6 +84,8 @@ const Login = () => {
 
       toast.success("Login successful!");
 
+      sendLog("User Logged In", decodedToken.userId);
+
       setTimeout(() => {
         if (response.data.role === "ROLE_CUSTOMER") {
           navigate("/customer");
@@ -98,6 +100,7 @@ const Login = () => {
     } catch (error) {
       if (error.response) {
         toast.error("Invalid credentials");
+        sendLog("LOGIN_FAILED", email || "Unknown User");
       }
     }
   };

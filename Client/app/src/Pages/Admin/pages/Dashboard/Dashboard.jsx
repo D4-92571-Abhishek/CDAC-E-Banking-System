@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import { sendLog } from '../../../../services/loggerService';   
+import { useRef } from 'react';
 
 const Dashboard = () => {
+
+    // sendLog("ADMIN_DASHBOARD_ACCESSED", sessionStorage.getItem("userId") || "Unknown Admin");
+
+    const loggedRef = useRef(false);
+
+    useEffect(() => {
+        if (!loggedRef.current) {
+            sendLog("ADMIN_DASHBOARD_ACCESSED", sessionStorage.getItem("userId") || "Unknown Admin");
+            loggedRef.current = true;
+        }
+    }, []);
 
     const [responseData, setResponseData] = useState();
     const dashboardData = async () => {

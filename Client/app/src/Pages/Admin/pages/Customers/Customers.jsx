@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios';
+import { useRef } from 'react';
+import { sendLog } from '../../../../services/loggerService';
 
 const Customers = () => {
 
@@ -8,6 +10,15 @@ const Customers = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [showData, setShowData] = useState();
     const [status, setStatus] = useState("");
+
+    const loggedRef = useRef(false);
+
+    useEffect(() => {
+        if (!loggedRef.current) {
+            sendLog("ADMIN_CUSTOMERS_PAGE_ACCESSED", sessionStorage.getItem("userId") || "Unknown Admin");
+            loggedRef.current = true;
+        }
+    }, []);
 
     const customersDataInfo = async () => {
         const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerInfo', { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } });
