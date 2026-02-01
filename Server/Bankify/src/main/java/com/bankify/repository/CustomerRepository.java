@@ -72,7 +72,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 			    FROM Customer c
 			    JOIN c.user u
 			    LEFT JOIN Transaction t ON t.customer = c
-			    WHERE u.status='ACTIVE'
 			    GROUP BY
 			  u.id,
 			        u.name,

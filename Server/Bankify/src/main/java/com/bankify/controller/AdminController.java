@@ -90,10 +90,10 @@ public class AdminController {
 		
 	}
 	
-	@PutMapping("/adminDeactivateManager/{employeeId}")
-	public ResponseEntity<?> deactivateManager(@PathVariable Long employeeId){
+	@PutMapping("/adminDeactivateManager/{id}/{status}")
+	public ResponseEntity<?> changeManagerStatus(@PathVariable Long id,@PathVariable String status){
 		
-		return ResponseEntity.ok(adminService.deactivateManager(employeeId));
+		return ResponseEntity.ok(adminService.changeStatus(id,Status.valueOf(status.toUpperCase())));
 		
 	}
 	
