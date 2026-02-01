@@ -4,18 +4,29 @@ import { useNavigate } from "react-router-dom";
 import "./DashBoard.css";
 import axios from "axios";
 import { Eye, EyeOff, CreditCard, TrendingUp, Send, ArrowDownLeft, ArrowUpRight, MoreVertical, Wallet } from "lucide-react";
+import { useRef } from 'react';
+import { sendLog } from "../../../../services/loggerService";
 
 export default function DashboardUI() {
   const [cust, setCust] = useState();
   const [showBalance, setShowBalance] = useState(true);
   const [transDetails, setTransDetails] = useState();
   const navigate = useNavigate();
+  const loggedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loggedRef.current) {
+        sendLog("CUSTOMER_DASHBOARD_ACCESSED", sessionStorage.getItem("userId") || "Unknown Customer");
+        loggedRef.current = true;
+    }
+  }, []);
 
   const fetchData = async () => {
     try {
       const data = await axios.get(`http://localhost:8080/bankify/customers/${sessionStorage.getItem("userId")}`,
         { headers: { 'Authorization': `Bearer ${sessionStorage.getItem("token")}` } }
       );
+      console.log(data)
       setCust(data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -44,6 +55,7 @@ export default function DashboardUI() {
 
 
   console.log(transDetails)
+  console.log(cust)
 
 
   return (

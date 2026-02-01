@@ -12,6 +12,8 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useRef } from 'react';
+import { sendLog } from "../../../../services/loggerService";
 
 export default function FundTransferUI() {
   const [activeTab, setActiveTab] = useState("new");
@@ -31,6 +33,14 @@ export default function FundTransferUI() {
   const [accountNo, setAccountNo] = useState();
 
   const navigate = useNavigate();
+  const loggedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loggedRef.current) {
+        sendLog("CUSTOMER_FUND_TRANSFER_PAGE_ACCESSED", sessionStorage.getItem("userId") || "Unknown Customer");
+        loggedRef.current = true;
+    }
+  }, []);
 
   const fetchAccountNos = async () => {
     try {

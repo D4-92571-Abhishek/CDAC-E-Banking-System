@@ -139,7 +139,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Customer c = customerRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException());
 
 		Transaction t = transactionRepository.findTopByCustomerAndTransactionStatusOrderByTransactionTimeDesc(c,TransactionStatus.APPROVED)
-				.orElseThrow(() -> new BankifyException("transHistory not found"));
+				.orElseGet(() -> new Transaction());
 		CustomerDashboardResponseDTO res = modelMapper.map(c, CustomerDashboardResponseDTO.class);
 		res.setRecentTransactionAmount(t != null ? t.getAmount() : 0.0);
 		res.setName(c.getUser().getName());

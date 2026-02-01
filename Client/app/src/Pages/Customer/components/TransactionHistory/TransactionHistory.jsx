@@ -3,12 +3,23 @@ import "./TransactionHistory.css";
 import { ArrowDownLeft, ArrowUpRight, Calendar, Search } from "lucide-react";
 import axios from "axios";
 import Transactions from "./../../../Manager/pages/Transactions";
+import { useRef } from 'react';
+import { sendLog } from "../../../../services/loggerService";
 
 export default function TransactionHistory() {
   const [filterType, setFilterType] = useState("all");
 
   const [transactionHistory, setTransactionHistory] = useState([]);
   const [transData, setTransData] = useState({});
+
+  const loggedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loggedRef.current) {
+        sendLog("CUSTOMER_TRANSACTION_HISTORY_PAGE_ACCESSED", sessionStorage.getItem("userId") || "Unknown Customer");
+        loggedRef.current = true;
+    }
+  }, []);
 
   const fetchTransHistoryData = async () => {
     try {

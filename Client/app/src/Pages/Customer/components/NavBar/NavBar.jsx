@@ -14,6 +14,7 @@ import {  useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { customerDetails,customerDetailsEdit } from "../../Service/apiCall";
+import { sendLog } from "../../../../services/loggerService";
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -133,6 +134,7 @@ export default function DashboardLayout() {
 
   const logoutHandler = () => {
     sessionStorage.clear();
+    sendLog("CUSTOMER_LOGGED_OUT", sessionStorage.getItem("userId") || "Unknown User");
     navigate("/");
   };
   // Initialize form fields when responseData changes
