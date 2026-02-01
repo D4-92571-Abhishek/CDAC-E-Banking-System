@@ -16,56 +16,90 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	Optional<Customer> findByAccountNo(String accountNo);
 	
     
-    @Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
-    long getAdminTotalCustomers();
+//     @Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
+//     long getAdminTotalCustomers();
     
-    @Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
-    double getAdminTotalBankAssets();
+//     @Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
+//     double getAdminTotalBankAssets();
     
-    @Query("SELECT COALESCE(AVG(c.currentBalance), 0) FROM Customer c")
-    double getAdminAverageBalance();
+//     @Query("SELECT COALESCE(AVG(c.currentBalance), 0) FROM Customer c")
+//     double getAdminAverageBalance();
     
-    @Query("""
-            SELECT new com.bankify.dto.AdminCustomerListDTO(
-    		    u.id,
-                u.name,
-                c.accountNo,
-                c.currentBalance,
-                u.status,
-                u.creationDate,
-                MAX(t.transactionTime)
-            )
-            FROM Customer c
-            JOIN c.user u
-            LEFT JOIN Transaction t ON t.customer = c
-            GROUP BY
-    		    u.id,
-                u.name,
-                c.accountNo,
-                c.currentBalance,
-                u.status,
-                u.creationDate
-            ORDER BY u.creationDate DESC
-        """)
-        List<AdminCustomerListDTO> getAdminCustomerList();
+//     @Query("""
+//             SELECT new com.bankify.dto.AdminCustomerListDTO(
+//     		    u.id,
+//                 u.name,
+//                 c.accountNo,
+//                 c.currentBalance,
+//                 u.status,
+//                 u.creationDate,
+//                 MAX(t.transactionTime)
+//             )
+//             FROM Customer c
+//             JOIN c.user u
+//             LEFT JOIN Transaction t ON t.customer = c
+//             GROUP BY
+//     		    u.id,
+//                 u.name,
+//                 c.accountNo,
+//                 c.currentBalance,
+//                 u.status,
+//                 u.creationDate
+//             ORDER BY u.creationDate DESC
+//         """)
+//         List<AdminCustomerListDTO> getAdminCustomerList();
     
+
+	@Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
+	long getAdminTotalCustomers();
+
+	@Query("SELECT COALESCE(SUM(c.currentBalance), 0) FROM Customer c")
+	double getAdminTotalBankAssets();
+
+	@Query("SELECT COALESCE(AVG(c.currentBalance), 0) FROM Customer c")
+	double getAdminAverageBalance();
+
+	@Query("""
+			    SELECT new com.bankify.dto.AdminCustomerListDTO(
+			  u.id,
+			        u.name,
+			        c.accountNo,
+			        c.currentBalance,
+			        u.status,
+			        u.creationDate,
+			        MAX(t.transactionTime)
+			    )
+			    FROM Customer c
+			    JOIN c.user u
+			    LEFT JOIN Transaction t ON t.customer = c
+			    WHERE u.status='ACTIVE'
+			    GROUP BY
+			  u.id,
+			        u.name,
+			        c.accountNo,
+			        c.currentBalance,
+			        u.status,
+			        u.creationDate
+			    ORDER BY u.creationDate DESC
+			""")
+	List<AdminCustomerListDTO> getAdminCustomerList();
 
 //    @Query("""
 //    		SELECT new com.bankify.dto.LoanDetailsResponseDTO(l.loanType,l.interest,(ld.principle-(ld.paidMonths * ld.emi)),ld.emi,l.loanStatus)  FROM LoanDetails ld join ld.loan l WHERE ld.customer.id = :custId
 //    		""")
-	
-    @Query("""
-			SELECT new com.bankify.dto.LoanDetailsResponseDTO(
+
+	@Query("""
+				SELECT new com.bankify.dto.LoanDetailsResponseDTO(
 			    l.loanType,
-			    ld.interest,
-			    (ld.principle - (ld.paidMonths * ld.emi)),
-			    ld.emi,
+			    l.interest,
+			    (COALESCE(ld.principle, 0) - (COALESCE(ld.paidMonths, 0) * COALESCE(ld.emi, 0))),
+			    (COALESCE(ld.emi,0)),
 			    l.loanStatus
 			)
 			FROM LoanDetails ld
-			LEFT JOIN ld.loan l
-			WHERE ld.customer.id =:custId
-					""")
+			JOIN ld.loan l
+			WHERE ld.customer.id = :custId
+								""")
 	List<LoanDetailsResponseDTO> getLoanDetailsByCustomer(@Param("custId") Long custId);
 
 	Optional<Customer> findByUser(Long userId);
@@ -73,10 +107,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	@Query("SELECT c FROM Customer c where c.user.id = :userId")
 	Optional<Customer> findByUserId(@Param("userId") Long userId);
 
-    Optional<Customer> findByUser_Id(Long userId);
-    
-
-    
-    
+	Optional<Customer> findByUser_Id(Long userId);
 
 }
