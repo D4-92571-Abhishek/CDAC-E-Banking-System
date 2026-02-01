@@ -1,7 +1,6 @@
 import { Phone, Mail, Edit, KeyRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import axios from "../../../services/axios";
-
+import axios from "../services/axios";
 export default function Header() {
   const [user, setUser] = useState({});
   const [showEdit, setShowEdit] = useState(false);

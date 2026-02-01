@@ -3,7 +3,7 @@ import StatsCards from "../components/StatsCards";
 import {
   getActiveCustomers,
   getCustomerTransactions,
-} from "../../../services/transaction";
+} from "../services/transaction";
 import { ListOrdered } from "lucide-react";
 
 export default function Transactions() {
@@ -119,13 +119,11 @@ export default function Transactions() {
         className="border-bottom"
         style={{ transition: "all 0.2s ease-in-out" }}
       >
-        {/* NAME + EMAIL */}
         <td>
           <div className="fw-semibold text-primary">{cust.name}</div>
           <small className="text-muted">{cust.email}</small>
         </td>
 
-        {/* MOBILE */}
         <td className="fw-medium">{cust.contactNo}</td>
 
         {/* ACTION */}

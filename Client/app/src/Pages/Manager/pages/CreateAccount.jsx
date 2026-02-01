@@ -1,6 +1,6 @@
 import { useState } from "react";
 import StatsCards from "../components/StatsCards";
-import api from "../../../services/axios";
+import api from "../services/axios";
 
 export default function CreateAccount() {
   const [formData, setFormData] = useState({

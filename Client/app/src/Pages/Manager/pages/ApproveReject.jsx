@@ -6,7 +6,7 @@ import {
   verifyAddress,
   approveCustomer,
   rejectCustomer,
-} from "../../../services/manager";
+} from "../services/manager";
 
 export default function ApproveReject() {
   const [customers, setCustomers] = useState([]);

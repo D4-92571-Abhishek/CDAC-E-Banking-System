@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDashboardStats } from "../../../services/dashboard";
+import { getDashboardStats } from "../services/dashboard";
 
 export default function StatsCards() {
   const [stats, setStats] = useState(null);
