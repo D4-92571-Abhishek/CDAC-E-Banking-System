@@ -20,7 +20,11 @@ import lombok.ToString;
 public class CustomerSignupRequest {
 
     private String name;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd")
+
     private LocalDate dob;
+    
     private String email;
     private String contactNo;
     private String password;

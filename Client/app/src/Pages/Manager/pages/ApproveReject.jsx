@@ -6,7 +6,7 @@ import {
   verifyAddress,
   approveCustomer,
   rejectCustomer,
-} from "../../../services/manager";
+} from "../services/manager";
 
 export default function ApproveReject() {
   const [customers, setCustomers] = useState([]);
@@ -91,8 +91,7 @@ export default function ApproveReject() {
 
   return (
    <div className="content">
-  <h5 className="mb-4">Dashboard Overview</h5>
-  <StatsCards />
+  
 
   <div className="card shadow-sm rounded-4 border-0 mt-4">
     {/* HEADER WITH SEARCH & FILTER */}
