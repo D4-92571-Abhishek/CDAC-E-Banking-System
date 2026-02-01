@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import {  useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { customerDetails,customerDetailsEdit } from "../../Service/apiCall";
+import { sendLog } from "../../../../services/loggerService";
 import { customerDetails,customerDetailsEdit,updatePasswordApi  } from "../../Service/apiCall";
 
 export default function DashboardLayout() {
@@ -134,6 +136,7 @@ export default function DashboardLayout() {
 
   const logoutHandler = () => {
     sessionStorage.clear();
+    sendLog("CUSTOMER_LOGGED_OUT", sessionStorage.getItem("userId") || "Unknown User");
     navigate("/");
   };
   // Initialize form fields when responseData changes
