@@ -45,6 +45,10 @@ public class Transaction extends Base {
 	@Column(name="transaction_description")
 	private String transactionDescription;
 	
+	@Column(name="transaction_status",nullable = false,length = 20)
+	@Enumerated(EnumType.STRING)
+	private TransactionStatus transactionStatus = TransactionStatus.PENDING;
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="customer_id",nullable = false)
 	private Customer customer;

@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,16 @@ public class TransactionHistory extends Base{
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
 	
+	@Column(name="transaction_status",nullable = false,length = 20)
+	@Enumerated(EnumType.STRING)
+	private TransactionStatus transactionStatus = TransactionStatus.PENDING;
+	
 	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
+	
+	@OneToOne
+	@JoinColumn(name= "transaction_id")
+	private Transaction transaction;
+	
 }

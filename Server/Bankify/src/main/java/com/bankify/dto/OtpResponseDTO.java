@@ -11,12 +11,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+public class OtpResponseDTO {
 
-
-public class CustomerFundTransferRequestDTO {
-	private String selfAccountNo;
-	private String destinationAccountNo;
-	private double amount;
+	private String status;
 	private String message;
-	
+	private String transId;
+	private String otpId;
 }

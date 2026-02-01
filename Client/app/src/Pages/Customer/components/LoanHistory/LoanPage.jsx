@@ -262,7 +262,8 @@ export default function CurrentLoansUI() {
           </div>
         </div>
 
-        <div
+       {allLoans && allLoans.length > 0 && (
+           <div
           className="card border-0 rounded-3 overflow-hidden"
           style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}
         >
@@ -325,6 +326,8 @@ export default function CurrentLoansUI() {
             </table>
           </div>
         </div>
+        )
+       }
 
         <div
           className="modal fade"

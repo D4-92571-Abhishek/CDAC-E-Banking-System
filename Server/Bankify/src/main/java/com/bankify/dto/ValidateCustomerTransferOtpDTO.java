@@ -13,10 +13,13 @@ import lombok.ToString;
 @ToString
 
 
-public class CustomerFundTransferRequestDTO {
+public class ValidateCustomerTransferOtpDTO {
 	private String selfAccountNo;
 	private String destinationAccountNo;
 	private double amount;
 	private String message;
-	
+	private String transactionId;
+	private String otpId;
+	private String inputOTP;
+	private String cancelTransaction = "FALSE";
 }

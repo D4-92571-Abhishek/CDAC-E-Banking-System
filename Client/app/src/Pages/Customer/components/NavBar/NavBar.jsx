@@ -13,6 +13,7 @@ import {
 import {  useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { customerDetails,customerDetailsEdit } from "../../Service/apiCall";
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -59,14 +60,12 @@ export default function DashboardLayout() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      // Close the modal
       const closeButton =
         document
           .querySelector('[data-bs-target="#changePasswordModal"]')
           ?.parentElement?.querySelector(".btn-close") ||
         document.querySelector("#changePasswordModal .btn-close");
       if (closeButton) closeButton.click();
-      // Alternative: use Bootstrap's modal API
       const modal = document.getElementById("changePasswordModal");
       if (modal) {
         const bsModal = new window.bootstrap.Modal(modal);
@@ -89,15 +88,16 @@ export default function DashboardLayout() {
         pincode: pincode,
       };
 
-      const responseEdit = await axios.put(
-        `http://localhost:8080/bankify/customers/edit-customer/${sessionStorage.getItem("userId")}`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        },
-      );
+      // const responseEdit = await axios.put(
+      //   `http://localhost:8080/bankify/customers/edit-customer/${sessionStorage.getItem("userId")}`,
+      //   body,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      //     },
+      //   },
+      // );
+      const responseEdit = await customerDetailsEdit(body);
       if(responseEdit.data.status==="Success"){
         toast.success("Profile updated successfully!");
         const modal = document.getElementById("editProfileModal");
@@ -112,12 +112,14 @@ export default function DashboardLayout() {
       }
     };
   const fetchData = async () => {
-    const data = await axios.get(
-      `http://localhost:8080/bankify/customers/get-customer/${sessionStorage.getItem("userId")}`,
-      {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      },
-    );
+    // const data = await axios.get(
+    //   `http://localhost:8080/bankify/customers/get-customer/${sessionStorage.getItem("userId")}`,
+    //   {
+    //     headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+    //   },
+    // );
+
+    const data = await customerDetails();
     setResponseData(data.data);
   };
 
