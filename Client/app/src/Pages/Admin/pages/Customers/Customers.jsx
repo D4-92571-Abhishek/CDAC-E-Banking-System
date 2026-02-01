@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useRef } from 'react';
 import { sendLog } from '../../../../services/loggerService';
+import { getAdminCustomerDataInfo , getAdminCustomersList , activateDeactivateCustomer } from '../../Service/adminCustomerPageService';    
 
 const Customers = () => {
 
@@ -20,42 +21,71 @@ const Customers = () => {
         }
     }, []);
 
+    // const customersDataInfo = async () => {
+    //     const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerInfo', { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } });
+    //     setResponseData(response.data);
+    // }
+
     const customersDataInfo = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerInfo', { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } });
-        setResponseData(response.data);
-    }
+        try {
+            const data = await getAdminCustomerDataInfo();  
+            setResponseData(data);
+        } catch (error) {
+            console.error("Error fetching customer data:", error);
+        }
+    };
+
+    // const customersList = async () => {
+    //     const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerList', { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } });
+    //     setCustomersListData(response.data);
+    //     setShowData(response.data);
+    // }
 
     const customersList = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminCustomerList', { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } });
-        setCustomersListData(response.data);
-        setShowData(response.data);
-    }
+        try {
+            const data = await getAdminCustomersList();  
+            setCustomersListData(data);
+            setShowData(data);
+        } catch (error) {
+            console.error("Error fetching customers list:", error);
+        }
+    };
+
+    // const onActivateDeactivateCustomer = async (id, status) => {
+    //     try {
+    //         await axios.put(
+    //             `http://localhost:8080/bankify/admin/adminDeactivateCustomer/${id}/${status}`,{},
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    //                     "Content-Type": "application/json"
+    //                 }
+    //             }
+    //         );
+
+    //         customersDataInfo();
+    //         customersList();
+
+    //     } catch (err) {
+    //         console.error("Deactivate Customer Failed:", err);
+    //         alert("Failed to deactivate customer. Check console.");
+    //     }
+    // };
 
     const onActivateDeactivateCustomer = async (id, status) => {
         try {
-            await axios.put(
-                `http://localhost:8080/bankify/admin/adminDeactivateCustomer/${id}/${status}`,{},
-                {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-                        "Content-Type": "application/json"
-                    }
-                }
-            );
-
+            await activateDeactivateCustomer(id, status);
             customersDataInfo();
             customersList();
-
         } catch (err) {
-            console.error("Deactivate Customer Failed:", err);
-            alert("Failed to deactivate customer. Check console.");
+            console.error("Activate/Deactivate Customer Failed:", err);
+            alert("Failed to activate/deactivate customer. Check console.");
         }
     };
 
     useEffect(() => {
         customersDataInfo();
         customersList();
-
     }, []);
 
     useEffect(() => {
