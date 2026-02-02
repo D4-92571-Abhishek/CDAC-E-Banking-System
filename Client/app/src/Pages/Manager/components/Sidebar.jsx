@@ -69,6 +69,14 @@ backgroundColor: "#e5e7eb",
             Rejected Applications
           </NavLink>
         </li>
+
+        <li className="nav-item">
+          <NavLink to="loan-customers" className={navLinkClass}>
+            <Wallet size={20} />
+            Loan Applications
+          </NavLink>
+        </li>
+
       </ul>
 
       {/* Logout Button */}
