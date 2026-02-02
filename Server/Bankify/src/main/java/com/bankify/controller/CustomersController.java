@@ -45,6 +45,7 @@ public class CustomersController {
 //    }
 	@GetMapping("/{userId}")
 	public ResponseEntity<?> getCustomerDetailsByUserId(@PathVariable Long userId) {
+		System.out.println("Hello from cust");
 		return ResponseEntity.ok(customerService.getCustomerDetailsById(userId));
 	}
     @GetMapping("/active-customers")
