@@ -1,6 +1,8 @@
 package com.bankify.service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,14 +16,20 @@ import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.dto.ManagerCreateCustomerDTO;
 import com.bankify.dto.ManagerHeaderDTO;
 import com.bankify.dto.PendingCustomerResponse;
+import com.bankify.dto.PendingLoanCustomerDTO;
 import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.Address;
 import com.bankify.entities.Customer;
+import com.bankify.entities.Loan;
+import com.bankify.entities.LoanDetails;
+import com.bankify.entities.LoanStatus;
 import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.User;
 import com.bankify.repository.AddressRepository;
 import com.bankify.repository.CustomerRepository;
+import com.bankify.repository.LoanDetailsRepository;
+import com.bankify.repository.LoanRepository;
 import com.bankify.repository.ManagerDashboardRepository;
 import com.bankify.repository.TransactionRepository;
 import com.bankify.repository.UserRepository;
@@ -41,7 +49,22 @@ public class ManagerServiceImpl implements ManagerService {
     private final ManagerDashboardRepository dashboardRepository;
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private final LoanRepository loanRepository;
+    private final LoanDetailsRepository loanDetailsRepository;
 
+    
+    public static String generateAccountNumber() {
+		Random random = new Random();
+		StringBuilder sb = new StringBuilder();
+
+		// Generate 10-digit account number
+		for (int i = 0; i < 10; i++) {
+			int digit = random.nextInt(10); // 0 to 9
+			sb.append(digit);
+		}
+
+		return sb.toString();
+	}
 
 
 
@@ -152,6 +175,75 @@ public class ManagerServiceImpl implements ManagerService {
         return new GeneralResponseDTO("Success", "Customer Account is Unblocked");
 
     }
+    
+    
+    @Override
+    public GeneralResponseDTO approveLoan(Long loanId) {
+
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (loan.getLoanStatus() != LoanStatus.PENDING) {
+            throw new RuntimeException("Loan already processed");
+        }
+
+        // 1️ Fetch existing LoanDetails (already created at request time)
+        LoanDetails details = loanDetailsRepository.findByLoan(loan)
+                .orElseThrow(() -> new RuntimeException("LoanDetails not found"));
+
+        // 2️ Approval date
+        LocalDate startDate = LocalDate.now();
+
+        // 3️ Derive tenure from EMI & principal
+        double totalMonths = loan.getLoanTenure()*12;
+
+        if (totalMonths <= 0) {
+            throw new RuntimeException("Invalid tenure calculation");
+        }
+
+        LocalDate endDate = startDate.plusMonths((long)totalMonths);
+
+        // 4️ Update LoanDetails (this is where dates live)
+        details.setStartDate(startDate);
+        details.setEndDate(endDate);
+        loanDetailsRepository.save(details);
+
+        // 5️ Update Loan status ONLY
+        loan.setLoanStatus(LoanStatus.ACTIVE);
+        loanRepository.save(loan);
+        loan.getCustomer().setLoanTaken(true);
+        return new GeneralResponseDTO(
+            "SUCCESS",
+            "Loan approved successfully"
+        );
+    }
+
+
+    @Override
+    @Transactional
+    public GeneralResponseDTO rejectLoan(Long loanId) {
+
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (loan.getLoanStatus() != LoanStatus.PENDING) {
+            throw new RuntimeException("Loan already processed");
+        }
+
+        loan.setLoanStatus(LoanStatus.REJECTED);
+        loanRepository.save(loan);
+
+        return new GeneralResponseDTO(
+            "SUCCESS",
+            "Loan rejected successfully"
+        );
+    }
+    
+    
+    @Override
+    public List<PendingLoanCustomerDTO> getAllPendingLoans() {
+        return loanRepository.findAllPendingLoans();
+    }
 
     
     @Override
@@ -250,6 +342,7 @@ public class ManagerServiceImpl implements ManagerService {
     	    Customer customer = modelMapper.map(dto, Customer.class);
     	    customer.setLoanTaken(false);
     	    customer.setUser(user);
+    	    customer.setAccountNo(generateAccountNumber());
 
     	    Address address = modelMapper.map(dto, Address.class);
     	    address.setAddressVerified(true);

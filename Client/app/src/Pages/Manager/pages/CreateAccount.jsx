@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StatsCards from "../components/StatsCards";
 import api from "../services/axios";
+import { sendLog } from "../../../services/loggerService";
 
 export default function CreateAccount() {
   const [formData, setFormData] = useState({
@@ -19,6 +20,18 @@ export default function CreateAccount() {
     pincode: "",
   });
 
+  const loggedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loggedRef.current) {
+      sendLog(
+        "MANAGER_DASHBOARD_ACCESSED",
+        sessionStorage.getItem("userId") || "Unknown Admin"
+      );
+      loggedRef.current = true;
+    }
+  }, []);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -26,7 +39,74 @@ export default function CreateAccount() {
     });
   };
 
+  /* 🔹 SIMPLE VALIDATION */
+  const validateForm = () => {
+    const {
+      firstName,
+      lastName,
+      email,
+      contactNo,
+      password,
+      dateOfBirth,
+      gender,
+      aadharNo,
+      panNo,
+      completeAddress,
+      city,
+      state,
+      pincode,
+    } = formData;
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !contactNo ||
+      !password ||
+      !dateOfBirth ||
+      !gender ||
+      !aadharNo ||
+      !panNo ||
+      !completeAddress ||
+      !city ||
+      !state ||
+      !pincode
+    ) {
+      alert("All fields are required");
+      return false;
+    }
+
+    if (!email.includes("@")) {
+      alert("Invalid email address");
+      return false;
+    }
+
+    if (contactNo.length !== 10) {
+      alert("Mobile number must be 10 digits");
+      return false;
+    }
+
+    if (aadharNo.length !== 12) {
+      alert("Aadhar number must be 12 digits");
+      return false;
+    }
+
+    if (panNo.length !== 10) {
+      alert("PAN number must be 10 characters");
+      return false;
+    }
+
+    if (pincode.length !== 6) {
+      alert("Pincode must be 6 digits");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     try {
       await api.post("/manager/create-customer", formData);
       alert("Customer account created successfully!");
@@ -61,7 +141,6 @@ export default function CreateAccount() {
         <h4 className="mb-3">Create Customer Account</h4>
 
         <div className="row g-3">
-
           <div className="col-md-6">
             <label className="form-label">First Name</label>
             <input
@@ -209,7 +288,6 @@ export default function CreateAccount() {
               Create Account
             </button>
           </div>
-
         </div>
       </div>
     </div>

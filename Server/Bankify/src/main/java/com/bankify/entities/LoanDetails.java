@@ -33,6 +33,9 @@ public class LoanDetails extends Base {
 	private LocalDate startDate = LocalDate.now();
 	@Column(name="end_date")
 	private LocalDate endDate;
+	
+	@Column(name = "loan_tenure")
+	private double loanTenure;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "loan_id")
 	private Loan loan;

@@ -159,6 +159,32 @@ const fetchAllLoansApi = async () => {
   return data;
 };
 
+const payLoanEmi = async (loanId) => {
+  const data = await axios.get(
+    `${API_BASE_URL}/customers/loan/pay-loan-amount/${sessionStorage.getItem("userId")}/${loanId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    },
+  );
+
+  return data;
+};
+
+const addFundsToAccount = async(incomingAmount) =>{
+   const data = await axios.post(
+    `${API_BASE_URL}/customers/add-funds/${sessionStorage.getItem("userId")}`,{amount:incomingAmount},
+    {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    },
+  );
+
+  return data;
+}
+
 export {
   customerDetails,
   customerDetailsEdit,
@@ -173,4 +199,6 @@ export {
   cancelFundstransferApi,
   fetchAllLoansApi,
   requestNewLoanApi,
+  payLoanEmi,
+  addFundsToAccount
 };
