@@ -33,6 +33,9 @@ public class Loan extends Base {
 	@Column(name="loan_status",nullable = false)
 	private LoanStatus loanStatus;
 	
+	@Column(name="loan_tenure")
+	private Double loanTenure;
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer")
 	private Customer customer;

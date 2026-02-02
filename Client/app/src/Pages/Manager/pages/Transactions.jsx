@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import StatsCards from "../components/StatsCards";
+import { sendLog } from "../../../services/loggerService";
 import {
   getActiveCustomers,
   getCustomerTransactions,
 } from "../services/transaction";
 import { ListOrdered } from "lucide-react";
+
 
 export default function Transactions() {
   const [customers, setCustomers] = useState([]);
@@ -22,6 +24,18 @@ export default function Transactions() {
 
   const dropdownRef = useRef(null);
 
+    const loggedRef = useRef(false);
+
+
+  useEffect(() => {
+          if (!loggedRef.current) {
+              sendLog("MANAGER_DASHBOARD_ACCESSED", sessionStorage.getItem("userId") || "Unknown Admin");
+              loggedRef.current = true;
+          }
+      }, []);
+
+  
+
   useEffect(() => {
     loadActiveCustomers();
   }, []);
@@ -30,6 +44,20 @@ export default function Transactions() {
     const res = await getActiveCustomers();
     setCustomers(res.data);
   };
+
+  const getStatusBadge = (status) => {
+  switch (status) {
+    case "APPROVED":
+      return <span className="badge bg-success">APPROVED</span>;
+    case "PENDING":
+      return <span className="badge bg-warning text-dark">PENDING</span>;
+    case "CANCELLED":
+      return <span className="badge bg-danger">CANCELLED</span>;
+    default:
+      return <span className="badge bg-secondary">{status}</span>;
+  }
+};
+
 
   const handleViewTransactions = async (customer) => {
     setLoading(true);
@@ -248,13 +276,14 @@ export default function Transactions() {
                           <th>Type</th>
                           <th>Amount</th>
                           <th>Description</th>
+                          <th>Status</th>
                           <th>Date & Time</th>
                         </tr>
                       </thead>
                       <tbody>
                         {sortedTransactions.map((tx) => (
-                          <tr key={tx.transactionId}>
-                            <td>{tx.transactionId}</td>
+                          <tr key={tx.id}>
+                            <td>{tx.id}</td>
                             <td>
                               <span
                                 className={`badge ${
@@ -270,6 +299,7 @@ export default function Transactions() {
                               ₹{tx.amount.toFixed(2)}
                             </td>
                             <td>{tx.transactionDescription}</td>
+                            <td>{getStatusBadge(tx.transactionStatus)}</td>
                             <td>
                               {new Date(
                                 tx.transactionTime

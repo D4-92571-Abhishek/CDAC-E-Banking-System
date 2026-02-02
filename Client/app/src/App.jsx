@@ -31,6 +31,7 @@ import ApproveReject from './Pages/Manager/pages/ApproveReject';
 import Transactions from './Pages/Manager/pages/Transactions';
 import BlockedCustomers from './Pages/Manager/pages/BlockedCustomers';
 import ProtectedRoute from "./Pages/Manager/pages/ProtectedRoute";
+import LoanApproval  from "./Pages/Manager/pages/LoanApproval";
 import "react-toastify/dist/ReactToastify.css";
 
 
@@ -78,6 +79,8 @@ function App() {
             <Route path="transactions" element={<Transactions />} />
             
            <Route path="blocked-customers" element={<BlockedCustomers />} />
+            <Route path="loan-customers" element={<LoanApproval/>} />
+
 
           </Route>
           </Route>

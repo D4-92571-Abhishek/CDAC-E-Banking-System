@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bankify.dto.AddAmountObjectDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
 import com.bankify.dto.LoanRequestDTO;
 import com.bankify.dto.ValidateCustomerTransferOtpDTO;
@@ -18,6 +19,7 @@ import com.bankify.dto.EditCustomerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
 import com.bankify.service.CustomerService;
 
+import io.micrometer.core.ipc.http.HttpSender.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -112,6 +114,21 @@ public class CustomersController {
 		return ResponseEntity.ok(customerService.getAccountNo(userId));
 	}
 	
+	@GetMapping("/loan/pay-loan-amount/{userId}/{loanId}")
+	public ResponseEntity<?> payLoanAmount(@PathVariable Long userId,@PathVariable Long loanId){
+		return ResponseEntity.ok(customerService.payLoanEMI(userId, loanId));
+	}
+	
+//	@GetMapping("/loan/get-loan-details/{userId}")
+//	
+//	public ResponseEntity<?> getCurrentLoanDetails(@PathVariable Long userId){
+//		return ResponseEntity.ok(customerService.getActiveLoanDetails(userId));
+//	}
+	
+	@PostMapping("/add-funds/{userId}")
+	public ResponseEntity<?> addFundsToyourAccount(@PathVariable Long userId,@RequestBody AddAmountObjectDTO addAmount){
+		return ResponseEntity.ok(customerService.addFundsToAccount(userId,addAmount));
+	}
 	
 
 }

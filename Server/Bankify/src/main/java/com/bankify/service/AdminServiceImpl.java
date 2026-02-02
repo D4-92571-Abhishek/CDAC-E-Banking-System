@@ -16,6 +16,8 @@ import com.bankify.dto.AdminLoanInfoDTO;
 import com.bankify.dto.AdminLoanListDTO;
 import com.bankify.dto.AdminManagerListDTO;
 import com.bankify.dto.GeneralResponseDTO;
+import com.bankify.entities.Customer;
+import com.bankify.entities.Gender;
 import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.User;
@@ -33,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 	
-	final CustomerRepository customerRepository;
+	private final CustomerRepository customerRepository;
 	private final TransactionRepository transactionRepository;
 	private final UserRepository userRepository;
 	private final LoanRepository loanRepository;
@@ -182,6 +184,60 @@ public class AdminServiceImpl implements AdminService {
 		
 		return null;
 	}
+
+	@Override
+	public void createAdminAndBankAssetsAccount() {
+
+	    if (userRepository.existsByEmail("admin@bankify.com")) {
+	        System.out.println("Admin already exists. Skipping...");
+	        return;
+	    }
+
+	    User admin = new User();
+	    admin.setName("admin");
+	    admin.setContactNo("1234567890");
+	    admin.setDob(LocalDate.parse("2000-01-01"));
+	    admin.setRole(Role.ROLE_ADMIN);
+	    admin.setCustomerVerified(true);
+	    admin.setStatus(Status.ACTIVE);
+	    admin.setEmail("admin@bankify.com");
+	    admin.setPassword(passwordEncoder.encode("admin123"));
+
+	    userRepository.save(admin);
+
+	    if (userRepository.existsByEmail("bank@bankify.com")) {
+	        System.out.println("Bank assets user already exists. Skipping...");
+	        return;
+	    }
+
+	    User bankAssets = new User();
+	    bankAssets.setName("bank");
+	    bankAssets.setContactNo("0123456789");
+	    bankAssets.setDob(LocalDate.parse("2000-01-01"));
+	    bankAssets.setRole(Role.ROLE_ADMIN);
+	    bankAssets.setCustomerVerified(true);
+	    bankAssets.setStatus(Status.ACTIVE);
+	    bankAssets.setEmail("bank@bankify.com");
+	    bankAssets.setPassword(passwordEncoder.encode("bank123"));
+
+	    userRepository.save(bankAssets);
+
+	    if (customerRepository.existsByUser(bankAssets)) {
+	        return;
+	    }
+
+	    Customer cust = new Customer();
+	    cust.setAadharNo("************");
+	    cust.setPanNo("**********");
+	    cust.setAccountNo("1111111111");
+	    cust.setCurrentBalance(5_000_000.00);
+	    cust.setGender(Gender.MALE);
+	    cust.setLoanTaken(false);
+	    cust.setUser(bankAssets);
+
+	    customerRepository.save(cust);
+	}
+
 		
 	
 	

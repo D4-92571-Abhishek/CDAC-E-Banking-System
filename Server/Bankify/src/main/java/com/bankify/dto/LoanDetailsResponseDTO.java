@@ -18,6 +18,7 @@ import lombok.ToString;
 @ToString
 
 public class LoanDetailsResponseDTO {
+	private Long id;
 	private LoanType loanType;
 	private double interest;
 	private double currentBalance;

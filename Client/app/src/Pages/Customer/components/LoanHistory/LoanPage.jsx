@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoanApplicationUI from "../ApplyForLoan/ApplyForLoan";
 import "./LoanPage.css";
@@ -13,10 +13,15 @@ import {
   XCircle,
 } from "lucide-react";
 
-import { useRef } from 'react';
+import { useRef } from "react";
 import { sendLog } from "../../../../services/loggerService";
 
-import {requestNewLoanApi,fetchAllLoansApi} from "../../Service/apiCall";
+import {
+  requestNewLoanApi,
+  fetchAllLoansApi,
+  payLoanEmi,
+} from "../../Service/apiCall";
+import { Button } from "bootstrap";
 
 export default function CurrentLoansUI() {
   const [allLoans, setAllLoans] = useState();
@@ -26,16 +31,18 @@ export default function CurrentLoansUI() {
   const [tenure, setTenure] = useState(0);
   const [loanType, setLoanType] = useState("");
 
-  let id=0;
-
+  let id = 0;
 
   const navigate = useNavigate();
   const loggedRef = useRef(false);
 
   useEffect(() => {
     if (!loggedRef.current) {
-        sendLog("CUSTOMER_LOAN_PAGE_ACCESSED", sessionStorage.getItem("userId") || "Unknown Customer");
-        loggedRef.current = true;
+      sendLog(
+        "CUSTOMER_LOAN_PAGE_ACCESSED",
+        sessionStorage.getItem("userId") || "Unknown Customer",
+      );
+      loggedRef.current = true;
     }
   }, []);
 
@@ -55,7 +62,7 @@ export default function CurrentLoansUI() {
     };
 
     try {
-      console.log("Submitting loan request", body);
+      // console.log("Submitting loan request", body);
       // const response = await axios.post(
       //   `http://localhost:8080/bankify/customers/loan/request-new-loan/${userId}`,
       //   body,
@@ -74,7 +81,7 @@ export default function CurrentLoansUI() {
         // close modal by clicking its close button (no bootstrap global required)
         const modal = document.getElementById("applyforLoanModal");
         if (modal) {
-          const closeBtn = modal.querySelector('.btn-close');
+          const closeBtn = modal.querySelector(".btn-close");
           if (closeBtn) closeBtn.click();
         }
         // refresh loans
@@ -90,7 +97,10 @@ export default function CurrentLoansUI() {
         const data = err.response.data;
         console.error("Server response:", status, data);
         if (status === 403) {
-          toast.error(data?.message || "Forbidden: you don't have permission to apply for a loan.");
+          toast.error(
+            data?.message ||
+              "Forbidden: you don't have permission to apply for a loan.",
+          );
         } else {
           toast.error(data?.message || `Request failed: ${status}`);
         }
@@ -128,7 +138,10 @@ export default function CurrentLoansUI() {
 
   React.useEffect(() => {
     fetchAllLoans();
-    if(sessionStorage.getItem("token")===null||sessionStorage.getItem("token")===""){
+    if (
+      sessionStorage.getItem("token") === null ||
+      sessionStorage.getItem("token") === ""
+    ) {
       navigate("/");
     }
   }, []);
@@ -163,8 +176,64 @@ export default function CurrentLoansUI() {
     }
   };
 
+  const payEmi = async (loanId) => {
+    try {
+      const response = await payLoanEmi(loanId);
+      if (response?.data.status === "Success") {
+        fetchAllLoans();
+        toast.success("EMI payed");
+      } else {
+        toast.warn(response?.data.message);
+      }
+    } catch (e) {
+      toast.error(e.message);
+    }
+  };
+
+  const action = (loanStatus, loanId) => {
+    switch (loanStatus) {
+      case "ACTIVE":
+        return (
+          <button
+            className="btn btn-success mb-2"
+            onClick={() => payEmi(loanId)}
+          >
+            PAY EMI
+          </button>
+        );
+
+      case "PENDING":
+        return (
+          <span className="badge bg-warning-subtle text-warning">
+            {loanStatus}
+          </span>
+        );
+
+      case "CANCELLED":
+      case "REJECTED":
+        return (
+          <span className="badge bg-danger-subtle text-danger">
+            {loanStatus}
+          </span>
+        );
+
+      case "COMPLETED":
+        return (
+          <span className="badge bg-success-subtle text-success">
+            {loanStatus}
+          </span>
+        );
+
+      default:
+        return (
+          <span className="badge bg-secondary text-dark">{loanStatus}</span>
+        );
+    }
+  };
   const totalBalance =
-    allLoans?.reduce((sum, loan) => sum + loan.currentBalance, 0) || 0;
+    allLoans
+      ?.filter((l) => l.loanStatus === "ACTIVE")
+      .reduce((sum, loan) => sum + loan.currentBalance, 0) || 0;
   const activeLoans =
     allLoans?.filter((l) => l.loanStatus === "ACTIVE").length || 0;
   const totalMonthlyPayment =
@@ -280,72 +349,79 @@ export default function CurrentLoansUI() {
           </div>
         </div>
 
-       {allLoans && allLoans.length > 0 && (
-           <div
-          className="card border-0 rounded-3 overflow-hidden"
-          style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}
-        >
-          <div className="table-responsive">
-            <table className="table mb-0">
-              <thead style={{ backgroundColor: "rgba(102, 126, 234, 0.05)" }}>
-                <tr>
-                  <th className="border-0 py-4 px-4 fw-semibold text-dark">
-                    Loan Type
-                  </th>
-                  <th className="border-0 py-4 px-4 fw-semibold text-dark">
-                    Current Balance
-                  </th>
-                  <th className="border-0 py-4 px-4 fw-semibold text-dark">
-                    Interest Rate
-                  </th>
-                  <th className="border-0 py-4 px-4 fw-semibold text-dark">
-                    Monthly Payment
-                  </th>
-                  <th className="border-0 py-4 px-4 fw-semibold text-dark">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {allLoans?.map((loan) => (
-                  <tr
-                    key={++id}
-                    style={{ borderBottom: "1px solid #e9ecef" }}
-                  >
-                    <td className="py-4 px-4">
-                      <span className="fw-semibold text-dark">
-                        {loan.loanType}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span className="fw-semibold">
-                        ₹ {loan.currentBalance}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span className="text-muted">{loan.interest}%</span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span className="fw-semibold">
-                        ₹ {loan.monthlyPayment}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="d-flex align-items-center">
-                        {getStatusIcon(loan.loanStatus)}
-                        <span className={getStatusClass(loan.loanStatus)}>
-                          {loan.loanStatus}
-                        </span>
-                      </div>
-                    </td>
+        {allLoans && allLoans.length > 0 && (
+          <div
+            className="card border-0 rounded-3 overflow-hidden"
+            style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}
+          >
+            <div className="table-responsive">
+              <table className="table mb-0">
+                <thead style={{ backgroundColor: "rgba(102, 126, 234, 0.05)" }}>
+                  <tr>
+                    <th className="border-0 py-4 px-4 fw-semibold text-dark">
+                      Loan Type
+                    </th>
+                    <th className="border-0 py-4 px-4 fw-semibold text-dark">
+                      Current Balance
+                    </th>
+                    <th className="border-0 py-4 px-4 fw-semibold text-dark">
+                      Interest Rate
+                    </th>
+                    <th className="border-0 py-4 px-4 fw-semibold text-dark">
+                      Monthly Payment
+                    </th>
+                    <th className="border-0 py-4 px-4 fw-semibold text-dark">
+                      Status
+                    </th>
+                    <th className="border-0 py-4 px-4 fw-semibold text-dark">
+                      Action
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {allLoans?.map((loan) => (
+                    <tr
+                      key={loan.id}
+                      style={{ borderBottom: "1px solid #e9ecef" }}
+                    >
+                      <td className="py-4 px-4">
+                        <span className="fw-semibold text-dark">
+                          {loan.loanType}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="fw-semibold">
+                          ₹ {loan.currentBalance}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="text-muted">{loan.interest}%</span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="fw-semibold">
+                          ₹ {loan.monthlyPayment}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="d-flex align-items-center">
+                          {getStatusIcon(loan.loanStatus)}
+                          <span className={getStatusClass(loan.loanStatus)}>
+                            {loan.loanStatus}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="d-flex align-items-center mb-4">
+                          {action(loan.loanStatus, loan.id)}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-        )
-       }
+        )}
 
         <div
           className="modal fade"

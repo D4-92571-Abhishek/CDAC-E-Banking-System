@@ -10,10 +10,14 @@ import org.springframework.data.repository.query.Param;
 import com.bankify.dto.AdminCustomerListDTO;
 import com.bankify.dto.LoanDetailsResponseDTO;
 import com.bankify.entities.Customer;
+import com.bankify.entities.User;
+
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	Optional<Customer> findByAccountNo(String accountNo);
+	
+	boolean existsByUser(User user);
 	
     
 //     @Query("SELECT COUNT(c) FROM Customer c WHERE c.user.status='ACTIVE'")
@@ -89,6 +93,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 	@Query("""
 				SELECT new com.bankify.dto.LoanDetailsResponseDTO(
+				l.id,
 			    l.loanType,
 			    l.interest,
 			    (COALESCE(ld.principle, 0) - (COALESCE(ld.paidMonths, 0) * COALESCE(ld.emi, 0))),

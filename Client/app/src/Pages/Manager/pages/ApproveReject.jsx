@@ -7,10 +7,21 @@ import {
   approveCustomer,
   rejectCustomer,
 } from "../services/manager";
+import { sendLog } from "../../../services/loggerService";
+import { useRef } from "react";
 
 export default function ApproveReject() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+    const loggedRef = useRef(false);
+
+   useEffect(() => {
+          if (!loggedRef.current) {
+              sendLog("MANAGER_APPOVED/REJECT_ACCOUNT_ACCESSED", sessionStorage.getItem("userId") || "Unknown Admin");
+              loggedRef.current = true;
+          }
+      }, []);
 
   // modal state
   const [showModal, setShowModal] = useState(false);

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\CDAC_Submission\\Project_DAC_2025\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj": {}
+    "C:\\Users\\wwwsa\\OneDrive\\Desktop\\sampproject\\project\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj": {}
   },
   "projects": {
-    "D:\\CDAC_Submission\\Project_DAC_2025\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj": {
+    "C:\\Users\\wwwsa\\OneDrive\\Desktop\\sampproject\\project\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\CDAC_Submission\\Project_DAC_2025\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj",
+        "projectUniqueName": "C:\\Users\\wwwsa\\OneDrive\\Desktop\\sampproject\\project\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj",
         "projectName": "BankifyLogger",
-        "projectPath": "D:\\CDAC_Submission\\Project_DAC_2025\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj",
-        "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
-        "outputPath": "D:\\CDAC_Submission\\Project_DAC_2025\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\obj\\",
+        "projectPath": "C:\\Users\\wwwsa\\OneDrive\\Desktop\\sampproject\\project\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\BankifyLogger.csproj",
+        "packagesPath": "C:\\Users\\wwwsa\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\wwwsa\\OneDrive\\Desktop\\sampproject\\project\\CDAC-E-Banking-System\\Logger\\BankifyLogger\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\wwwsa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
