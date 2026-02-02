@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useRef } from 'react';
 import { sendLog } from '../../../../services/loggerService';
+import { getAdminLoanDataInfo,getAdminLoansList } from '../../Service/adminLoanPageService';
 
 const Loans = () => {
 
@@ -17,15 +18,33 @@ const Loans = () => {
         }
     }, []);
 
+    // const loanDataInfo = async () => {
+    //     const response = await axios.get('http://localhost:8080/bankify/admin/adminLoanInfo',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+    //     setResponseData(response.data);
+    // };
+
     const loanDataInfo = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminLoanInfo',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
-        setResponseData(response.data);
+        try {
+            const data = await getAdminLoanDataInfo();  
+            setResponseData(data);
+        } catch (error) {
+            console.error("Error fetching admin loan data info:", error);
+        }
     };
 
+    // const loansList = async () => {
+    //     const response = await axios.get('http://localhost:8080/bankify/admin/adminLoanList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+    //     setLoansListData(response.data);
+    // }
+
     const loansList = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminLoanList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
-        setLoansListData(response.data);
-    }
+        try {
+            const data = await getAdminLoansList();
+            setLoansListData(data);
+        } catch (error) {
+            console.error("Error fetching admin loans list:", error);
+        }
+    };
 
     useEffect(() => {
         loanDataInfo();

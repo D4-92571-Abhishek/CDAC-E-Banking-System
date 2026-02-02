@@ -6,11 +6,22 @@ import {
   verifyAddress,
   approveCustomer,
   rejectCustomer,
-} from "../../../services/manager";
+} from "../services/manager";
+import { sendLog } from "../../../services/loggerService";
+import { useRef } from "react";
 
 export default function ApproveReject() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+    const loggedRef = useRef(false);
+
+   useEffect(() => {
+          if (!loggedRef.current) {
+              sendLog("MANAGER_APPOVED/REJECT_ACCOUNT_ACCESSED", sessionStorage.getItem("userId") || "Unknown Admin");
+              loggedRef.current = true;
+          }
+      }, []);
 
   // modal state
   const [showModal, setShowModal] = useState(false);
@@ -91,8 +102,7 @@ export default function ApproveReject() {
 
   return (
    <div className="content">
-  <h5 className="mb-4">Dashboard Overview</h5>
-  <StatsCards />
+  
 
   <div className="card shadow-sm rounded-4 border-0 mt-4">
     {/* HEADER WITH SEARCH & FILTER */}

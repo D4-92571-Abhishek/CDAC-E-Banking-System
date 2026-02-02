@@ -33,10 +33,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	            SELECT new com.bankify.dto.AdminManagerListDTO(
 	                u.name,
 	                u.id,
-	                u.creationDate
+	                u.creationDate,
+	                u.status
 	            )
 	            FROM User u
-	            WHERE u.role = 'ROLE_MANAGER' AND u.status='ACTIVE'
+	            WHERE u.role = 'ROLE_MANAGER'
 	            ORDER BY u.creationDate DESC
 	        """)
 	        List<AdminManagerListDTO> getAdminManagersList();

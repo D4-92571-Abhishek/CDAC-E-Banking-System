@@ -17,9 +17,8 @@ import com.bankify.dto.EditManagerDetailsDTO;
 import com.bankify.dto.EditPasswordDTO;
 import com.bankify.dto.ManagerCreateCustomerDTO;
 import com.bankify.dto.ManagerHeaderDTO;
-import com.bankify.entities.User;
-import com.bankify.repository.UserRepository;
 import com.bankify.service.CustomerService;
+import com.bankify.service.LoanService;
 import com.bankify.service.ManagerService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +32,8 @@ public class ManagerController {
 
     private final ManagerService managerService;
     private final CustomerService customerService;
+   // private final LoanService loanService;
+
 
 
     @GetMapping("/pending")
@@ -75,6 +76,24 @@ public class ManagerController {
     public ResponseEntity<?> rejectCustomer(@PathVariable Long userId) {
         return ResponseEntity.ok(managerService.rejectCustomer(userId));
     }
+    
+    @PutMapping("/loan/reject/{loanId}")
+    public ResponseEntity<?> rejectLoan(@PathVariable Long loanId) {
+        return ResponseEntity.ok(managerService.rejectLoan(loanId));
+    }
+    
+    @GetMapping("/loan/pending")
+    public ResponseEntity<?> getPendingLoans() {
+        return ResponseEntity.ok(managerService.getAllPendingLoans());
+    }
+    
+    @PutMapping("/loan/approve/{loanId}")
+    public ResponseEntity<?> approveLoan(
+            @PathVariable Long loanId
+    ) {
+        return ResponseEntity.ok(managerService.approveLoan(loanId));
+    }
+
     
     @GetMapping("/transactions/{userId}")
   public ResponseEntity<?> getCustomerTransactions(

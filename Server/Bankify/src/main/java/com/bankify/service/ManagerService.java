@@ -10,6 +10,7 @@ import com.bankify.dto.GeneralResponseDTO;
 import com.bankify.dto.ManagerCreateCustomerDTO;
 import com.bankify.dto.ManagerHeaderDTO;
 import com.bankify.dto.PendingCustomerResponse;
+import com.bankify.dto.PendingLoanCustomerDTO;
 import com.bankify.dto.TransactionResponseDTO;
 import com.bankify.entities.User;
 
@@ -40,6 +41,12 @@ public interface ManagerService {
     GeneralResponseDTO rejectCustomer(Long userId);
     
     GeneralResponseDTO unblockCustomer(Long userId);
+    
+    GeneralResponseDTO approveLoan(Long loanId);
+    
+    GeneralResponseDTO rejectLoan(Long loanId);
+    
+    List<PendingLoanCustomerDTO> getAllPendingLoans();
 
     User createCustomerAsManager(ManagerCreateCustomerDTO dto);
     
