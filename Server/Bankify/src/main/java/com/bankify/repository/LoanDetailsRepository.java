@@ -1,12 +1,16 @@
 package com.bankify.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import com.bankify.dto.ActiveLoanDetailsDTO;
 import com.bankify.dto.AdminLoanListDTO;
 import com.bankify.entities.Customer;
+import com.bankify.entities.Loan;
 import com.bankify.entities.LoanDetails;
 
 public interface LoanDetailsRepository extends JpaRepository<LoanDetails, Long> {
@@ -64,6 +68,21 @@ public interface LoanDetailsRepository extends JpaRepository<LoanDetails, Long> 
 			 """)
 		    List<AdminLoanListDTO> getAdminLoanList();
 
+	 		
+	 		Optional<LoanDetails> findByLoan(Loan loan);
+	 		
+	 		
+//	 		@Query("""
+//	 				SELECT new com.bankify.dto.ActiveLoanDetailsDTO(
+//	 				COALESCE(SUM(l.amount),0),
+//	 				COALESCE(COUNT(l),0),
+//	 				COALESCE(SUM(ld.emi),0)
+//	 				) FROM LoanDetails ld join ld.loan l
+//	 				WHERE ld.customer=:cust
+//	 				AND l.status='ACTIVE'
+//	 				""")
+//
+//	 		ActiveLoanDetailsDTO getActiveLoanDetails(@Param("cust") Customer customer);
 
 	 
 }
