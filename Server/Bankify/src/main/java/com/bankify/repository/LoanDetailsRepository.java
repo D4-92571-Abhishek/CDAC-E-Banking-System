@@ -16,7 +16,6 @@ import com.bankify.entities.LoanDetails;
 public interface LoanDetailsRepository extends JpaRepository<LoanDetails, Long> {
 	List<LoanDetails> findByCustomer(Customer customer);
 	
-	Optional<LoanDetails> findByLoan(Loan loan);
 
 	
 	@Query("""
