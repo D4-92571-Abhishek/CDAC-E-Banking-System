@@ -35,4 +35,6 @@ public interface AdminService {
 	GeneralResponseDTO deactivateManager(Long employeeId);
 
 	GeneralResponseDTO changeStatus(Long id,Status status);
+
+	void createAdminAndBankAssetsAccount();
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 
+import com.bankify.dto.ActiveLoanDetailsDTO;
+import com.bankify.dto.AddAmountObjectDTO;
 import com.bankify.dto.CustomerAccountDetailsDTO;
 import com.bankify.dto.CustomerDashboardResponseDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
@@ -60,5 +62,11 @@ public interface CustomerService {
 	DisplayCustomerDetailsDTO getCustomerDetails(Long userId);
 
     CustomerAccountDetailsDTO getAccountNo(Long userId);
+    
+    GeneralResponseDTO payLoanEMI(Long userId,Long loanId);
+//    
+//    ActiveLoanDetailsDTO getActiveLoanDetails(Long userId);
+
+	GeneralResponseDTO addFundsToAccount(Long userId, AddAmountObjectDTO addAmount);
 }
 

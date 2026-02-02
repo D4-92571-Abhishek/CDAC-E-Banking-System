@@ -17,6 +17,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.bankify.dto.ActiveLoanDetailsDTO;
+import com.bankify.dto.AddAmountObjectDTO;
 import com.bankify.dto.CustomerAccountDetailsDTO;
 import com.bankify.dto.CustomerDashboardResponseDTO;
 import com.bankify.dto.CustomerFundTransferRequestDTO;
@@ -387,6 +389,7 @@ public class CustomerServiceImpl implements CustomerService {
 		details.setInterest(loanRequestDTO.getInterest());
 		details.setPaidMonths(0);
 		details.setPrinciple(loanRequestDTO.getAmount());
+		details.setLoanTenure(loanRequestDTO.getLoanTenureYears());
 
 		loanDetailsRepository.save(details);
 
@@ -514,5 +517,168 @@ public class CustomerServiceImpl implements CustomerService {
 
 		return custDetails;
 	}
+//	@Transactional
+//	public GeneralResponseDTO payLoanEMI(Long userId,Long loanId) {
+//		Loan customerLoan = loanRepository.findById(loanId).orElseThrow(()-> new BankifyException("Loan id not found"));
+//		Customer customer = customerRepository.findByUserId(userId).orElseThrow(()->new BankifyException("Customer Not found"));
+//		LoanDetails loanDetails = loanDetailsRepository.findByLoan(customerLoan).orElseThrow(()->new BankifyException("Loan Details not found"));
+//		
+//		Customer bank = customerRepository.findById(1l).orElseThrow(()-> new BankifyException("Some Internal Error"));
+//		
+//		
+//		
+//		Transaction payLoan = new Transaction();
+//		TransactionHistory trans = new TransactionHistory();
+//		
+//		payLoan.setAmount(loanDetails.getEmi());
+//		payLoan.setCustomer(customer);
+//		payLoan.setTransactionDescription("Loan Emi");
+//		payLoan.setTransactionType(TransactionType.DEBITED);
+//		
+//		trans.setAmount(loanDetails.getEmi());
+//		trans.setCustomer(customer);
+//		trans.setSenderAccountNo(customer.getAccountNo());
+//		trans.setRecieverAccountNo("LoanTransaction with Loan id : "+loanId);
+//		trans.setTransactionType(TransactionType.DEBITED);
+//		
+//		
+//		
+//		if(customer.getCurrentBalance()<loanDetails.getEmi()) {
+//			payLoan.setTransactionStatus(TransactionStatus.DECLINED);
+//			trans.setTransactionStatus(TransactionStatus.DECLINED);
+//			transactionRepository.save(payLoan);
+//			transactionHistoryRepository.save(trans);
+//			return new GeneralResponseDTO("Failed","Insufficients Funds");
+//		}
+//		
+//		if(loanDetails.getPaidMonths()+1==loanDetails.getLoanTenure()*12) {
+//			customerLoan.setLoanStatus(LoanStatus.COMPLETED);
+//		}
+//		
+//		customer.setCurrentBalance(customer.getCurrentBalance()-loanDetails.getEmi());
+//		
+//		payLoan.setTransactionStatus(TransactionStatus.APPROVED);
+//		trans.setTransactionStatus(TransactionStatus.APPROVED);
+//		
+//		bank.setCurrentBalance(bank.getCurrentBalance()+loanDetails.getEmi());
+//		
+//		loanDetails.setPaidMonths(loanDetails.getPaidMonths()+1);
+//		transactionRepository.save(payLoan);
+//		transactionHistoryRepository.save(trans);
+//		return new GeneralResponseDTO("Success","Loan EMI paid");
+//		
+//	}
+	@Transactional
+	public GeneralResponseDTO payLoanEMI(Long userId, Long loanId) {
+
+	    Loan customerLoan = loanRepository.findById(loanId)
+	            .orElseThrow(() -> new BankifyException("Loan id not found"));
+	    Customer customer = customerRepository.findByUserId(userId)
+	            .orElseThrow(() -> new BankifyException("Customer Not found"));
+	    LoanDetails loanDetails = loanDetailsRepository.findByLoan(customerLoan)
+	            .orElseThrow(() -> new BankifyException("Loan Details not found"));
+	    Customer bank = customerRepository.findById(1L)
+	            .orElseThrow(() -> new BankifyException("Some Internal Error"));
+
+	    // Check insufficient balance
+	    if (customer.getCurrentBalance() < loanDetails.getEmi()) {
+	        Transaction payLoan = new Transaction();
+	        payLoan.setAmount(loanDetails.getEmi());
+	        payLoan.setCustomer(customer);
+	        payLoan.setTransactionDescription("Loan EMI");
+	        payLoan.setTransactionType(TransactionType.DEBITED);
+	        payLoan.setTransactionStatus(TransactionStatus.DECLINED);
+	        transactionRepository.save(payLoan);
+
+	        TransactionHistory trans = new TransactionHistory();
+	        trans.setAmount(loanDetails.getEmi());
+	        trans.setCustomer(customer);
+	        trans.setSenderAccountNo(customer.getAccountNo());
+	        trans.setRecieverAccountNo("LoanTransaction with Loan id: " + loanId);
+	        trans.setTransactionType(TransactionType.DEBITED);
+	        trans.setTransactionStatus(TransactionStatus.DECLINED);
+	        transactionHistoryRepository.save(trans);
+
+	        return new GeneralResponseDTO("Failed", "Insufficient Funds");
+	    }
+
+	    // Deduct EMI from customer
+	    customer.setCurrentBalance(customer.getCurrentBalance() - loanDetails.getEmi());
+	    customerRepository.save(customer);
+
+	    // Add EMI to bank
+	    bank.setCurrentBalance(bank.getCurrentBalance() + loanDetails.getEmi());
+	    customerRepository.save(bank);
+
+	    // Update loan details
+	    loanDetails.setPaidMonths(loanDetails.getPaidMonths() + 1);
+	    loanDetailsRepository.save(loanDetails);
+
+	    if (loanDetails.getPaidMonths() == loanDetails.getLoanTenure() * 12) {
+	        customerLoan.setLoanStatus(LoanStatus.COMPLETED);
+	        loanRepository.save(customerLoan);
+	    }
+
+	    // Save transaction
+	    Transaction payLoan = new Transaction();
+	    payLoan.setAmount(loanDetails.getEmi());
+	    payLoan.setCustomer(customer);
+	    payLoan.setTransactionDescription("Loan EMI");
+	    payLoan.setTransactionType(TransactionType.DEBITED);
+	    payLoan.setTransactionStatus(TransactionStatus.COMPLETED);
+	    transactionRepository.save(payLoan);
+
+	    // Save transaction history
+	    TransactionHistory trans = new TransactionHistory();
+	    trans.setAmount(loanDetails.getEmi());
+	    trans.setCustomer(customer);
+	    trans.setSenderAccountNo(customer.getAccountNo());
+	    trans.setRecieverAccountNo("LoanTransaction with Loan id: " + loanId);
+	    trans.setTransactionType(TransactionType.DEBITED);
+	    trans.setTransactionStatus(TransactionStatus.COMPLETED);
+	    trans.setTransaction(payLoan);
+	    transactionHistoryRepository.save(trans);
+
+	    return new GeneralResponseDTO("Success", "Loan EMI paid successfully");
+	}
+
+
+	@Override
+	public GeneralResponseDTO addFundsToAccount(Long userId, AddAmountObjectDTO addAmount) {
+		Customer customer = customerRepository.findByUserId(userId).orElseThrow(()-> new BankifyException("User Not Valid"));
+		
+		customer.setCurrentBalance(customer.getCurrentBalance()+addAmount.getAmount());
+		Transaction trans = new Transaction();
+		trans.setAmount(addAmount.getAmount());
+		trans.setCustomer(customer);
+		trans.setTransactionDescription("Transaction Money Added into Customer's Account");
+		trans.setTransactionStatus(TransactionStatus.COMPLETED);
+		trans.setTransactionType(TransactionType.CREDITED);
+		
+		transactionRepository.save(trans);
+		
+		TransactionHistory transHis = new TransactionHistory();
+		transHis.setAmount(addAmount.getAmount());
+		transHis.setCustomer(customer);
+		transHis.setRecieverAccountNo("Self");
+		transHis.setSenderAccountNo("Self");
+		transHis.setTransaction(trans);
+		transHis.setTransactionStatus(TransactionStatus.COMPLETED);
+		transHis.setTransactionType(TransactionType.CREDITED);
+		
+		transactionHistoryRepository.save(transHis);
+		
+		return new GeneralResponseDTO("Success","Successfully Added Money");
+	}
+	
+//	public ActiveLoanDetailsDTO getActiveLoanDetails(Long userId) {
+//		
+//		Customer customer = customerRepository.findByUserId(userId).orElseThrow(()-> new BankifyException("Invalid User"));
+//		
+//		ActiveLoanDetailsDTO activeLoanDetails =  loanDetailsRepository.getActiveLoanDetails(customer);
+//		
+//		return activeLoanDetails;
+//		
+//	}
 
 }
