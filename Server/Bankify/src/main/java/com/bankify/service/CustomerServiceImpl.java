@@ -1,5 +1,6 @@
 package com.bankify.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -217,7 +217,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Transaction t = new Transaction();
 		t.setAmount(fundDetails.getAmount());
 		t.setTransactionDescription("Funds is sending to Name : " + reciever.getUser().getName() + " to Account No : "
-				+ reciever.getAccountNo());
+				+ reciever.getAccountNo()+" "+fundDetails.getMessage());
 		t.setTransactionTime(LocalDateTime.now());
 		t.setCustomer(sender);
 		t.setTransactionType(TransactionType.DEBITED);
@@ -372,9 +372,13 @@ public class CustomerServiceImpl implements CustomerService {
 		System.out.println(newLoanRequest);
 		newLoanRequest.setLoanStatus(LoanStatus.PENDING);
 		newLoanRequest.setCustomer(cust);
-
+		newLoanRequest.setLoanTenure(loanRequestDTO.getLoanTenureYears());
+        
+//		LocalDate startDate = LocalDate.now();
+//		LocalDate endDate = startDate.plusYears((long) loanRequestDTO.getLoanTenureYears());
+		
 		LoanDetails details = new LoanDetails();
-
+ 
 		loanRepository.save(newLoanRequest);
 		details.setEmi(getMonthlyPayment(newLoanRequest.getAmount(), newLoanRequest.getInterest(),
 				loanRequestDTO.getLoanTenureYears()));

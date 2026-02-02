@@ -31,6 +31,8 @@ public class User extends Base implements UserDetails {
 
 	@Column(name = "name", nullable = false, length = 100)
 	private String name;
+	
+	
 	@Column(name = "date_of_birth")
 	private LocalDate dob;
 	@Column(name = "email", nullable = false, unique = true)

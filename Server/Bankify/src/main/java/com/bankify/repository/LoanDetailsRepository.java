@@ -1,16 +1,21 @@
 package com.bankify.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.bankify.dto.AdminLoanListDTO;
 import com.bankify.entities.Customer;
+import com.bankify.entities.Loan;
 import com.bankify.entities.LoanDetails;
 
 public interface LoanDetailsRepository extends JpaRepository<LoanDetails, Long> {
 	List<LoanDetails> findByCustomer(Customer customer);
+	
+	Optional<LoanDetails> findByLoan(Loan loan);
+
 	
 	@Query("""
 		    SELECT COALESCE(SUM(
