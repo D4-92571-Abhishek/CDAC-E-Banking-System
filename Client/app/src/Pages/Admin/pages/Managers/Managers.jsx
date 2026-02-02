@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import { useRef } from 'react';
 import { sendLog } from '../../../../services/loggerService';
-
+import { getAdminManagerDataInfo,getAdminManagersList,addManagerViaAdmin,activateDeactivateManager } from '../../Service/adminManagerPageService';
 
 const Managers = () => {
 
@@ -28,16 +28,35 @@ const Managers = () => {
         }
     }, []);
 
+    // const managersDataInfo = async () => {
+    //     const response = await axios.get('http://localhost:8080/bankify/admin/adminActiveManagers',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+    //     setResponseData(response.data);
+    // };
+
     const managersDataInfo = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminActiveManagers',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
-        setResponseData(response.data);
+        try {
+            const data = await getAdminManagerDataInfo();
+            setResponseData(data);
+        } catch (error) {
+            console.error("Error in fetching manager data info:", error);
+        }
     };
 
+    // const managersList = async () => {
+    //     const response = await axios.get('http://localhost:8080/bankify/admin/adminManagerList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+    //     setManagersListData(response.data);
+    //     setShowData(response.data);
+    // }
+
     const managersList = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminManagerList',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
-        setManagersListData(response.data);
-        setShowData(response.data);
-    }
+        try {
+            const data = await getAdminManagersList();
+            setManagersListData(data);
+            setShowData(data);
+        } catch (error) {
+            console.error("Error in fetching managers list:", error);
+        }
+    };
 
     const handleChange = (e) => {
         setFormData({
@@ -46,67 +65,112 @@ const Managers = () => {
         });
     }
 
-    const addManager = async () => {
-        console.log(formData)
-        try {
-            await axios.post(
-                "http://localhost:8080/bankify/admin/adminAddManager",
-                {
-                    name: formData.fullName,
-                    email: formData.email,
-                    dob: formData.dob,
-                    contactNo: formData.phone
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-                        "Content-Type": "application/json"
-                    }
-                }
-            );
+    // const addManager = async () => {
+    //     console.log(formData)
+    //     try {
+    //         await axios.post(
+    //             "http://localhost:8080/bankify/admin/adminAddManager",
+    //             {
+    //                 name: formData.fullName,
+    //                 email: formData.email,
+    //                 dob: formData.dob,
+    //                 contactNo: formData.phone
+    //             },
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    //                     "Content-Type": "application/json"
+    //                 }
+    //             }
+    //         );
 
+    //         managersList();
+    //         managersDataInfo();
+
+    //         setFormData({
+    //             fullName: "",
+    //             email: "",
+    //             dob: "",
+    //             phone: ""
+    //         });
+
+    //         alert("Manager Added Successfully!");
+
+    //         // const modal = window.bootstrap.Modal.getInstance(
+    //         //     document.getElementById("exampleModal")
+    //         // );
+    //         // modal.hide();
+
+    //     } catch (err) {
+    //         console.error("Add Manager Failed:", err);
+    //         alert("Failed to add manager. Check console.");
+    //     }
+    // };
+
+    const addManager = async () => {
+        try {
+            await addManagerViaAdmin({
+                name: formData.fullName,
+                email: formData.email,
+                dob: formData.dob,
+                contactNo: formData.phone
+            });
             managersList();
             managersDataInfo();
-
             setFormData({
                 fullName: "",
                 email: "",
                 dob: "",
                 phone: ""
             });
-
             alert("Manager Added Successfully!");
-
-            // const modal = window.bootstrap.Modal.getInstance(
-            //     document.getElementById("exampleModal")
-            // );
-            // modal.hide();
-
         } catch (err) {
             console.error("Add Manager Failed:", err);
             alert("Failed to add manager. Check console.");
         }
     };
 
-    const onDeactivate = async (employeeId) => {
+    // const onDeactivate = async (employeeId) => {
+    //     try {
+    //         await axios.put(
+    //             `http://localhost:8080/bankify/admin/adminDeactivateManager/${employeeId}`,
+    //             {},
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    //                     "Content-Type": "application/json"
+    //                 }
+    //             }
+    //         );
+
+    //         managersList();
+    //         managersDataInfo();
+
+    //     } catch (err) {
+    //         console.error("Deactivate Manager Failed:", err);
+    //         alert("Failed to deactivate manager. Check console.");
+    //     }
+    // };
+
+    // const onDeactivate = async (employeeId) => {
+    //     try {
+    //         await deactivateManagerViaAdmin(employeeId);
+    //         managersList();
+    //         managersDataInfo();
+    //     } catch (err) {
+    //         console.error("Deactivate Manager Failed:", err);
+    //         alert("Failed to deactivate manager. Check console.");
+    //     }
+    // };
+
+    const onActivateDeactivateManager = async (id, status) => {
         try {
-            await axios.put(
-                `http://localhost:8080/bankify/admin/adminDeactivateManager/${employeeId}`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-                        "Content-Type": "application/json"
-                    }
-                }
-            );
-
-            managersList();
+            await activateDeactivateManager(id, status);
             managersDataInfo();
-
+            managersList();
         } catch (err) {
-            console.error("Deactivate Manager Failed:", err);
-            alert("Failed to deactivate manager. Check console.");
+            console.error("Activate/Deactivate Manager Failed:", err);
+            alert("Failed to activate/deactivate manager. Check console.");
         }
     };
 
@@ -255,6 +319,7 @@ const Managers = () => {
                                   <th scope="col">Manager</th>
                                   <th scope="col">Employee ID</th>
                                   <th scope="col">Hire Date</th>
+                                  <th scope="col">Status</th>
                                   <th scope="col">Actions</th>
                               </tr>
                           </thead>
@@ -265,8 +330,16 @@ const Managers = () => {
                                       <td>{manager.managerName}</td>
                                       <td>{manager.employeeId}</td>
                                       <td>{manager.hireDate}</td>
+                                      <td>{manager.status}</td>
                                       <td>
-                                          <button className="btn btn-danger" onClick={()=>{onDeactivate(manager.employeeId)}}>Deactivate</button>
+                                          {/* <button className="btn btn-danger" onClick={()=>{onDeactivate(manager.employeeId)}}>Deactivate</button> */}
+                                          {manager.status === "ACTIVE" ? (
+                                              <button
+                                                  className="btn btn-danger" onClick={() => onActivateDeactivateManager(manager.employeeId, "DEACTIVATED")}>Deactivate</button>
+                                            ) : (
+                                              <button
+                                                  className="btn btn-success" onClick={() => onActivateDeactivateManager(manager.employeeId, "ACTIVE")}>Activate</button>
+                                            )}
                                       </td>
                                   </tr>
                               ))}

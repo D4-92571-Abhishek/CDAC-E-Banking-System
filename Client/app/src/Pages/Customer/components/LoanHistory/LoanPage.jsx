@@ -12,7 +12,7 @@ import {
   Clock,
   XCircle,
 } from "lucide-react";
-import axios from "axios";
+
 import { useRef } from 'react';
 import { sendLog } from "../../../../services/loggerService";
 

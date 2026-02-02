@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { sendLog } from '../../../../services/loggerService';   
 import { useRef } from 'react';
+import { getAdminDashboardData } from '../../Service/adminDashboardService';
 
 const Dashboard = () => {
 
@@ -17,10 +18,19 @@ const Dashboard = () => {
     }, []);
 
     const [responseData, setResponseData] = useState();
+    // const dashboardData = async () => {
+    //     const response = await axios.get('http://localhost:8080/bankify/admin/adminDashboard',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
+    //     setResponseData(response.data);
+    // }
+
     const dashboardData = async () => {
-        const response = await axios.get('http://localhost:8080/bankify/admin/adminDashboard',{headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}});
-        setResponseData(response.data);
-    }
+        try {
+            const data = await getAdminDashboardData();
+            setResponseData(data);
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+        }
+    };
 
     useEffect(() => {
         dashboardData();
