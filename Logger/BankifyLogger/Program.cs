@@ -11,12 +11,15 @@ namespace BankifyLogger
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
+			Directory.CreateDirectory("/app/logs");
+
 			Log.Logger = new LoggerConfiguration()
 							 .MinimumLevel.Information()
 							 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-					         .MinimumLevel.Override("System", LogEventLevel.Warning)
-	                         .WriteTo.File("logs/bankify-.txt",rollingInterval: RollingInterval.Day,outputTemplate: "{Message}{NewLine}")
+							 .MinimumLevel.Override("System", LogEventLevel.Warning)
+							 .WriteTo.File("/app/logs/bankify-.txt", rollingInterval: RollingInterval.Day, outputTemplate: "{Message}{NewLine}")
 							 .CreateLogger();
+
 
 			builder.Host.UseSerilog();
 
@@ -28,25 +31,41 @@ namespace BankifyLogger
 			{
 				options.AddPolicy("ReactPolicy", policy =>
 				{
-					/*					policy.WithOrigins("http://localhost:5173")
-					*/
+					policy
+						.SetIsOriginAllowed(origin =>
+							origin == "http://localhost:5173" ||    // Local dev
+							origin == "http://frontend" ||          // Docker service name
+							origin.StartsWith("http://frontend:")  // If port is mapped
+						)
+						.AllowAnyHeader()
+						.AllowAnyMethod();
+				});
+			});
+
+
+			/*builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("ReactPolicy", policy =>
+				{
+					*//*					policy.WithOrigins("http://localhost:5173")
+					*//*
 					policy.WithOrigins("http://localhost:5173")
 						  .AllowAnyHeader()
 						  .AllowAnyMethod();
 				});
-			});
-			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-		/*	builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
-
-			builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-				.AddNegotiate();*/
-
-		/*	builder.Services.AddAuthorization(options =>
-			{
-				// By default, all incoming requests will be authorized according to the default policy.
-				options.FallbackPolicy = options.DefaultPolicy;
 			});*/
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			/*	builder.Services.AddEndpointsApiExplorer();
+				builder.Services.AddSwaggerGen();
+
+				builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+					.AddNegotiate();*/
+
+			/*	builder.Services.AddAuthorization(options =>
+				{
+					// By default, all incoming requests will be authorized according to the default policy.
+					options.FallbackPolicy = options.DefaultPolicy;
+				});*/
 
 			var app = builder.Build();
 
@@ -61,6 +80,8 @@ namespace BankifyLogger
 			app.UseCors("ReactPolicy");
 
 			app.MapControllers();
+
+			app.Urls.Add("http://0.0.0.0:5000");
 
 			app.Run();
 		}
