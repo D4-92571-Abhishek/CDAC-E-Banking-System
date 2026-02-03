@@ -67,10 +67,10 @@ services:
       context: ./Client/app
       args:
         # React -> Spring Boot
-        VITE_API_BASE_URL: http://43.205.103.174:8080/bankify 
+        VITE_API_BASE_URL: http://13.201.51.77:8080/bankify 
 
         # React -> Logger
-        VITE_LOGGER_BASE_URL: http://43.205.103.174:5000
+        VITE_LOGGER_BASE_URL: http://13.201.51.77:5000
     container_name: bankify-frontend
     restart: always
     depends_on:
