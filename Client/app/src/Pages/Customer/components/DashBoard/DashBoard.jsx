@@ -197,7 +197,7 @@ export default function DashboardUI() {
                       Total In-Coming Funds
                     </p>
                     <h5 className="fw-bold text-dark mb-0">
-                      {transDetails?.totalIncomingAmount || "₹ 0"}
+                      {transDetails?.totalIncomingAmount.toFixed(2) || "₹ 0"}
                     </h5>
                   </div>
                   <div
@@ -224,7 +224,7 @@ export default function DashboardUI() {
                       Total Out-Going Funds
                     </p>
                     <h5 className="fw-bold text-dark mb-0">
-                      {transDetails?.totalOutGoingAmount || "₹ 0"}
+                      {transDetails?.totalOutGoingAmount.toFixed(2) || "₹ 0"}
                     </h5>
                   </div>
                   <div

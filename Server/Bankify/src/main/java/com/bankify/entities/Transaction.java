@@ -40,7 +40,7 @@ public class Transaction extends Base {
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
 	@Column(name = "transaction_time")
-	private LocalDateTime transactionTime;
+	private LocalDateTime transactionTime = LocalDateTime.now();
 	
 	@Column(name="transaction_description")
 	private String transactionDescription;

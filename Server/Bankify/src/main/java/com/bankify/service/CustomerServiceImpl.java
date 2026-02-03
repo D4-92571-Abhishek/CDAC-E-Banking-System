@@ -156,24 +156,51 @@ public class CustomerServiceImpl implements CustomerService {
 
 		return res;
 	}
-
+//
+//	@Override
+//	public Page<TransactionResponseDTO> getCustomerTransactions(Long userId) {
+//
+//		Customer c = customerRepository.findByUserId(userId)
+//				.orElseThrow(() -> new RuntimeException("Customer not found"));
+//
+//		Pageable page = PageRequest.of(0, 10);
+//
+//		Page<Transaction> transactionPage = transactionRepository.findByCustomerOrderByTransactionTimeDesc(c, page);
+//
+//		List<TransactionResponseDTO> trResponse = new ArrayList<>();
+//
+//		for (Transaction t : transactionPage.getContent()) {
+//			trResponse.add(modelMapper.map(t, TransactionResponseDTO.class));
+//		}
+//
+//		return new PageImpl<>(trResponse, page, transactionPage.getTotalElements());
+//	}
+	
 	@Override
-	public Page<TransactionResponseDTO> getCustomerTransactions(Long userId) {
+	public List<TransactionResponseDTO> getCustomerTransactions(Long userId) {
 
 		Customer c = customerRepository.findByUserId(userId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
+//
+//		Pageable page = PageRequest.of(0, 10);
 
-		Pageable page = PageRequest.of(0, 10);
+//		Page<Transaction> transactionPage = transactionRepository.findByCustomerOrderByTransactionTimeDesc(c, page);
 
-		Page<Transaction> transactionPage = transactionRepository.findByCustomerOrderByTransactionTimeDesc(c, page);
-
+		List<Transaction> transactionPage = transactionRepository.findByCustomerOrderByTransactionTimeDesc(c);
 		List<TransactionResponseDTO> trResponse = new ArrayList<>();
-
-		for (Transaction t : transactionPage.getContent()) {
+		
+		
+		
+//		System.out.println(transactionPage);
+		for(Transaction t : transactionPage) {
 			trResponse.add(modelMapper.map(t, TransactionResponseDTO.class));
 		}
+		
+		System.out.println("TRRRRRR RESPONSE "+trResponse);
 
-		return new PageImpl<>(trResponse, page, transactionPage.getTotalElements());
+		
+
+		return trResponse;
 	}
 
 	public Page<Transaction> getCustomerTransactions(Long userId, TransactionType transactionType) {
