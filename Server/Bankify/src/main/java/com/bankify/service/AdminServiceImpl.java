@@ -21,6 +21,9 @@ import com.bankify.entities.Gender;
 import com.bankify.entities.Role;
 import com.bankify.entities.Status;
 import com.bankify.entities.User;
+import com.bankify.exception.DashboardDataNotAvailableException;
+import com.bankify.exception.EntryAlreadyExistsException;
+import com.bankify.exception.UserNotFoundException;
 import com.bankify.repository.CustomerRepository;
 import com.bankify.repository.LoanDetailsRepository;
 import com.bankify.repository.LoanRepository;
@@ -76,7 +79,13 @@ public class AdminServiceImpl implements AdminService {
 		
 		AdminCustomerInfoDTO adminCustomerInfoDTO=new AdminCustomerInfoDTO();
 		
-		adminCustomerInfoDTO.setTotalCustomers(customerRepository.getAdminTotalCustomers());
+		long totalCustomers=customerRepository.getAdminTotalCustomers();
+		
+		if(totalCustomers==0) {
+			throw new DashboardDataNotAvailableException("No customers Data available");
+		}
+		
+		adminCustomerInfoDTO.setTotalCustomers(totalCustomers);
 		
 		adminCustomerInfoDTO.setTotalBalance(customerRepository.getAdminTotalBankAssets());
 		
@@ -117,6 +126,10 @@ public class AdminServiceImpl implements AdminService {
 		user.setPassword(passwordEncoder.encode("manager"));
 		user.setCustomerVerified(true);
 		
+		if(userRepository.existsByEmail(manager.getEmail())){
+			throw new EntryAlreadyExistsException("Mananger already exists with this Email");
+		}
+		
 		userRepository.save(user);
 		
 		return new GeneralResponseDTO("Success","Manager created with ID : "+user.getId());
@@ -142,6 +155,10 @@ public class AdminServiceImpl implements AdminService {
 	public List<AdminLoanListDTO> getAdminLoanList() {
 
 		List<AdminLoanListDTO> list = loanDetailsRepository.getAdminLoanList();
+		
+		if(list.isEmpty()) {
+			throw new DashboardDataNotAvailableException("No Loans Data Avaialable");
+		}
 
 	    list.forEach(dto -> {
 	        // nextDue = today + 1 month (or your logic)
@@ -180,9 +197,13 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public GeneralResponseDTO changeStatus(Long id,Status status) {
 
-		userRepository.changeCustomerStatus(id,status);
+		int updatedStatus =userRepository.changeCustomerStatus(id,status);
 		
-		return null;
+		if(updatedStatus==0) {
+			throw new UserNotFoundException("User Not found with Id : "+id);
+		}
+		
+		return new GeneralResponseDTO("Success","Status updated successfully of ID : "+id);
 	}
 
 	@Override

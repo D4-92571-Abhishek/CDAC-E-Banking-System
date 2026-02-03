@@ -1,0 +1,2 @@
+UserId: "1" | Action: "User Logged In" | IP: "localhost" | Time: "03/02/2026 03:33:46"
+UserId: "1" | Action: "ADMIN_DASHBOARD_ACCESSED" | IP: "localhost" | Time: "03/02/2026 03:33:46"
