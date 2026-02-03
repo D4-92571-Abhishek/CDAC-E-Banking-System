@@ -27,7 +27,7 @@ namespace BankifyLogger
 
 			builder.Services.AddControllers();
 
-			builder.Services.AddCors(options =>
+			/*builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("ReactPolicy", policy =>
 				{
@@ -40,7 +40,24 @@ namespace BankifyLogger
 						.AllowAnyHeader()
 						.AllowAnyMethod();
 				});
+			});*/
+
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("ReactPolicy", policy =>
+				{
+					policy
+						.SetIsOriginAllowed(origin =>
+							origin.StartsWith("http://localhost") ||          // Local dev
+							origin.Contains("compute.amazonaws.com") ||       // EC2 public DNS
+							origin.StartsWith("http://13.201.51.77") ||      // EC2 public IP
+							origin.StartsWith("http://frontend")             // Docker internal (rare)
+						)
+						.AllowAnyHeader()
+						.AllowAnyMethod();
+				});
 			});
+
 
 
 			/*builder.Services.AddCors(options =>
