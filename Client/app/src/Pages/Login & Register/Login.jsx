@@ -17,6 +17,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
 
   const navigate = useNavigate();
@@ -73,7 +75,7 @@ const Login = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:8080/bankify/login",
+        `${API_BASE_URL}/login`,
         body
       );
 
