@@ -23,6 +23,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [cnfPassword, setCnfPassword] = useState("");
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
   const validation = () => {
     if (
@@ -70,7 +72,7 @@ const Register = () => {
     console.log(body);
     // return;
     const response = await axios.post(
-      "http://localhost:8080/bankify/customers/signup",
+      `${API_BASE_URL}/customers/signup`,
       body,
       {
         headers: {
