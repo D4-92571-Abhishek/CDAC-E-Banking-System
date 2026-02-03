@@ -20,6 +20,8 @@ export default function TransactionHistory() {
     }
   }, []);
 
+  // console.log(transactionHistory)
+
   const fetchTransHistoryData = async () => {
     try {
       // const data = await axios.get(
@@ -32,7 +34,7 @@ export default function TransactionHistory() {
       // );
       const data = await fetchTransactionHistory();
 
-      setTransactionHistory(data.data.content);
+      setTransactionHistory(data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

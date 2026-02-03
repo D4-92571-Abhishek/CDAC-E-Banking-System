@@ -21,7 +21,7 @@ import com.bankify.entities.TransactionType;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    List<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer customer);
+//    List<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer customer);
     
     Optional<Transaction> findTopByCustomerAndTransactionStatusOrderByTransactionTimeDesc(Customer customer,TransactionStatus status);
     
@@ -34,7 +34,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     		""")
     Double findAllAmountsByTransactionType (@Param("cId") Long cId,@Param("trType") TransactionType trType,TransactionStatus trStatus);
 
-	Page<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer c,Pageable page);
+//	Page<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer c,Pageable page);
+	
+	List<Transaction> findByCustomerOrderByTransactionTimeDesc(Customer c); 
 	
 //	@Query("""
 //			SELECT new com.bankify.dto.TransactionResponseDTO(

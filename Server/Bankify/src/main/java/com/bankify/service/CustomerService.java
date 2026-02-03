@@ -36,9 +36,9 @@ public interface CustomerService {
 
 	CustomerDashboardResponseDTO getCustomerDetailsById(Long userId);
 	
+	public List<TransactionResponseDTO> getCustomerTransactions(Long userId);
 
-
-	Page<TransactionResponseDTO> getCustomerTransactions(Long userId);
+//	Page<TransactionResponseDTO> getCustomerTransactions(Long userId);
 	
 	
 	OtpResponseDTO sendOtp(Long userId, CustomerFundTransferRequestDTO fundDetails);
