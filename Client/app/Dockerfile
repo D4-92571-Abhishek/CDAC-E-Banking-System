@@ -4,9 +4,11 @@ WORKDIR /app
 
 # Accept build-time variables
 ARG VITE_API_BASE_URL
+ARG VITE_LOGGER_BASE_URL
 
 # Make them available to Vite
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_LOGGER_BASE_URL=$VITE_LOGGER_BASE_URL
 
 COPY package.json package-lock.json ./
 RUN npm install

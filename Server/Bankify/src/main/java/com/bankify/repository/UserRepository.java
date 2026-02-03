@@ -113,7 +113,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	    	        @Param("role") Role role
 	    	);
 
-	    boolean existsByEmail(String email);
 	    
 
 	    

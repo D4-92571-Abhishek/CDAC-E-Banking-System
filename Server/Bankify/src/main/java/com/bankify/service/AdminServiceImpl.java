@@ -126,7 +126,7 @@ public class AdminServiceImpl implements AdminService {
 		user.setPassword(passwordEncoder.encode("manager"));
 		user.setCustomerVerified(true);
 		
-		if(!userRepository.existsByEmail(manager.getEmail())){
+		if(userRepository.existsByEmail(manager.getEmail())){
 			throw new EntryAlreadyExistsException("Mananger already exists with this Email");
 		}
 		
